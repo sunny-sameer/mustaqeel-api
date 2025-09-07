@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [ApiAuthenticateController::class, 'userLogin']);
+    Route::post('/signup', [ApiAuthenticateController::class, 'userSignUp']);
     Route::post('/2fa/verify', [TwoFactorController::class, 'verify']);
 });
 

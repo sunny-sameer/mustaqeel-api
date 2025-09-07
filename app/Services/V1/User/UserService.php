@@ -20,6 +20,12 @@ class UserService
 
     public function getUserByEmail($userEmail): object
     {
-        return  $this->userInterface->getUserByEmail($userEmail)->first();
+        return  $this->userInterface->getUserByEmail($userEmail);
+    }
+
+
+    public function createUser($userEmail): object
+    {
+        return  $this->userInterface->getUserByEmail($userEmail);
     }
 }

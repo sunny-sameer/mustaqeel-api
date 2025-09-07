@@ -7,5 +7,5 @@ use Exception;
 
 class TooManyLoginAttemptsException extends Exception
 {
-    protected $message = 'Too many login attempts. Please try again later.';
+    protected $message = 'Too many attempts. Please try again later.';
 }

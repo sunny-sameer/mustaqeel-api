@@ -20,9 +20,11 @@ use Illuminate\Support\Facades\Auth;
 
 // Exceptions
 use App\Exceptions\UserNotFoundException;
+use App\Exceptions\UserFoundException;
 use App\Exceptions\AuthenticationFailedException;
 use App\Exceptions\TooManyLoginAttemptsException;
 use App\Http\Requests\API\V1\LoginRequest;
+use App\Http\Requests\API\V1\SignupRequest;
 
 
 use App\Services\V1\Auth\TwoFactorService;
@@ -56,11 +58,7 @@ class AuthService
     public function userExist(): self
     {
         $user = $this->userService->getUserByEmail($this->userEmail);
-        // notify()
-        //     ->on('user_registered')
-        //     ->with($user, ['name' => $user->name, 'email' => $user->email])
-        //     ->send();
-        // die('asdfasd');
+
         if (!$user) {
             throw new UserNotFoundException();
         }
@@ -74,7 +72,7 @@ class AuthService
         //     $empData = $this->employeeInterface->getEmployeeCompanyProfileByUserId($user->id)->first();
         //     $user->setRelation('business', $empData?->employeeProfile?->business);
         // }
-        $this->user = $user;
+        $this->user = $user->first();
 
         return $this;
     }
@@ -88,10 +86,10 @@ class AuthService
     //     return $this;
     // }
 
-    public function rateLimiterLogin(): self
+    public function rateLimiter(): self
     {
 
-        $key = sprintf('login:%s|%s', strtolower($this->userEmail), $this->request->ip());
+        $key = sprintf('loginSignUp:%s|%s', strtolower($this->userEmail), $this->request->ip());
 
         if (RateLimiter::tooManyAttempts($key, 2)) {
             throw new TooManyLoginAttemptsException();
@@ -104,14 +102,13 @@ class AuthService
 
     public function attemptAuth(): self
     {
-
         if (!Auth::attempt($this->request->only('email', 'password'))) {
             throw new AuthenticationFailedException();
         }
 
         $user = Auth::user();
 
-        $this->twoFactorTokens = [$pendingToken, $expiresIn] = $this->twoFactor->start($user, $this->request->ip(), $this->request->userAgent());
+        $this->twoFactorTokens = [$pendingToken, $expiresIn] = $this->twoFactor->startLogin($user, $this->request->ip(), $this->request->userAgent());
         return $this;
     }
 
@@ -155,5 +152,41 @@ class AuthService
         }
 
         return collect($array);
+    }
+
+    public function setInputsSignUp(SignupRequest $request): self
+    {
+        $this->userEmail = $request->email;
+        $this->userPassword = $request->password;
+        $this->request = $request;
+        return $this;
+    }
+
+    public function sendOtpToken(): self
+    {
+
+        $signUpUserData = $this->request->only('name', 'nameArabic', 'email', 'password', 'termsAccepted');
+
+        $this->twoFactorTokens = [$pendingToken, $expiresIn] = $this->twoFactor->startSignup($signUpUserData, $this->request->ip(), $this->request->userAgent());
+        return $this;
+    }
+
+    // public function userAlreadyExists()
+    // {
+    //     $user = $this->userService->getUserByEmail($this->userEmail);
+    //     echo '<pre>'; print_r($user->first()); echo '<pre/>';
+    //      die();
+    //     if ($user) {
+    //         throw new UserFoundException();
+    //     }
+
+    //     return $this;
+    // }
+
+    public function getSignUpResponse(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
+            'twoFactorTokens' => $this->twoFactorTokens[0],
+        ]);
     }
 }

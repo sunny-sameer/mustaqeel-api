@@ -4,6 +4,9 @@ namespace App\Http\Requests\API\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 class OtpVerifyRequest extends FormRequest
 {
     /**
@@ -23,6 +26,7 @@ class OtpVerifyRequest extends FormRequest
         return [
             'email' => ['required', 'email', 'exists:users,email'],
             'otp'   => ['required', 'digits:6'], // exactly 6 digits
+            'pendingToken'   => ['required']
         ];
     }
 
@@ -37,14 +41,20 @@ class OtpVerifyRequest extends FormRequest
             'email.exists'   => 'No user found with this email.',
             'otp.required'   => 'OTP is required.',
             'otp.digits'     => 'OTP must be exactly 6 digits.',
+            'pendingToken.required'   => 'Pending Token is required.',
+
         ];
     }
 
     /**
      * Always return JSON for APIs.
      */
-    public function wantsJson(): bool
+    protected function failedValidation(Validator $validator)
     {
-        return true;
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Validation errors',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

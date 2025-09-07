@@ -7,19 +7,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\V1\OtpVerifyRequest;
 use App\Http\Requests\API\V1\OtpResendRequest;
 use App\Services\V1\Auth\TwoFactorService;
+use App\Services\V1\User\UserService;
 use Illuminate\Http\JsonResponse;
 
 
 
 class TwoFactorController extends Controller
 {
-    public function __construct(private TwoFactorService $twoFactor) {}
+    public function __construct(private TwoFactorService $twoFactor, private UserService $UserService) {}
 
     public function verify(OtpVerifyRequest $request): JsonResponse
     {
 
         $result = $this->twoFactor->verify(
-            $request->pending_token,
+            $request->pendingToken,
             $request->otp,
             $request->ip(),
             $request->userAgent()
@@ -32,12 +33,35 @@ class TwoFactorController extends Controller
             ], $result->status);
         }
 
-        $token = $result->user->createToken('api')->plainTextToken;
+        if (isset($result->user)) {
+            $token = $result->user->createToken('api')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'flow'    => 'login',
+                'token'   => $token,
+                'user'    => $result->user,
+            ], 200);
+        }
+
+        if (isset($result->flow) && $result->flow  == 'signup') {
+            // $user = \App\Models\User::create($result->signupData);
+
+            // $token = $user->createToken('api')->plainTextToken;
+            $this->UserService->createUser('entity');
+
+            return response()->json([
+                'success' => true,
+                'flow'    => 'signup',
+                'token'   => '$token',
+                'user'    => '$user',
+            ], 201);
+        }
 
         return response()->json([
-            'success' => true,
-            'token' => $token,
-        ]);
+            'success' => false,
+            'message' => 'Unexpected error.',
+        ], 500);
     }
 
     public function resend(OtpResendRequest $request): JsonResponse
