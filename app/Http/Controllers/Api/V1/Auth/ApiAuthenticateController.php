@@ -15,6 +15,8 @@ use App\Http\Requests\API\V1\SignupRequest;
 
 
 use App\Services\V1\Auth\AuthService;
+use App\Services\V1\User\UserService;
+
 
 
 use App\Exceptions\UserNotFoundException;
@@ -32,7 +34,8 @@ class ApiAuthenticateController extends BaseController
 
 
     public function __construct(
-        AuthService $authService
+        AuthService $authService,
+        private UserService $UserService
     ) {
 
         $this->authService = $authService;

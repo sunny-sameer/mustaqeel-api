@@ -130,7 +130,7 @@ class TwoFactorService
 
         // Handle flow types
         if ($data['type'] === 'signup') {
-            return (object)['ok' => true, 'status' => 201, 'flow' => 'signup', $data];
+            return (object)['ok' => true, 'status' => 201, 'flow' => 'signup', 'suUser' => $data];
         }
 
         if ($data['type'] === 'login') {
@@ -143,6 +143,26 @@ class TwoFactorService
         }
 
         return (object)['ok' => false, 'status' => 400, 'message' => 'Unknown flow.'];
+    }
+
+    public function verifyEmailData(string $pendingToken): object
+    {
+        $cacheKey = $this->key($pendingToken);
+        $data = Cache::get($cacheKey);
+
+        if (!$data) {
+            return (object)['ok' => false, 'status' => 400, 'message' => 'Invalid or expired token.'];
+        }
+
+        if ($data['type'] === 'signup') {
+            return (object)['ok' => true, 'flow' => 'signup'];
+        }
+
+        if ($data['type'] === 'login') {
+            return (object)['ok' => true, 'flow' => 'login'];
+        }
+
+        return (object)['ok' => false, 'flow' => 'unknown'];
     }
 
     /**

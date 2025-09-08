@@ -6,9 +6,13 @@ use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Services\V1\Auth\TwoFactorService;
+
 
 class OtpVerifyRequest extends FormRequest
 {
+    public function __construct(private TwoFactorService $twoFactor) {}
+
     /**
      * Authorize the request.
      */
@@ -23,9 +27,28 @@ class OtpVerifyRequest extends FormRequest
      */
     public function rules(): array
     {
+        $data = $this->twoFactor->verifyEmailData($this->input('pendingToken'));
+
+
+        if (!$data->ok) {
+            return [
+                'email' => ['required', 'email'],
+                'otp'   => ['required', 'digits:6'],
+                'pendingToken'   => ['required']
+            ];
+        }
+
+        if ($data->flow == 'signup') {
+            return [
+                'email' => ['required', 'email'],
+                'otp'   => ['required', 'digits:6'],
+                'pendingToken'   => ['required']
+            ];
+        }
+
         return [
             'email' => ['required', 'email', 'exists:users,email'],
-            'otp'   => ['required', 'digits:6'], // exactly 6 digits
+            'otp'   => ['required', 'digits:6'],
             'pendingToken'   => ['required']
         ];
     }

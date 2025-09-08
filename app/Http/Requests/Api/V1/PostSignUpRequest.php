@@ -6,7 +6,7 @@ use App\Http\Requests\API\V1\BaseRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class SignupRequest extends BaseRequest
+class PostSignupRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -17,10 +17,9 @@ class SignupRequest extends BaseRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'nameArabic' => ['nullable', 'regex:/^[ا-يإأءئلأؤۂآلآ()\-\.]+$/u'], // only Arabic if present
+            'nameArabic' => ['nullable', 'regex:/^[ا-يإأءئلأؤۂآلآ()\-\.]+$/u'],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,64}$/',
-            'confirmPassword' => 'required|same:password',
             'termsAccepted' => 'required|accepted',
         ];
     }
@@ -35,8 +34,6 @@ class SignupRequest extends BaseRequest
             'email.unique' => 'This email is already registered.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',
-            'confirmPassword.required' => 'Confirm password is required.',
-            'confirmPassword.same' => 'Confirm password must match password.',
             'termsAccepted.required' => 'You must accept the terms.',
             'termsAccepted.accepted' => 'You must accept the terms.',
         ];

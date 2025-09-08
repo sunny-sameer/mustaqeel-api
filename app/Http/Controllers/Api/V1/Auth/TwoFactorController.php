@@ -3,22 +3,23 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseController;
+
 use App\Http\Requests\API\V1\OtpVerifyRequest;
 use App\Http\Requests\API\V1\OtpResendRequest;
 use App\Services\V1\Auth\TwoFactorService;
 use App\Services\V1\User\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 
 
-class TwoFactorController extends Controller
+class TwoFactorController extends BaseController
 {
     public function __construct(private TwoFactorService $twoFactor, private UserService $UserService) {}
 
     public function verify(OtpVerifyRequest $request): JsonResponse
     {
-
         $result = $this->twoFactor->verify(
             $request->pendingToken,
             $request->otp,
@@ -27,58 +28,52 @@ class TwoFactorController extends Controller
         );
 
         if (!$result->ok) {
-            return response()->json([
-                'success' => false,
-                'message' => $result->message,
-            ], $result->status);
+            return $this->sendErrorResponse(false, $result->message, $result->status);
         }
 
-        if (isset($result->user)) {
-            $token = $result->user->createToken('api')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'flow'    => 'login',
-                'token'   => $token,
-                'user'    => $result->user,
-            ], 200);
-        }
 
         if (isset($result->flow) && $result->flow  == 'signup') {
-            // $user = \App\Models\User::create($result->signupData);
+            $userData = $result->suUser['signup_data'];
 
-            // $token = $user->createToken('api')->plainTextToken;
-            $this->UserService->createUser('entity');
+            $result = $this->UserService->createUser($userData, 'applicant');
 
-            return response()->json([
-                'success' => true,
-                'flow'    => 'signup',
-                'token'   => '$token',
-                'user'    => '$user',
-            ], 201);
+            if ($result['success']) {
+                return $this->sendSuccessResponse($result['data'], $result['message']);
+            }
+
+            return $this->sendErrorResponse($result['errors'], $result['message'], $result['status']);
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Unexpected error.',
-        ], 500);
-    }
 
-    public function resend(OtpResendRequest $request): JsonResponse
-    {
-        $res = $this->twoFactor->resend($request->pending_token, $request->ip(), $request->userAgent());
+        if (isset($result->user) && $result->flow  == 'login') {
+            $result = $this->UserService->createToken($result->user)->loginResponse();
 
-        if (!$res->ok) {
-            return response()->json([
-                'success' => false,
-                'message' => $res->message,
-            ], $res->status);
+            if ($result['success']) {
+                return $this->sendSuccessResponse($result['data'], $result['message']);
+            }
+
+            return $this->sendErrorResponse($result['errors'], $result['message'], $result['status']);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'OTP resent.',
-            'expires_in' => $res->expiresIn,
-        ]);
+        return $this->sendErrorResponse('token verification', 'Unexpected error.', 500);
     }
+
+    // public function resend(OtpResendRequest $request): JsonResponse
+    // {
+    //     $res = $this->twoFactor->resend($request->pending_token, $request->ip(), $request->userAgent());
+
+    //     if (!$res->ok) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $res->message,
+    //         ], $res->status);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'OTP resent.',
+    //         'expires_in' => $res->expiresIn,
+    //     ]);
+    // }
 }
