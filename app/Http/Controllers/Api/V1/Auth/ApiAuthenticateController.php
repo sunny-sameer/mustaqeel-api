@@ -52,13 +52,13 @@ class ApiAuthenticateController extends BaseController
                 ->attemptAuth()
                 ->getAuthResponse();
         } catch (UserNotFoundException $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 404);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (TooManyLoginAttemptsException $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 420);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 420);
         } catch (AuthenticationFailedException $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 401);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 401);
         } catch (\Exception $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 403);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
     }
 
@@ -72,11 +72,11 @@ class ApiAuthenticateController extends BaseController
                 ->sendOtpToken()
                 ->getSignUpResponse();
         } catch (UserFoundException $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 404);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (TooManyLoginAttemptsException $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 420);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 420);
         } catch (\Exception $e) {
-            return $this->sendErrorResponse(false, $e->getMessage(), 403);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
     }
 }
