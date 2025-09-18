@@ -3,13 +3,17 @@
 namespace App\Http\Requests\API\V1;
 
 use App\Http\Requests\API\V1\BaseRequest;
+use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+
 
 use App\Models\User;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+
 
 class LoginRequest extends BaseRequest
 {
+
+    use FailedValidationTrait;
+
 
     /**
      * Get the validation rules that apply to the request.
@@ -34,14 +38,5 @@ class LoginRequest extends BaseRequest
     public function wantsJson(): bool
     {
         return true;
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'errors' => $validator->errors()
-        ], 422));
     }
 }

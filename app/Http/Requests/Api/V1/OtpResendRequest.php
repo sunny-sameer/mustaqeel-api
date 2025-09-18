@@ -4,8 +4,14 @@ namespace App\Http\Requests\API\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+
+
 class OtpResendRequest extends FormRequest
 {
+    use FailedValidationTrait;
+
+
     /**
      * Authorize the request.
      */

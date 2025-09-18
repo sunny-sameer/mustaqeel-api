@@ -25,14 +25,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
-            NotificationSeeder::class
+            NotificationSeeder::class,
+            CategoriesSeeder::class,
+            SectorsSeeder::class,
+            UserAdminSeeder::class,
         ]);
 
         Model::reguard();
-
-        User::factory()->create([
-            'name' => 'Casper',
-            'email' => 'caspertalks@yopmail.com',
-        ]);
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Requests\API\V1;
 
 use App\Http\Requests\API\V1\BaseRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+
+use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+
 
 class SignupRequest extends BaseRequest
 {
+    use FailedValidationTrait;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -45,14 +48,5 @@ class SignupRequest extends BaseRequest
     public function wantsJson(): bool
     {
         return true;
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'errors' => $validator->errors()
-        ], 422));
     }
 }

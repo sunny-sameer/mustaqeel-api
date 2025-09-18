@@ -4,13 +4,17 @@ namespace App\Http\Requests\API\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+
+
 use App\Services\V1\Auth\TwoFactorService;
 
 
 class OtpVerifyRequest extends FormRequest
 {
+    use FailedValidationTrait;
+
+
     public function __construct(private TwoFactorService $twoFactor) {}
 
     /**
@@ -69,15 +73,4 @@ class OtpVerifyRequest extends FormRequest
         ];
     }
 
-    /**
-     * Always return JSON for APIs.
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'errors' => $validator->errors()
-        ], 422));
-    }
 }
