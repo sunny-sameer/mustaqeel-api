@@ -18,7 +18,7 @@ class UserAdminSeeder extends Seeder
         $superAdmin = User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@yopmail.com',
-            'password' => Hash::make('welcome123')
+            'password' => Hash::make('Jusour@2025')
         ]);
         $superAdmin->assignRole('super-admin');
 
@@ -26,7 +26,7 @@ class UserAdminSeeder extends Seeder
         $admin = User::create([
             'name' => 'admin',
             'email' => 'admin@yopmail.com',
-            'password' => Hash::make('welcome123')
+            'password' => Hash::make('Jusour@2025')
         ]);
         $admin->assignRole('admin');
 
@@ -34,7 +34,7 @@ class UserAdminSeeder extends Seeder
         $admin = User::create([
             'name' => 'Applicant',
             'email' => 'caspertalks@yopmail.com',
-            'password' => Hash::make('welcome123')
+            'password' => Hash::make('Jusour@2025')
         ]);
         $admin->assignRole('applicant');
     }
