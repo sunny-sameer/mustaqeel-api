@@ -42,10 +42,6 @@ class GenericController extends BaseController
     }
     public function createCategory(CategoryCreateRequest $request)
     {
-        echo '<pre>';
-        print_r($request->all());
-        echo '<pre/>';
-        die();
         return response()->json($this->service->createCategory($request->all()), 201);
     }
     public function updateCategory(CategoryUpdateRequest $request, $id)
