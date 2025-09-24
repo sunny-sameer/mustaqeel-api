@@ -17,10 +17,8 @@ class EntityCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'entityEn'   => 'required|string|max:255',
-            'entityAr'   => 'required|string|max:255',
-            'activityId' => 'nullable|array',
-            'activityId.*' => 'integer|exists:activities,id',
+            'name'   => 'required|string|max:255',
+            'nameAr'   => 'required|string|max:255',
         ];
     }
 }

@@ -12,15 +12,16 @@ class EntityUpdateRequest extends FormRequest
 {
     use FailedValidationTrait;
 
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {
         return [
-            'entityEn'   => 'sometimes|string|max:255',
-            'entityAr'   => 'sometimes|string|max:255',
-            'activityId' => 'sometimes|array',
-            'activityId.*' => 'integer|exists:activities,id',
+            'name'   => 'sometimes|string|max:255',
+            'nameAr'   => 'sometimes|string|max:255'
         ];
     }
 }

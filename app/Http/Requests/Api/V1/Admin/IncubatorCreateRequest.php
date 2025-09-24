@@ -18,8 +18,8 @@ class IncubatorCreateRequest extends FormRequest
     {
         return [
             'categoryId' => 'required|integer|exists:categories,id',
-            'incubatorEn' => 'required|string|max:255',
-            'incubatorAr' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'nameAr' => 'required|string|max:255',
         ];
     }
 }

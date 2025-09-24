@@ -20,9 +20,7 @@ class ActivityCreateRequest extends FormRequest
         return [
             'sectorId'   => 'required|integer|exists:sectors,id',
             'name'  => 'required|string|max:255',
-            'nameAr'  => 'required|string|max:255',
-            'entityIds'   => 'nullable|array',
-            'entityIds.*' => 'integer|exists:entities,id',
+            'nameAr'  => 'required|string|max:255'
         ];
     }
 }

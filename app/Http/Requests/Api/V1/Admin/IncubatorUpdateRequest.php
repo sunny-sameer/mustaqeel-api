@@ -18,8 +18,8 @@ class IncubatorUpdateRequest extends FormRequest
     {
         return [
             'categoryId' => 'sometimes|integer|exists:categories,id',
-            'incubatorEn' => 'sometimes|string|max:255',
-            'incubatorAr' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'nameAr' => 'sometimes|string|max:255',
         ];
     }
 }

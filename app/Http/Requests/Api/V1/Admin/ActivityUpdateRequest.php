@@ -21,10 +21,8 @@ class ActivityUpdateRequest extends FormRequest
     {
         return [
             'sectorId'   => 'sometimes|integer|exists:sectors,id',
-            'activityEn'  => 'sometimes|string|max:255',
-            'activityAr'  => 'sometimes|string|max:255',
-            'entityIds'   => 'sometimes|array',
-            'entityIds.*' => 'integer|exists:entities,id',
+            'name'  => 'sometimes|string|max:255',
+            'nameAr'  => 'sometimes|string|max:255',
         ];
     }
 }
