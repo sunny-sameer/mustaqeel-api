@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class activityEntity extends Model
 {
-    //
+    protected $table = 'activity_entity';
+    protected $guarded = [];
 
 
     public function activity()

@@ -22,4 +22,12 @@ class SubActivityUpdateRequest extends FormRequest
             'subActivityAr' => 'sometimes|string|max:255',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'subActivityEn.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
+            'subActivityAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
+        ];
+    }
 }

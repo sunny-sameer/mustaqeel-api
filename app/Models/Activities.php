@@ -9,8 +9,10 @@ use App\Models\Traits\HasSlug;
 
 class Activities extends Model
 {
-    //
     use HasSlug;
+
+    protected $table = 'activities';
+    protected $guarded = [];
 
 
 
@@ -30,8 +32,7 @@ class Activities extends Model
     // }
 
     public function entities()
-{
-    return $this->belongsToMany(Entities::class, 'activity_entity', 'activityId', 'entityId')
-                ;
-}
+    {
+        return $this->belongsToMany(Entities::class, 'activity_entity', 'activityId', 'entityId');
+    }
 }

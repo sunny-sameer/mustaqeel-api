@@ -9,10 +9,12 @@ trait ArabicValidationTrait
      *
      * @return array
      */
-    public static function arabicNameRule(): array
+    public static function arabicNameRule(string $unique): array
     {
         return [
             'required',
+            'string',
+            $unique,
             'min:3',
             'max:255',
             'regex:/^[\p{Arabic}.,، ]+$/u'

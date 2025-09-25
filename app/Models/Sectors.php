@@ -11,6 +11,9 @@ class Sectors extends Model
 {
     use HasSlug;
 
+    protected $table = 'sectors';
+    protected $guarded = [];
+
 
     public function categories()
     {

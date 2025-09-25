@@ -23,4 +23,12 @@ class SectorUpdateRequest extends FormRequest
             'categoryIds.*' => 'integer|exists:categories,id',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
+            'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
+        ];
+    }
 }

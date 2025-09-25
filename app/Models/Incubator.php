@@ -7,13 +7,10 @@ use App\Models\Traits\HasSlug;
 
 class Incubator extends Model
 {
-    //
-
     use HasSlug;
 
-
-
-    protected $fillable = ['categoryId', 'nameEn', 'nameAr', 'slug'];
+    protected $table = 'incubators';
+    protected $guarded = [];
 
     public function category()
     {

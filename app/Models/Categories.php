@@ -10,6 +10,9 @@ class Categories extends Model
 {
     use HasSlug;
 
+    protected $table = 'categories';
+    protected $guarded = [];
+
 
 
     public function sectors()

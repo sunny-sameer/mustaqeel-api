@@ -24,8 +24,8 @@ class CategoryCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'   => 'required|string|max:255',
-            'nameAr' => self::arabicNameRule(),
+            'name' => 'required|string|min:3|max:50|unique:categories,name|regex:/^[a-zA-Z.,، ]+$/',
+            'nameAr' => self::arabicNameRule('unique:categories,nameAr'),
             'status' => 'nullable|boolean',
         ];
     }
@@ -33,7 +33,8 @@ class CategoryCreateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nameAr.regex' => 'The :attribute must contain only Arabic characters, parentheses, hyphens, and dots.',
+            'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
+            'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
         ];
     }
 }

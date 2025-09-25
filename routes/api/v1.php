@@ -27,7 +27,7 @@ Route::prefix('auth')->group(function () {
 
 
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum','role:admin|super-admin']], function () {
     Route::prefix('admin')->group(function () { // Categories
         Route::get('categories', [GenericController::class, 'categories']);
         Route::get('categories/{id}', [GenericController::class, 'category']);

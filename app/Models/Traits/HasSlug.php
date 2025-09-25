@@ -34,7 +34,6 @@ trait HasSlug
         return $slug;
     }
 
-
     protected static function bootHasSlug()
     {
         static::creating(function ($model) {

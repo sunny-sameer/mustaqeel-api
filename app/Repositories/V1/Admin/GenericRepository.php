@@ -32,10 +32,6 @@ class GenericRepository extends CoreRepository implements GenericInterface
     public function createCategory($data)
     {
         // $data['slug'] = \Str::slug($data['name']);
-        echo '<pre>';
-        print_r($data);
-        echo '<pre/>';
-        die();
         return Category::create($data);
     }
     public function updateCategory($id, $data)

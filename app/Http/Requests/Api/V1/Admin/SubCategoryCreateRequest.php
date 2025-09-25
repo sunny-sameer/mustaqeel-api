@@ -25,4 +25,12 @@ class SubCategoryCreateRequest extends FormRequest
             'nameAr'      => 'required|string|max:255',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
+            'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
+        ];
+    }
 }
