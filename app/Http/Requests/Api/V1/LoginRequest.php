@@ -25,16 +25,6 @@ class LoginRequest extends BaseRequest
         return (new user())->loginRules();
     }
 
-    public function messages(): array
-    {
-        return [
-            'email.required' => 'Email is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least 6 characters.',
-        ];
-    }
-
     public function wantsJson(): bool
     {
         return true;

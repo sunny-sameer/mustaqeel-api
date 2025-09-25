@@ -3,16 +3,27 @@
 
 namespace App\Models\Traits\Rules;
 
+use Illuminate\Validation\Rules\Password;
 
 trait UserRules
 {
     public function createdRules()
     {
         return [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => ['required', 'min:8', 'regex:/^(?=[^\d]*\d)(?=[A-Z\d ]*[^A-Z\d ]).{8,}$/i'],
-            'roles' => ['nullable', 'array'],
+            'name' => 'required|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/',
+            'nameArabic' => 'nullable|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
+            'email' => 'required|min:5|max:255|email|unique:users,email',
+            'password' => [
+                'required',
+                Password::min(8)
+                ->max(64)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
+            'confirmPassword' => 'required|same:password',
+            'termsAccepted' => 'required|accepted'
         ];
     }
 
@@ -51,8 +62,25 @@ trait UserRules
     public function changePasswordRules()
     {
         return [
-            'old_password' => 'required|min:6',
-            'password' => 'required|min:8|confirmed|regex:/^(?=[^\d]*\d)(?=[A-Z\d ]*[^A-Z\d ]).{8,}$/i',
+            'old_password' => [
+                'required',
+                Password::min(8)
+                ->max(64)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
+            'password' => [
+                'required',
+                Password::min(8)
+                ->max(64)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
+            'confirmPassword' => 'required|same:password'
         ];
     }
 
@@ -60,22 +88,34 @@ trait UserRules
     {
 
         return [
-            'email' => [
+            'email' => 'required|min:5|max:255|email|exists:users,email',
+            'password' => [
                 'required',
-                'min:5',
-                'email',
-                'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$/',
-            ],
-            'password' => 'required'
+                Password::min(8)
+                ->max(64)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ]
         ];
     }
 
     public function resetPasswordRules()
     {
         return [
-            'password' => 'required|min:8|confirmed|regex:/^(?=[^\d]*\d)(?=[A-Z\d ]*[^A-Z\d ]).{8,}$/i',
+            'email' => 'required|min:5|max:255|email|exists:users,email',
+            'password' => [
+                'required',
+                Password::min(8)
+                ->max(64)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
+            'confirmPassword' => 'required|same:password',
             'token' => 'required|min:10',
-            'email' => 'required|email'
         ];
     }
 }

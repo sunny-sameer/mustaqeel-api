@@ -3,11 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\API\V1\LoginRequest;
@@ -16,7 +11,6 @@ use App\Http\Requests\API\V1\SignupRequest;
 
 use App\Services\V1\Auth\AuthService;
 use App\Services\V1\User\UserService;
-
 
 
 use App\Exceptions\UserNotFoundException;

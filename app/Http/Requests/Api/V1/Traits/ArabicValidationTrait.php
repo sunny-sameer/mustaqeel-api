@@ -13,9 +13,9 @@ trait ArabicValidationTrait
     {
         return [
             'required',
-            'string',
+            'min:3',
             'max:255',
-            'regex:/^[ا-يإأءئلأؤۂآلآ()\-\.]+$/u'
+            'regex:/^[\p{Arabic}.,، ]+$/u'
         ];
     }
 }

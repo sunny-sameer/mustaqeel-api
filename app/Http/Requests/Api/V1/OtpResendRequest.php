@@ -26,19 +26,7 @@ class OtpResendRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'exists:users,email'],
-        ];
-    }
-
-    /**
-     * Custom error messages.
-     */
-    public function messages(): array
-    {
-        return [
-            'email.required' => 'Email is required.',
-            'email.email'    => 'Please provide a valid email.',
-            'email.exists'   => 'No user found with this email.',
+            'email' => 'required|min:5|max:255|email|exists:users,email',
         ];
     }
 

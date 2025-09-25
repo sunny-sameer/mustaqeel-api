@@ -42,7 +42,7 @@ class UserService extends BaseService
     {
         $rules = [
             'name'          => 'required|string|max:255',
-            'nameArabic'    => ['nullable', 'regex:/^[ا-يإأءئلأؤۂآلآ()\-\.]+$/u'],
+            'nameArabic'    => ['nullable', 'regex:/^[\p{Arabic}.,، ]+$/u'],
             'email'         => 'required|email|unique:users,email',
             'password'      => [
                 'required',

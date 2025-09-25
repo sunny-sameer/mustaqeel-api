@@ -5,7 +5,7 @@ namespace App\Http\Requests\API\V1;
 use App\Http\Requests\API\V1\BaseRequest;
 
 use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
-
+use Illuminate\Validation\Rules\Password;
 
 class SignupRequest extends BaseRequest
 {
@@ -19,29 +19,28 @@ class SignupRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'nameArabic' => ['nullable', 'regex:/^[ا-يإأءئلأؤۂآلآ()\-\.]+$/u'], // only Arabic if present
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,64}$/',
+            'name' => 'required|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/',
+            'nameArabic' => 'nullable|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
+            'email' => 'required|min:5|max:255|email|unique:users,email',
+            'password' => [
+                'required',
+                Password::min(8)
+                ->max(64)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
             'confirmPassword' => 'required|same:password',
-            'termsAccepted' => 'required|accepted',
+            'termsAccepted' => 'required|accepted'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'Name is required.',
-            'nameArabic.regex' => 'The Arabic name must only contain Arabic characters.',
-            'email.required' => 'Email is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.unique' => 'This email is already registered.',
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least 8 characters.',
-            'confirmPassword.required' => 'Confirm password is required.',
-            'confirmPassword.same' => 'Confirm password must match password.',
-            'termsAccepted.required' => 'You must accept the terms.',
-            'termsAccepted.accepted' => 'You must accept the terms.',
+            'name.regex' => 'The name field only contains characters, spaces, commas and dots.',
+            'nameArabic.regex' => 'The name arabic field only contains arabic letters, spaces, commas and dots.'
         ];
     }
 

@@ -16,11 +16,21 @@ use App\Repositories\V1\Comms\CommsInterface;
 
 class TwoFactorService
 {
+    private $otpLength = 6;
+    private $otpValidaty = 5;
+
+    private $comms;
+
     // 5 minutes OTP expiry
     private int $ttl = 300;
 
     // Max wrong attempts before lockout
     private int $maxAttempts = 5;
+
+    public function __construct(CommsInterface $comms)
+    {
+        $this->comms = $comms;
+    }
 
     private function key(string $token): string
     {
@@ -77,6 +87,7 @@ class TwoFactorService
 
         $otp = $this->generateOtp();
         $otpHash = $this->hashOtp($otp);
+        $otpCreate = $this->createOtp($user->email);
 
         $payload = [
             'type'      => 'login',
@@ -100,7 +111,7 @@ class TwoFactorService
     /**
      * Verify OTP (used for both signup & login)
      */
-    public function verify(string $pendingToken, string $otp, string $ip, ?string $ua): object
+    public function verify(string $pendingToken, string $otp, string $email, string $ip, ?string $ua): object
     {
         $cacheKey = $this->key($pendingToken);
         $data = Cache::get($cacheKey);
@@ -119,12 +130,18 @@ class TwoFactorService
         }
 
         // Check OTP
-        $valid = hash_equals($data['otp_hash'], $this->hashOtp($otp));
-        if (!$valid) {
-            $data['attempts']++;
-            Cache::put($cacheKey, $data, $this->ttlRemaining($cacheKey));
-            return (object)['ok' => false, 'status' => 401, 'message' => 'Invalid OTP.'];
+        // $valid = hash_equals($data['otp_hash'], $this->hashOtp($otp));
+        // if (!$valid) {
+        //     $data['attempts']++;
+        //     Cache::put($cacheKey, $data, $this->ttlRemaining($cacheKey));
+        //     return (object)['ok' => false, 'status' => 401, 'message' => 'Invalid OTP.'];
+        // }
+
+        $valid = $this->comms->validateOtp($email,$otp);
+        if(!$valid->status){
+            return (object)['ok' => false, 'status' => 401, 'message' => $valid->message];
         }
+
 
         Cache::forget($cacheKey);
 
@@ -257,5 +274,10 @@ class TwoFactorService
     private function ttlRemaining(string $cacheKey): int
     {
         return $this->ttl; // Could be improved if using Redis with TTL fetch
+    }
+
+    private function createOtp(string $email)
+    {
+        return $this->comms->generateOtp($email, 'numeric', $this->otpLength, $this->otpValidaty);
     }
 }

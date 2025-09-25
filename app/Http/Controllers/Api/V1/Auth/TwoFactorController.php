@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use Illuminate\Http\JsonResponse;
 
 use App\Http\Controllers\Api\BaseController;
 
 use App\Http\Requests\API\V1\OtpVerifyRequest;
-use App\Http\Requests\API\V1\OtpResendRequest;
+
 use App\Services\V1\Auth\TwoFactorService;
 use App\Services\V1\User\UserService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-
 
 
 class TwoFactorController extends BaseController
@@ -23,6 +21,7 @@ class TwoFactorController extends BaseController
         $result = $this->twoFactor->verify(
             $request->pendingToken,
             $request->otp,
+            $request->email,
             $request->ip(),
             $request->userAgent()
         );

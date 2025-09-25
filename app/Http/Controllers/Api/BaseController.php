@@ -29,8 +29,8 @@ class BaseController extends Controller
      * Standard error response
      */
     protected function sendErrorResponse(
-        string $error,
         mixed $errorDetails = null,
+        string $error,
         int $statusCode = Response::HTTP_BAD_REQUEST
     ): JsonResponse {
         $response = [

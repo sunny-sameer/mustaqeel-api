@@ -33,44 +33,27 @@ class OtpVerifyRequest extends FormRequest
     {
         $data = $this->twoFactor->verifyEmailData($this->input('pendingToken'));
 
+        $validation = [
+            'otp'   => 'required|digits:6',
+            'pendingToken'   => 'required|min:10'
+        ];
 
         if (!$data->ok) {
-            return [
-                'email' => ['required', 'email'],
-                'otp'   => ['required', 'digits:6'],
-                'pendingToken'   => ['required']
-            ];
+            $validation['email'] = 'required|min:5|max:255|email';
+            return $validation;
         }
 
         if ($data->flow == 'signup') {
-            return [
-                'email' => ['required', 'email'],
-                'otp'   => ['required', 'digits:6'],
-                'pendingToken'   => ['required']
-            ];
+            $validation['email'] = 'required|min:5|max:255|email';
+            return $validation;
         }
 
-        return [
-            'email' => ['required', 'email', 'exists:users,email'],
-            'otp'   => ['required', 'digits:6'],
-            'pendingToken'   => ['required']
-        ];
+        $validation['email'] = 'required|min:5|max:255|email|exists:users,email';
+        return $validation;
     }
 
-    /**
-     * Custom error messages.
-     */
-    public function messages(): array
+    public function wantsJson(): bool
     {
-        return [
-            'email.required' => 'Email is required.',
-            'email.email'    => 'Please provide a valid email.',
-            'email.exists'   => 'No user found with this email.',
-            'otp.required'   => 'OTP is required.',
-            'otp.digits'     => 'OTP must be exactly 6 digits.',
-            'pendingToken.required'   => 'Pending Token is required.',
-
-        ];
+        return true;
     }
-
 }
