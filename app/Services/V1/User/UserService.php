@@ -15,10 +15,7 @@ use Illuminate\Validation\ValidationException;
 
 
 use App\Models\User;
-
-
-
-
+use Illuminate\Support\Facades\Auth;
 
 class UserService extends BaseService
 {
@@ -110,5 +107,34 @@ class UserService extends BaseService
             data: ['user' => $this->user, 'token' => $this->token, 'role' => $this->user->roles->pluck('name')->first()],
             message: 'Login Successful'
         );
+    }
+
+    public function resolver()
+    {
+        DB::beginTransaction();
+
+        try {
+
+            if(!Auth::check()){
+                return (object)['ok' => false, 'status' => 400, 'message' => 'Invalid session.'];
+            }
+
+
+            $user = Auth::user();
+            DB::commit();
+
+            return $this->success(
+                data: ['user' => $user, 'profile' => $user->profile, 'role' => $user->roles->pluck('name')->first()],
+                message: 'User resolver triggered successfully'
+            );
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'User authentication failed',
+                errors: $e->getMessage(),
+                statusCode: 401
+            );
+        }
     }
 }

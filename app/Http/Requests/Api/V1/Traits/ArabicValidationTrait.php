@@ -14,10 +14,10 @@ trait ArabicValidationTrait
         return [
             'required',
             'string',
-            $unique,
             'min:3',
             'max:255',
-            'regex:/^[\p{Arabic}.,، ]+$/u'
+            'regex:/^[\p{Arabic}.,، ]+$/u',
+            $unique,
         ];
     }
 }

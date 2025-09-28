@@ -10,7 +10,8 @@ class Entities extends Model
     use HasSlug;
     //
 
-    protected $fillable = ['name', 'nameAr', 'slug'];
+    protected $table = 'entities';
+    protected $guarded = [];
 
     // public function activities()
     // {

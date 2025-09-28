@@ -2,15 +2,16 @@
 
 namespace App\Http\Requests\API\V1\Admin;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
+
 use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+use App\Http\Requests\API\V1\Traits\ArabicValidationTrait;
 
 
 class EntityUpdateRequest extends FormRequest
 {
-    use FailedValidationTrait;
+    use FailedValidationTrait, ArabicValidationTrait;
 
     public function authorize(): bool
     {
@@ -19,9 +20,11 @@ class EntityUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $id = (int) $this->route('id');
+
         return [
-            'name'   => 'sometimes|string|max:255',
-            'nameAr'   => 'sometimes|string|max:255'
+            'name' => 'required|string|min:3|max:50|unique:entities,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
+            'nameAr' => self::arabicNameRule('unique:entities,nameAr,'.$id),
         ];
     }
 

@@ -18,12 +18,12 @@ class Activities extends Model
 
     public function sector()
     {
-        return $this->belongsTo(Sectors::class);
+        return $this->belongsTo(Sectors::class, 'sectorId', 'id');
     }
 
     public function subActivities()
     {
-        return $this->hasMany(SubActivities::class);
+        return $this->hasMany(SubActivities::class, 'activityId', 'id');
     }
 
     // public function entities()

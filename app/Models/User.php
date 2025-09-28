@@ -16,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 
 use App\Models\Traits\Rules\UserRules;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class User extends Authenticatable
 {
@@ -73,5 +74,10 @@ class User extends Authenticatable
         ]);
 
         return new NewAccessToken($token, $token->getKey() . '|' . $plainTextToken);
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profiles::class,'userId','id');
     }
 }

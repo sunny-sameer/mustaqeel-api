@@ -9,9 +9,6 @@ use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
 use App\Http\Requests\Api\V1\Traits\ArabicValidationTrait;
 
 
-use Illuminate\Contracts\Validation\Rule;
-
-
 class CategoryCreateRequest extends FormRequest
 {
     use FailedValidationTrait, ArabicValidationTrait;

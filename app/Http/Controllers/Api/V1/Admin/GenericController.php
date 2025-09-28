@@ -20,10 +20,11 @@ use App\Http\Requests\API\V1\Admin\EntityCreateRequest;
 use App\Http\Requests\API\V1\Admin\EntityUpdateRequest;
 use App\Http\Requests\API\V1\Admin\IncubatorCreateRequest;
 use App\Http\Requests\API\V1\Admin\IncubatorUpdateRequest;
+use App\Http\Requests\API\V1\Admin\AttachCategoryToSectorRequest;
+use App\Http\Requests\Api\V1\Admin\AttachEntityOfActivityRequest;
 
 
 use App\Http\Controllers\Api\BaseController;
-
 use App\Services\V1\Admin\GenericService;
 
 
@@ -99,7 +100,7 @@ class GenericController extends BaseController
         $this->service->deleteSector($id);
         return response()->json(['message' => 'Deleted']);
     }
-    public function attachCategoriesToSector(Request $request, $sectorId)
+    public function attachCategoriesToSector(AttachCategoryToSectorRequest $request, $sectorId)
     {
         return response()->json($this->service->attachCategoriesToSector($sectorId, $request->categoryIds));
     }
@@ -126,7 +127,7 @@ class GenericController extends BaseController
         $this->service->deleteActivity($id);
         return response()->json(['message' => 'Deleted']);
     }
-    public function attachEntitiesToActivity(Request $request, $activityId)
+    public function attachEntitiesToActivity(AttachEntityOfActivityRequest $request, $activityId)
     {
         return response()->json($this->service->attachEntitiesToActivity($activityId, $request->entityIds));
     }

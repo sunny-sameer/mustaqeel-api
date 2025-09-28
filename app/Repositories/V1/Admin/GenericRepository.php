@@ -13,6 +13,7 @@ use App\Models\Activities as Activity;
 use App\Models\SubActivities as SubActivity;
 use App\Models\Entities as Entity;
 use App\Models\Incubator;
+use Illuminate\Support\Arr;
 
 class GenericRepository extends CoreRepository implements GenericInterface
 {
@@ -84,7 +85,8 @@ class GenericRepository extends CoreRepository implements GenericInterface
     public function createSector($data)
     {
         // $data['slug'] = \Str::slug($data['name']);
-        $sector = Sector::create($data);
+        $sectorData = Arr::except($data, ['categoryIds']);
+        $sector = Sector::create($sectorData);
         if (isset($data['categoryIds'])) $sector->categories()->sync($data['categoryIds']);
         return $sector;
     }
@@ -92,8 +94,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     {
         $sector = Sector::findOrFail($id);
         // if (isset($data['name'])) $data['slug'] = \Str::slug($data['name']);
-        $sector->update($data);
-        if (isset($data['categoryIds'])) $sector->categories()->sync($data['categoryIds']);
+        $sectorData = Arr::except($data, ['categoryIds']);
+        $sector->update($sectorData);
+        if (isset($data['categoryIds'])) $sector->categories()->sync([]); $sector->categories()->sync($data['categoryIds']);
         return $sector;
     }
     public function deleteSector($id)
@@ -112,8 +115,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
     public function createActivity($data)
     {
-        $data['slug'] = \Str::slug($data['nameEn']);
-        $activity = Activity::create($data);
+        // $data['slug'] = \Str::slug($data['nameEn']);
+        $activityData = Arr::except($data, ['entityIds']);
+        $activity = Activity::create($activityData);
         if (isset($data['entityIds'])) $activity->entities()->sync($data['entityIds']);
         return $activity;
     }
@@ -121,8 +125,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     {
         $activity = Activity::findOrFail($id);
         // if (isset($data['nameEn'])) $data['slug'] = \Str::slug($data['nameEn']);
-        $activity->update($data);
-        if (isset($data['entityIds'])) $activity->entities()->sync($data['entityIds']);
+        $sectorData = Arr::except($data, ['entityIds']);
+        $activity->update($sectorData);
+        if (isset($data['entityIds'])) $activity->entities()->sync([]); $activity->entities()->sync($data['entityIds']);
         return $activity;
     }
     public function deleteActivity($id)
@@ -206,11 +211,13 @@ class GenericRepository extends CoreRepository implements GenericInterface
     public function attachCategoriesToSector($sectorId, $categoryIds)
     {
         $sector = Sector::findOrFail($sectorId);
-        return $sector->categories()->syncWithoutDetaching($categoryIds);
+        $sector->categories()->sync([]);
+        return $sector->categories()->sync($categoryIds);
     }
     public function attachEntitiesToActivity($activityId, $entityIds)
     {
         $activity = Activity::findOrFail($activityId);
-        return $activity->entities()->syncWithoutDetaching($entityIds);
+        $activity->entities()->sync([]);
+        return $activity->entities()->sync($entityIds);
     }
 }

@@ -6,10 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 
 use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+use App\Http\Requests\API\V1\Traits\ArabicValidationTrait;
+
+
+use Illuminate\Validation\Rule;
+
 
 class ActivityCreateRequest extends FormRequest
 {
-    use FailedValidationTrait;
+    use FailedValidationTrait, ArabicValidationTrait;
     public function authorize(): bool
     {
         return true;
@@ -17,10 +22,27 @@ class ActivityCreateRequest extends FormRequest
 
     public function rules(): array
     {
+        $sectorId = $this->input('sectorId');
+
         return [
             'sectorId'   => 'required|integer|exists:sectors,id',
-            'name'  => 'required|string|max:255',
-            'nameAr'  => 'required|string|max:255'
+            'entityIds' => 'required|array',
+            'entityIds.*' => 'required|integer|exists:entities,id',
+
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                'regex:/^[a-zA-Z.,، ]+$/',
+                Rule::unique('activities', 'name')
+                    ->where(fn ($q) => $q->where('sectorId', $sectorId)),
+            ],
+
+            'nameAr' => self::arabicNameRule(
+                Rule::unique('activities', 'nameAr')
+                    ->where(fn ($q) => $q->where('sectorId', $sectorId))
+            ),
         ];
     }
 
@@ -29,6 +51,9 @@ class ActivityCreateRequest extends FormRequest
         return [
             'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
             'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
+            'entityIds.*.required' => 'The entity ids field is required.',
+            'entityIds.*.integer' => 'The entity ids field must be type of integer.',
+            'entityIds.*.exists' => 'The selected entity ids is invalid.',
         ];
     }
 }
