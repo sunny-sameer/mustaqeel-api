@@ -43,6 +43,7 @@ class ActivityCreateRequest extends FormRequest
                 Rule::unique('activities', 'nameAr')
                     ->where(fn ($q) => $q->where('sectorId', $sectorId))
             ),
+            'status' => 'required|boolean',
         ];
     }
 

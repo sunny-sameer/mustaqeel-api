@@ -38,6 +38,7 @@ class IncubatorCreateRequest extends FormRequest
                 Rule::unique('incubators', 'nameAr')
                     ->where(fn ($q) => $q->where('categoryId', $categoryId))
             ),
+            'status' => 'required|boolean',
         ];
     }
 

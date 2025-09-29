@@ -39,6 +39,7 @@ class SubActivityCreateRequest extends FormRequest
                 Rule::unique('sub_activities', 'nameAr')
                     ->where(fn ($q) => $q->where('activityId', $activityId))
             ),
+            'status' => 'required|boolean',
         ];
     }
 

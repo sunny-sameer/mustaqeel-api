@@ -22,6 +22,7 @@ class SectorCreateRequest extends FormRequest
             'categoryIds.*' => 'required|integer|exists:categories,id',
             'name' => 'required|string|min:3|max:50|unique:sectors,name|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:sectors,nameAr'),
+            'status' => 'required|boolean',
         ];
     }
 

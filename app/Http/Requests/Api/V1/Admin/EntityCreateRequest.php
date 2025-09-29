@@ -20,6 +20,7 @@ class EntityCreateRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:50|unique:entities,name|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:entities,nameAr'),
+            'status' => 'required|boolean',
         ];
     }
 

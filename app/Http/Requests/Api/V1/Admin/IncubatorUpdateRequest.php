@@ -41,6 +41,7 @@ class IncubatorUpdateRequest extends FormRequest
                     ->ignore($id)
                     ->where(fn ($q) => $q->where('categoryId', $categoryId))
             ),
+            'status' => 'required|boolean',
         ];
     }
 

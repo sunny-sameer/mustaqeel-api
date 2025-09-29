@@ -42,6 +42,7 @@ class SubActivityUpdateRequest extends FormRequest
                     ->ignore($id)
                     ->where(fn ($q) => $q->where('activityId', $activityId))
             ),
+            'status' => 'required|boolean',
         ];
     }
 

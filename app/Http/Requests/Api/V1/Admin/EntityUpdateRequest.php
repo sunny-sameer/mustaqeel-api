@@ -25,6 +25,7 @@ class EntityUpdateRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:50|unique:entities,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:entities,nameAr,'.$id),
+            'status' => 'required|boolean',
         ];
     }
 

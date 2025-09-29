@@ -16,12 +16,13 @@ use Laravel\Sanctum\HasApiTokens;
 
 
 use App\Models\Traits\Rules\UserRules;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, UserRules, HasApiTokens, HasRoles;
+    use HasFactory, Notifiable, UserRules, HasApiTokens, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +31,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'nameArabic',
         'email',
         'password',
     ];
@@ -52,7 +54,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

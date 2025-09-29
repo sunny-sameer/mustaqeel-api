@@ -7,10 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class NotificationEvent extends Model
 {
-    protected $fillable = [
-        'name',
-        'description'
-    ];
+    protected $table = 'notification_events';
+    protected $guarded = [];
 
     public function templates(): BelongsToMany
     {

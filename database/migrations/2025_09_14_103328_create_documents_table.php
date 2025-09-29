@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->json('meta')->nullable();
             $table->string('entityType')->nullable();
-            $table->string('status')->default('1');
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

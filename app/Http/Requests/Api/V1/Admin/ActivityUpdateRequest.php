@@ -47,6 +47,7 @@ class ActivityUpdateRequest extends FormRequest
                     ->ignore($id)
                     ->where(fn ($q) => $q->where('sectorId', $sectorId))
             ),
+            'status' => 'required|boolean',
         ];
     }
 

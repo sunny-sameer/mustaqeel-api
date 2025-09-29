@@ -35,7 +35,7 @@ class SubCategoryCreateRequest extends FormRequest
                     return $query->where('categoryId', $categoryId);
                 })
             ),
-            'status' => 'nullable|boolean',
+            'status' => 'required|boolean',
         ];
     }
 

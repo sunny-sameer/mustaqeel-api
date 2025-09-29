@@ -7,13 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class NotificationTemplate extends Model
 {
-    protected $fillable = [
-        'subject',
-        'default_content',
-        'custom_content',
-        'type',
-        'placeholders'
-    ];
+    protected $table = 'notification_templates';
+    protected $guarded = [];
 
     protected $casts = [
         'placeholders' => 'array'

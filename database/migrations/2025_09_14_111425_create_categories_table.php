@@ -18,9 +18,10 @@ return new class extends Migration
             $table->string('nameAr');
             $table->string('slug');
 
-            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('status')->default(1);
 
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('sectors', function (Blueprint $table) {
@@ -28,7 +29,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('nameAr');
             $table->string('slug');
+
+            $table->tinyInteger('status')->default(1);
+
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('sub_categories', function (Blueprint $table) {
@@ -40,9 +45,10 @@ return new class extends Migration
             $table->string('nameAr');
             $table->string('slug');
 
-            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('status')->default(1);
 
             $table->timestamps();
+            $table->softDeletes();
         });
 
 
@@ -50,7 +56,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('categoryId')->constrained('categories')->onDelete('cascade');
             $table->foreignId('sectorId')->constrained('sectors')->onDelete('cascade');
-            $table->timestamps();
 
             $table->unique(['categoryId', 'sectorId']);
         });
@@ -64,7 +69,10 @@ return new class extends Migration
             $table->string('nameAr');
             $table->string('slug');
 
+            $table->tinyInteger('status')->default(1);
+
             $table->timestamps();
+            $table->softDeletes();
         });
 
 
@@ -74,7 +82,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('nameAr')->nullable();
             $table->string('slug')->unique();
+
+            $table->tinyInteger('status')->default(1);
+
             $table->timestamps();
+            $table->softDeletes();
         });
 
         // Entities
@@ -83,7 +95,11 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('nameAr')->nullable();
             $table->string('slug')->unique();
+
+            $table->tinyInteger('status')->default(1);
+
             $table->timestamps();
+            $table->softDeletes();
         });
 
         // Pivot table Activity ↔ Entity
@@ -91,6 +107,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('activityId')->constrained('activities')->cascadeOnDelete();
             $table->foreignId('entityId')->constrained('entities')->cascadeOnDelete();
+
             $table->unique(['activityId', 'entityId']);
         });
 
@@ -101,7 +118,11 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('nameAr')->nullable();
             $table->string('slug')->unique();
+
+            $table->tinyInteger('status')->default(1);
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

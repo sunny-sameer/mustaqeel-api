@@ -24,6 +24,7 @@ class SectorUpdateRequest extends FormRequest
             'categoryIds.*' => 'required|integer|exists:categories,id',
             'name' => 'required|string|min:3|max:50|unique:sectors,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:sectors,nameAr,'.$id),
+            'status' => 'required|boolean',
         ];
     }
 

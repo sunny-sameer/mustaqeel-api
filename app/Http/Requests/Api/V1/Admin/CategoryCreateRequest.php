@@ -23,7 +23,7 @@ class CategoryCreateRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:50|unique:categories,name|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:categories,nameAr'),
-            'status' => 'nullable|boolean',
+            'status' => 'required|boolean',
         ];
     }
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->enum('type', ['sms', 'mail', 'database']);
             $table->json('placeholders')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('notification_events', function (Blueprint $table) {
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('notification_channels', function (Blueprint $table) {
@@ -30,6 +32,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('notification_event_template', function (Blueprint $table) {
@@ -46,6 +49,7 @@ return new class extends Migration
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

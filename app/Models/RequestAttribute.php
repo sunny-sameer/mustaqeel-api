@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Profiles extends Model
+class RequestAttribute extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'profiles';
+    protected $table = 'request_attributes';
     protected $guarded = [];
 }

@@ -25,7 +25,7 @@ class CategoryUpdateRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:50|unique:categories,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:categories,nameAr,'.$id),
-            'status' => 'sometimes|boolean',
+            'status' => 'required|boolean',
         ];
     }
 

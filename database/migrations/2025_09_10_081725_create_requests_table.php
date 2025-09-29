@@ -17,31 +17,39 @@ return new class extends Migration
             $table->foreignId('userId')->constrained('users')->onDelete('cascade');
 
             $table->string('reqReferenceNumber')->unique();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phoneNumber')->unique();
-            $table->string('mobileNumber')->unique();
-            $table->string('passportNumber')->unique();
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phoneNumber')->nullable();
+            $table->string('mobileNumber')->nullable();
+            $table->string('passportNumber')->nullable();
+            $table->string('qid')->nullable();
+            $table->tinyInteger('status')->default(1);
 
-            $table->date(column: 'submittedAt');
+            $table->date('submittedAt');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('request_meta_data', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('reqId')->constrained('requests')->onDelete('cascade');
 
-            $table->bigInteger('catId');
-            $table->bigInteger('sectorId');
-            $table->bigInteger('activityId');
-            $table->bigInteger('subActivities');
-            $table->bigInteger('entityId');
+            $table->string('catSlug',50);
+            $table->string('subCatSlug',50)->nullable();
+            $table->string('sectorSlug',50);
+            $table->string('activitySlug',50);
+            $table->string('subActivitySlug',50)->nullable();
+            $table->string('entitySlug',50)->nullable();
+            $table->string('incubatorSlug',50)->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('request_type_codes', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('reqId')->constrained('requests')->onDelete('cascade');
 
             $table->bigInteger('key');
@@ -49,16 +57,33 @@ return new class extends Migration
             $table->tinyInteger('expiry')->default(1);
 
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('request_codes_documents', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('reqTypeCodeId')->constrained('request_type_codes')->onDelete('cascade');
 
             $table->bigInteger('key');
             $table->bigInteger('documentName');
 
             $table->timestamps();
+            $table->softDeletes();
+        });
+
+        //family_member, jobs, educations, current_residence, other_nationalities, countries_visited, request
+
+        Schema::create('request_attributes', function (Blueprint $table){
+            $table->id();
+
+            $table->foreignId('reqId')->constrained('requests')->onDelete('cascade');
+
+            $table->longText('meta')->nullable();
+            $table->string('type');
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -67,9 +92,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_codes_documents');
+        Schema::dropIfExists('requests');
         Schema::dropIfExists('request_meta_data');
         Schema::dropIfExists('request_type_codes');
-        Schema::dropIfExists('requests');
+        Schema::dropIfExists('request_codes_documents');
+        Schema::dropIfExists('request_attributes');
     }
 };

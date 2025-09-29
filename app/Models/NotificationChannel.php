@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotificationChannel extends Model
 {
-    protected $fillable = [
-        'name',
-        'is_active'
-    ];
+    protected $table = 'notification_channels';
+    protected $guarded = [];
 }

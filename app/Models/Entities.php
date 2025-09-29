@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasSlug;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Entities extends Model
 {
-    use HasSlug;
-    //
+    use HasSlug, SoftDeletes;
 
     protected $table = 'entities';
     protected $guarded = [];
