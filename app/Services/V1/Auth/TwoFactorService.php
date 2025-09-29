@@ -46,7 +46,9 @@ class TwoFactorService
         $pendingToken = bin2hex(random_bytes(32));
 
 
-        $otp = $this->generateOtp();
+        $otpCreate = $this->createOtp($signupData['email']);
+        // $otp = $this->generateOtp();
+        $otp = $otpCreate->token;
         $otpHash = $this->hashOtp($otp);
 
         $payload = [
@@ -85,9 +87,10 @@ class TwoFactorService
     {
         $pendingToken = bin2hex(random_bytes(32));
 
-        $otp = $this->generateOtp();
-        $otpHash = $this->hashOtp($otp);
         $otpCreate = $this->createOtp($user->email);
+        // $otp = $this->generateOtp();
+        $otp = $otpCreate->token;
+        $otpHash = $this->hashOtp($otp);
 
         $payload = [
             'type'      => 'login',
