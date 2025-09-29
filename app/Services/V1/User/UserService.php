@@ -109,32 +109,23 @@ class UserService extends BaseService
         );
     }
 
+    public function checkUserResolver()
+    {
+        $this->user = User::with('profile')->find(auth()->id());
+
+        if (!$this->user) {
+            throw new UserNotFoundException();
+        }
+
+        return $this;
+
+    }
+
     public function resolver()
     {
-        DB::beginTransaction();
-
-        try {
-
-            if(!Auth::check()){
-                return (object)['ok' => false, 'status' => 400, 'message' => 'Invalid session.'];
-            }
-
-
-            $user = Auth::user();
-            DB::commit();
-
-            return $this->success(
-                data: ['user' => $user, 'profile' => $user->profile, 'role' => $user->roles->pluck('name')->first()],
-                message: 'User resolver triggered successfully'
-            );
-        } catch (\Throwable $e) {
-            DB::rollBack();
-
-            return $this->error(
-                message: 'User authentication failed',
-                errors: $e->getMessage(),
-                statusCode: 401
-            );
-        }
+        return $this->success(
+            data: ['user' => $this->user, 'role' => $this->user->roles->pluck('name')->first()],
+            message: 'User resolver triggered successfully'
+        );
     }
 }

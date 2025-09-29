@@ -25,7 +25,15 @@ class UserController extends BaseController
 
     public function userResolver()
     {
-        return $this->userService->resolver();
+        try {
+            return $this->userService
+            ->checkUserResolver()
+            ->resolver();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
 }

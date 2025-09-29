@@ -44,7 +44,7 @@ class OtpVerifyRequest extends FormRequest
         }
 
         if ($data->flow == 'signup') {
-            $validation['email'] = 'required|min:5|max:255|email';
+            $validation['email'] = 'required|min:5|max:255|email|unique:users,email';
             return $validation;
         }
 
