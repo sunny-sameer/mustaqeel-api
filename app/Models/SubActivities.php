@@ -15,6 +15,6 @@ class SubActivities extends Model
 
     public function activity()
     {
-        return $this->belongsTo(Activities::class);
+        return $this->belongsTo(Activities::class,'activityId','id');
     }
 }

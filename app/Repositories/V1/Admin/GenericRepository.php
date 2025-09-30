@@ -22,9 +22,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
         parent::__construct($model);
     }
     // ===== CATEGORIES =====
-    public function allCategories()
+    public function allCategories($paginate)
     {
-        return Category::all();
+        return Category::paginate($paginate);
     }
     public function findCategory($id)
     {
@@ -48,13 +48,13 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== SUBCATEGORIES =====
-    public function allSubCategories()
+    public function allSubCategories($paginate)
     {
-        return SubCategory::all();
+        return SubCategory::with('category')->paginate($paginate);
     }
     public function findSubCategory($id)
     {
-        return SubCategory::findOrFail($id);
+        return SubCategory::with('category')->findOrFail($id);
     }
     public function createSubCategory($data)
     {
@@ -74,9 +74,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== SECTORS =====
-    public function allSectors()
+    public function allSectors($paginate)
     {
-        return Sector::with('categories')->get();
+        return Sector::with('categories')->paginate($paginate);
     }
     public function findSector($id)
     {
@@ -105,9 +105,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== ACTIVITIES =====
-    public function allActivities()
+    public function allActivities($paginate)
     {
-        return Activity::with('sector', 'entities', 'subActivities')->get();
+        return Activity::with('sector', 'entities', 'subActivities')->paginate($paginate);
     }
     public function findActivity($id)
     {
@@ -136,13 +136,13 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== SUBACTIVITIES =====
-    public function allSubActivities()
+    public function allSubActivities($paginate)
     {
-        return SubActivity::all();
+        return SubActivity::with('activity')->paginate($paginate);
     }
     public function findSubActivity($id)
     {
-        return SubActivity::findOrFail($id);
+        return SubActivity::with('activity')->findOrFail($id);
     }
     public function createSubActivity($data)
     {
@@ -160,13 +160,13 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== ENTITIES =====
-    public function allEntities()
+    public function allEntities($paginate)
     {
-        return Entity::all();
+        return Entity::with('activities')->paginate($paginate);
     }
     public function findEntity($id)
     {
-        return Entity::findOrFail($id);
+        return Entity::with('activities')->findOrFail($id);
     }
     public function createEntity($data)
     {
@@ -184,13 +184,13 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== INCUBATORS =====
-    public function allIncubators()
+    public function allIncubators($paginate)
     {
-        return Incubator::all();
+        return Incubator::with('category')->paginate($paginate);
     }
     public function findIncubator($id)
     {
-        return Incubator::findOrFail($id);
+        return Incubator::with('category')->findOrFail($id);
     }
     public function createIncubator($data)
     {

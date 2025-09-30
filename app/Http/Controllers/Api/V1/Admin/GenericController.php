@@ -30,12 +30,14 @@ use App\Services\V1\Admin\GenericService;
 
 class GenericController extends BaseController
 {
+    protected $paginate = 10;
+
     public function __construct(private GenericService $service) {}
 
     // ===== CATEGORIES =====
     public function categories()
     {
-        return response()->json($this->service->allCategories());
+        return response()->json($this->service->allCategories($this->paginate));
     }
     public function category($id)
     {
@@ -58,7 +60,7 @@ class GenericController extends BaseController
     // ===== SUBCATEGORIES =====
     public function subCategories()
     {
-        return response()->json($this->service->allSubCategories());
+        return response()->json($this->service->allSubCategories($this->paginate));
     }
     public function subCategory($id)
     {
@@ -81,7 +83,7 @@ class GenericController extends BaseController
     // ===== SECTORS =====
     public function sectors()
     {
-        return response()->json($this->service->allSectors());
+        return response()->json($this->service->allSectors($this->paginate));
     }
     public function sector($id)
     {
@@ -108,7 +110,7 @@ class GenericController extends BaseController
     // ===== ACTIVITIES =====
     public function activities()
     {
-        return response()->json($this->service->allActivities());
+        return response()->json($this->service->allActivities($this->paginate));
     }
     public function activity($id)
     {
@@ -135,7 +137,7 @@ class GenericController extends BaseController
     // ===== SUBACTIVITIES =====
     public function subActivities()
     {
-        return response()->json($this->service->allSubActivities());
+        return response()->json($this->service->allSubActivities($this->paginate));
     }
     public function subActivity($id)
     {
@@ -158,7 +160,7 @@ class GenericController extends BaseController
     // ===== ENTITIES =====
     public function entities()
     {
-        return response()->json($this->service->allEntities());
+        return response()->json($this->service->allEntities($this->paginate));
     }
     public function entity($id)
     {
@@ -181,7 +183,7 @@ class GenericController extends BaseController
     // ===== INCUBATORS =====
     public function incubators()
     {
-        return response()->json($this->service->allIncubators());
+        return response()->json($this->service->allIncubators($this->paginate));
     }
     public function incubator($id)
     {

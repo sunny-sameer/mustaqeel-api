@@ -19,8 +19,7 @@ class Entities extends Model
     // }
 
     public function activities()
-{
-    return $this->belongsToMany(Activities::class, 'activity_entity', 'entityId', 'activityId')
-                ;
-}
+    {
+        return $this->belongsToMany(Activities::class, 'activity_entity', 'entityId', 'activityId');
+    }
 }
