@@ -49,7 +49,7 @@ return new class extends Migration
 
             $table->date('startDate');
             $table->date('endDate');
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
@@ -65,7 +65,7 @@ return new class extends Migration
             $table->date('startDate');
             $table->date('endDate');
             $table->text('comments')->nullable();
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('mobileNumber')->nullable();
             $table->string('passportNumber')->nullable();
             $table->string('qid')->nullable();
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(0);
 
             $table->date('submittedAt');
             $table->timestamps();
