@@ -177,4 +177,8 @@ class GenericService
     {
         return $this->genericInterface->attachEntitiesToActivity($activityId, $entityIds);
     }
+    public function attachActivitiesToEntity($entityId, $activityIds)
+    {
+        return $this->genericInterface->attachActivitiesToEntity($entityId, $activityIds);
+    }
 }

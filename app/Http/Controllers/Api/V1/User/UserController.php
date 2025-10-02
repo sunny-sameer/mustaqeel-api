@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Exceptions\AuthenticationFailedException;
-use App\Exceptions\TooManyLoginAttemptsException;
 use App\Exceptions\UserNotFoundException;
 use App\Http\Controllers\Api\BaseController;
 

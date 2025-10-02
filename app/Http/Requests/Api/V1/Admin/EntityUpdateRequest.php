@@ -23,6 +23,9 @@ class EntityUpdateRequest extends FormRequest
         $id = (int) $this->route('id');
 
         return [
+            'activityIds' => 'required|array',
+            'activityIds.*' => 'required|integer|exists:activities,id',
+
             'name' => 'required|string|min:3|max:50|unique:entities,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
             'nameAr' => self::arabicNameRule('unique:entities,nameAr,'.$id),
             'status' => 'required|boolean',
@@ -34,6 +37,9 @@ class EntityUpdateRequest extends FormRequest
         return [
             'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
             'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
+            'activityIds.*.required' => 'The activity ids field is required.',
+            'activityIds.*.integer' => 'The activity ids field must be type of integer.',
+            'activityIds.*.exists' => 'The selected activity ids is invalid.',
         ];
     }
 }

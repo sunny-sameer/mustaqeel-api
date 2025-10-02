@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\ApiAuthenticateController;
 use App\Http\Controllers\Api\V1\Auth\TwoFactorController;
 use App\Http\Controllers\Api\V1\Admin\GenericController;
+use App\Http\Controllers\Api\V1\Requests\RequestsController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use Illuminate\Support\Facades\Mail;
 
@@ -30,6 +31,11 @@ Route::prefix('auth')->group(function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::prefix('user')->group(function () {
         Route::get('resolve', [UserController::class ,'userResolver']);
+
+        // Requests
+        Route::prefix('requests')->group(function () {
+            Route::post('/', [RequestsController::class, 'createRequest']);
+        });
     });
 
     Route::group(['middleware' => ['role:admin|super-admin']], function () {
@@ -77,6 +83,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('entities', [GenericController::class, 'createEntity']);
             Route::put('entities/{id}', [GenericController::class, 'updateEntity']);
             Route::delete('entities/{id}', [GenericController::class, 'deleteEntity']);
+            Route::put('entities/{id}/activities', [GenericController::class, 'attachActivitiesToEntity']);
 
             // Incubators
             Route::get('incubators', [GenericController::class, 'incubators']);

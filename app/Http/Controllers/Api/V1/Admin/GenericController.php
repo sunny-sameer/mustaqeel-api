@@ -25,6 +25,7 @@ use App\Http\Requests\Api\V1\Admin\AttachEntityOfActivityRequest;
 
 
 use App\Http\Controllers\Api\BaseController;
+use App\Http\Requests\Api\V1\Admin\AttachActivityOfEntityRequest;
 use App\Services\V1\Admin\GenericService;
 
 
@@ -178,6 +179,10 @@ class GenericController extends BaseController
     {
         $this->service->deleteEntity($id);
         return response()->json(['message' => 'Deleted']);
+    }
+    public function attachActivitiesToEntity(AttachActivityOfEntityRequest $request, $entityId)
+    {
+        return response()->json($this->service->attachActivitiesToEntity($entityId, $request->activityIds));
     }
 
     // ===== INCUBATORS =====

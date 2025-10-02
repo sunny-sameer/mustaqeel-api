@@ -17,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
             "Core" => ["Core"],
             "Admin" => ["Generic"],
             "Users" => ["Users"],
-            "Comms" => ["Comms"]
+            "Comms" => ["Comms"],
+            "Requests" => ["Requests"],
         ];
         foreach ($repoArray as $_dir => $_names) {
             foreach ($_names as $_eachName) {

@@ -2,18 +2,37 @@
 
 namespace App\Repositories\V1\Users;
 
+
+use App\Models\User;
+use App\Models\Addresses;
+use App\Models\Communications;
+use App\Models\PassportDetails;
+use App\Models\Profiles;
+use App\Models\QatarInfo;
+
+
 use App\Repositories\V1\Core\CoreRepository;
 
 
 use Illuminate\Support\Facades\Hash;
 
-use App\Models\User;
-
 class UsersRepository extends CoreRepository implements UsersInterface
 {
-    public function __construct(User $model)
+    private $profiles;
+    private $passportDetails;
+    private $communications;
+    private $addresses;
+    private $qatarInfo;
+
+    public function __construct(User $model, Profiles $profiles, PassportDetails $passportDetails, Communications $communications, Addresses $addresses, QatarInfo $qatarInfo)
     {
         parent::__construct($model);
+
+        $this->profiles = $profiles;
+        $this->passportDetails = $passportDetails;
+        $this->communications = $communications;
+        $this->addresses = $addresses;
+        $this->qatarInfo = $qatarInfo;
     }
 
     public function getUsers(): string
@@ -56,5 +75,30 @@ class UsersRepository extends CoreRepository implements UsersInterface
     {
         $user->status = 'active';
         $user->save();
+    }
+
+    public function createUpdateProfile($request, $id)
+    {
+        return $this->profiles->updateOrCreate(['userId'=>$id],$request);
+    }
+
+    public function createUpdatePassport($request, $id)
+    {
+        return $this->passportDetails->updateOrCreate(['userId'=>$id],$request);
+    }
+
+    public function createUpdateComms($request, $id)
+    {
+        return $this->communications->updateOrCreate(['userId'=>$id],$request);
+    }
+
+    public function createUpdateAddress($request, $id)
+    {
+        return $this->addresses->updateOrCreate(['userId'=>$id],$request);
+    }
+
+    public function createUpdateQatarInfo($request, $id)
+    {
+        return $this->qatarInfo->updateOrCreate(['userId'=>$id],$request);
     }
 }

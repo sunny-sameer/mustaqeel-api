@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('nationality')->nullable();
             $table->string('countryOfResidence')->nullable();
             $table->string('religion')->nullable();
-            $table->string('dob')->nullable();
+            $table->date('dob')->nullable();
             $table->string('pob')->nullable();
             $table->string('maritalStatus')->nullable();
             $table->string('shortBiography')->nullable();
@@ -84,7 +84,7 @@ return new class extends Migration
             $table->bigInteger('userId')->constrained('users')->onDelete('cascade'); // userId
 
             $table->string('key')->nullable(); // sponsorName, addressSponsor,qidNo,qidType,address,workPermit,mainWorkPermit.
-            $table->json('value')->nullable(); //93933939,tet@yahoo.com
+            $table->json('value')->nullable(); // jusour, doha, 56565565678,Work Residency, yes, no
             $table->tinyInteger('status')->default(1);
 
             $table->timestamps();

@@ -76,11 +76,17 @@ class GenericRepository extends CoreRepository implements GenericInterface
     // ===== SECTORS =====
     public function allSectors($paginate)
     {
-        return Sector::with('categories')->paginate($paginate);
+        return Sector::with('categories')->paginate($paginate)->through(function ($sectors) {
+            $sectors->categoryIds = $sectors->categories->pluck('id');
+            return $sectors;
+        });
     }
     public function findSector($id)
     {
-        return Sector::with('categories')->findOrFail($id);
+        $sector = Sector::with('categories')->findOrFail($id);
+        $sector->categoryIds = $sector->categories->pluck('id');
+
+        return $sector;
     }
     public function createSector($data)
     {
@@ -107,11 +113,17 @@ class GenericRepository extends CoreRepository implements GenericInterface
     // ===== ACTIVITIES =====
     public function allActivities($paginate)
     {
-        return Activity::with('sector', 'entities', 'subActivities')->paginate($paginate);
+        return Activity::with('sector', 'entities', 'subActivities')->paginate($paginate)->through(function ($activities) {
+            $activities->entityIds = $activities->entities->pluck('id');
+            return $activities;
+        });
     }
     public function findActivity($id)
     {
-        return Activity::with('sector', 'entities', 'subActivities')->findOrFail($id);
+        $activity = Activity::with('sector', 'entities', 'subActivities')->findOrFail($id);
+        $activity->entityIds = $activity->entities->pluck('id');
+
+        return $activity;
     }
     public function createActivity($data)
     {
@@ -125,8 +137,8 @@ class GenericRepository extends CoreRepository implements GenericInterface
     {
         $activity = Activity::findOrFail($id);
         // if (isset($data['nameEn'])) $data['slug'] = \Str::slug($data['nameEn']);
-        $sectorData = Arr::except($data, ['entityIds']);
-        $activity->update($sectorData);
+        $activityData = Arr::except($data, ['entityIds']);
+        $activity->update($activityData);
         if (isset($data['entityIds'])) $activity->entities()->sync([]); $activity->entities()->sync($data['entityIds']);
         return $activity;
     }
@@ -162,21 +174,34 @@ class GenericRepository extends CoreRepository implements GenericInterface
     // ===== ENTITIES =====
     public function allEntities($paginate)
     {
-        return Entity::with('activities')->paginate($paginate);
+        return Entity::with('activities')->paginate($paginate)->through(function ($entities) {
+            $entities->activityIds = $entities->activities->pluck('id');
+            return $entities;
+        });
     }
     public function findEntity($id)
     {
-        return Entity::with('activities')->findOrFail($id);
+        $entity = Entity::with('activities')->findOrFail($id);
+        $entity->activityIds = $entity->activities->pluck('id');
+
+        return $entity;
     }
     public function createEntity($data)
     {
-        return Entity::create($data);
+        $entityData = Arr::except($data, ['activityIds']);
+        $entity = Entity::create($entityData);
+        if (isset($data['activityIds'])) $entity->activities()->sync($data['activityIds']);
+        return $entity;
     }
     public function updateEntity($id, $data)
     {
-        $ent = Entity::findOrFail($id);
-        $ent->update($data);
-        return $ent;
+        $entity = Entity::findOrFail($id);
+
+        $entityData = Arr::except($data, ['activityIds']);
+        $entity->update($entityData);
+        if (isset($data['activityIds'])) $entity->activities()->sync([]); $entity->activities()->sync($data['activityIds']);
+
+        return $entity;
     }
     public function deleteEntity($id)
     {
@@ -219,5 +244,12 @@ class GenericRepository extends CoreRepository implements GenericInterface
         $activity = Activity::findOrFail($activityId);
         $activity->entities()->sync([]);
         return $activity->entities()->sync($entityIds);
+    }
+
+    public function attachActivitiesToEntity($entityId, $activityIds)
+    {
+        $entity = Entity::findOrFail($entityId);
+        $entity->activities()->sync([]);
+        return $entity->activities()->sync($activityIds);
     }
 }

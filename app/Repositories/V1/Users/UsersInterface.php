@@ -15,4 +15,9 @@ interface UsersInterface extends CoreInterface
     public function createUser($signUpData);
     public function assignRole(User $user, $role);
     public function activateUser(User $user);
+    public function createUpdateProfile($request, $id);
+    public function createUpdatePassport($request, $id);
+    public function createUpdateComms($request, $id);
+    public function createUpdateAddress($request, $id);
+    public function createUpdateQatarInfo($request, $id);
 }

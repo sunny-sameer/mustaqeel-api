@@ -59,4 +59,5 @@ interface GenericInterface extends CoreInterface
     // ===== PIVOTS =====
     public function attachCategoriesToSector($sectorId, $categoryIds);
     public function attachEntitiesToActivity($activityId, $entityIds);
+    public function attachActivitiesToEntity($entityId, $activityIds);
 }
