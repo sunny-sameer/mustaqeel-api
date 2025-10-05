@@ -60,4 +60,10 @@ interface GenericInterface extends CoreInterface
     public function attachCategoriesToSector($sectorId, $categoryIds);
     public function attachEntitiesToActivity($activityId, $entityIds);
     public function attachActivitiesToEntity($entityId, $activityIds);
+
+    // ===== REQUEST METAS =====
+    public function getAllCategories();
+    public function getAllSectorsSubCategoriesAndIncubators($catId);
+    public function getAllActivities($secId);
+    public function getAllEntitiesAndSubActivities($actId);
 }

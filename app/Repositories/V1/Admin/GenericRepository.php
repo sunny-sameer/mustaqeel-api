@@ -270,4 +270,60 @@ class GenericRepository extends CoreRepository implements GenericInterface
         $entity->activities()->sync([]);
         return $entity->activities()->sync($activityIds);
     }
+
+
+    // ===== REQUEST METAS =====
+    public function getAllCategories()
+    {
+        return Category::select('id','slug','name','nameAr')
+        ->where('status',true)
+        ->get();
+    }
+
+    public function getAllSectorsSubCategoriesAndIncubators($catId)
+    {
+        $sectors = Sector::whereHas('categories', function ($query) use ($catId) {
+            $query->where('categoryId', $catId);
+        })
+        ->select('id','slug', 'name', 'nameAr')
+        ->where('status',true)
+        ->get();
+
+        $subCategories =  SubCategory::select('id','slug','name','nameAr')
+        ->where('categoryId', $catId)
+        ->where('status',true)
+        ->get();
+
+        $incubator =  Incubator::select('id','slug','name','nameAr')
+        ->where('categoryId', $catId)
+        ->where('status',true)
+        ->get();
+
+        return ['sectors'=>$sectors,'subCategories'=>$subCategories,'incubator'=>$incubator];
+    }
+
+    public function getAllActivities($secId)
+    {
+        return Activity::select('id','slug','name','nameAr')
+        ->where('sectorId', $secId)
+        ->where('status',true)
+        ->get();
+    }
+
+    public function getAllEntitiesAndSubActivities($actId)
+    {
+        $entities = Entity::whereHas('activities', function ($query) use ($actId) {
+            $query->where('activityId', $actId);
+        })
+        ->select('id','slug', 'name', 'nameAr')
+        ->where('status',true)
+        ->get();
+
+        $subActivities =  SubActivity::select('id','slug','name','nameAr')
+        ->where('activityId', $actId)
+        ->where('status',true)
+        ->get();
+
+        return ['entities'=>$entities,'subActivities'=>$subActivities];
+    }
 }

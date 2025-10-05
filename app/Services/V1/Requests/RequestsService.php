@@ -2,21 +2,35 @@
 
 namespace App\Services\V1\Requests;
 
-use App\DTOs\Api\V1\RequestAttributesDTO;
-use App\DTOs\Api\V1\RequestDTO;
-use App\DTOs\Api\V1\RequestMetasDTO;
-use App\Exceptions\BadRequestException;
-use App\Exceptions\UserNotFoundException;
-use App\Services\V1\BaseService;
+
+use App\Models\User;
 
 
 use App\Http\Requests\Api\V1\RequestsRequest;
-use App\Models\User;
-use App\Repositories\V1\Requests\RequestsInterface;
-use App\Repositories\V1\Users\UsersInterface;
+
+
+use App\Services\V1\BaseService;
 use App\Services\V1\User\UserService;
+
+
+use App\DTOs\Api\V1\RequestAttributesDTO;
+use App\DTOs\Api\V1\RequestDTO;
+use App\DTOs\Api\V1\RequestMetasDTO;
+
+
+use App\Exceptions\BadRequestException;
+use App\Exceptions\UserNotFoundException;
+
+
+use App\Repositories\V1\Admin\GenericInterface;
+use App\Repositories\V1\Requests\RequestsInterface;
+
+
 use Carbon\Carbon;
+
+
 use Illuminate\Support\Facades\DB;
+
 
 class RequestsService extends BaseService
 {
@@ -24,6 +38,8 @@ class RequestsService extends BaseService
 
 
     protected $requestsInterface;
+    protected $genericInterface;
+
     protected $userService;
 
     private ?object $user = null;
@@ -31,9 +47,11 @@ class RequestsService extends BaseService
     private ?string $requestId = null;
 
 
-    public function __construct(RequestsInterface $requestsInterface, UserService $userService)
+    public function __construct(RequestsInterface $requestsInterface, GenericInterface $genericInterface, UserService $userService)
     {
         $this->requestsInterface = $requestsInterface;
+        $this->genericInterface = $genericInterface;
+
         $this->userService = $userService;
     }
 
@@ -116,5 +134,25 @@ class RequestsService extends BaseService
                 statusCode: 500
             );
         }
+    }
+
+    public function getAllCategories()
+    {
+        return $this->genericInterface->getAllCategories();
+    }
+
+    public function getAllSectorsSubCategoriesAndIncubators($catId)
+    {
+        return $this->genericInterface->getAllSectorsSubCategoriesAndIncubators($catId);
+    }
+
+    public function getAllActivities($secId)
+    {
+        return $this->genericInterface->getAllActivities($secId);
+    }
+
+    public function getAllEntitiesAndSubActivities($actId)
+    {
+        return $this->genericInterface->getAllEntitiesAndSubActivities($actId);
     }
 }

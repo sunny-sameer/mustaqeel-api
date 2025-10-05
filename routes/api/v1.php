@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\V1\Auth\ApiAuthenticateController;
@@ -8,7 +7,6 @@ use App\Http\Controllers\Api\V1\Auth\TwoFactorController;
 use App\Http\Controllers\Api\V1\Admin\GenericController;
 use App\Http\Controllers\Api\V1\Requests\RequestsController;
 use App\Http\Controllers\Api\V1\User\UserController;
-use Illuminate\Support\Facades\Mail;
 
 
 
@@ -35,6 +33,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         // Requests
         Route::prefix('requests')->group(function () {
             Route::post('/', [RequestsController::class, 'createRequest']);
+
+
+            Route::get('categories', [RequestsController::class,'getAllCategories']);
+            Route::get('sectors-sub-categories-incubators/{catId}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
+            Route::get('activities/{secId}', [RequestsController::class,'getAllActivities']);
+            Route::get('entities-sub-activities/{actId}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
         });
     });
 

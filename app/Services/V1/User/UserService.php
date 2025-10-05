@@ -2,26 +2,31 @@
 
 namespace App\Services\V1\User;
 
+
+use App\Models\User;
+
+
 use App\DTOs\Api\V1\AddressDTO;
 use App\DTOs\Api\V1\CommunicationDTO;
 use App\DTOs\Api\V1\PassportDTO;
 use App\DTOs\Api\V1\ProfileDTO;
 use App\DTOs\Api\V1\QatarInfoDTO;
+
+
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UserNotFoundException;
-use App\Services\V1\BaseService;
-use App\Repositories\V1\Users\UsersInterface;
-
-// use App\Http\Requests\API\V1\PostSignupRequest;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-
-use App\Exceptions\ServiceOperationException;
 use Illuminate\Validation\ValidationException;
 
 
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Services\V1\BaseService;
+
+
+use App\Repositories\V1\Users\UsersInterface;
+
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+
 
 class UserService extends BaseService
 {

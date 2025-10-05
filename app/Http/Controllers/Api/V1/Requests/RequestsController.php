@@ -41,4 +41,27 @@ class RequestsController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
     }
+
+    public function getAllCategories()
+    {
+        return $this->sendSuccessResponse($this->requests->getAllCategories());
+    }
+
+    public function getAllSectorsSubCategoriesAndIncubators($catId)
+    {
+        if (empty($catId)) return $this->sendErrorResponse('Invalid category id', 'Invalid category id', 400);
+        return $this->sendSuccessResponse($this->requests->getAllSectorsSubCategoriesAndIncubators($catId));
+    }
+
+    public function getAllActivities($secId)
+    {
+        if (empty($secId)) return $this->sendErrorResponse('Invalid sector id', 'Invalid sector id', 400);
+        return $this->sendSuccessResponse($this->requests->getAllActivities($secId));
+    }
+
+    public function getAllEntitiesAndSubActivities($actId)
+    {
+        if (empty($actId)) return $this->sendErrorResponse('Invalid activity id', 'Invalid activity id', 400);
+        return $this->sendSuccessResponse($this->requests->getAllEntitiesAndSubActivities($actId));
+    }
 }
