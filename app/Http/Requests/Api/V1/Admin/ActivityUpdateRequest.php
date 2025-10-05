@@ -28,8 +28,8 @@ class ActivityUpdateRequest extends FormRequest
 
         return [
             'sectorId'   => 'required|integer|exists:sectors,id',
-            // 'entityIds'  => 'required|array',
-            // 'entityIds.*'=> 'required|integer|exists:entities,id',
+            'entityIds'  => 'nullable|array',
+            'entityIds.*'=> 'nullable|integer|exists:entities,id',
 
             'name' => [
                 'required',
@@ -57,8 +57,8 @@ class ActivityUpdateRequest extends FormRequest
             'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
             'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
             // 'entityIds.*.required' => 'The entity ids field is required.',
-            // 'entityIds.*.integer' => 'The entity ids field must be type of integer.',
-            // 'entityIds.*.exists' => 'The selected entity ids is invalid.',
+            'entityIds.*.integer' => 'The entity ids field must be type of integer.',
+            'entityIds.*.exists' => 'The selected entity ids is invalid.',
         ];
     }
 }

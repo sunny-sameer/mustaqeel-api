@@ -2,34 +2,39 @@
 
 namespace App\Services\V1\Requests;
 
-use App\DTOs\Api\V1\AddressDTO;
-use App\DTOs\Api\V1\CommunicationDTO;
-use App\DTOs\Api\V1\PassportDTO;
-use App\DTOs\Api\V1\ProfileDTO;
-use App\DTOs\Api\V1\QatarInfoDTO;
+use App\DTOs\Api\V1\RequestAttributesDTO;
+use App\DTOs\Api\V1\RequestDTO;
+use App\DTOs\Api\V1\RequestMetasDTO;
+use App\Exceptions\BadRequestException;
 use App\Exceptions\UserNotFoundException;
 use App\Services\V1\BaseService;
 
 
 use App\Http\Requests\Api\V1\RequestsRequest;
-
-
+use App\Models\User;
 use App\Repositories\V1\Requests\RequestsInterface;
 use App\Repositories\V1\Users\UsersInterface;
+use App\Services\V1\User\UserService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RequestsService extends BaseService
 {
+    const Applicant_REQUEST_ID_PATTERN = 'APP-{YEAR}-{000000}';
+
+
     protected $requestsInterface;
-    protected $userInterface;
+    protected $userService;
 
     private ?object $user = null;
     private ?object $requests = null;
+    private ?string $requestId = null;
 
 
-    public function __construct(RequestsInterface $requestsInterface, UsersInterface $userInterface)
+    public function __construct(RequestsInterface $requestsInterface, UserService $userService)
     {
         $this->requestsInterface = $requestsInterface;
-        $this->userInterface = $userInterface;
+        $this->userService = $userService;
     }
 
 
@@ -41,62 +46,75 @@ class RequestsService extends BaseService
 
     public function userExists()
     {
-        $id = auth()->id();
-        $user = $this->userInterface->show($id);
+        $this->user = User::with('profile')->find(auth()->id());
 
-        if (!$user) {
+        if (!$this->user) {
             throw new UserNotFoundException();
         }
-
-        $this->user = $user;
 
         return $this;
     }
 
-    public function userProfile()
+    public function createRequestReferenceNumber()
     {
-        $error = '';
+        $request = $this->requestsInterface->getLastRequest();
+        $requestId = 1000;
+        if(isset($request->reqReferenceNumber))
+        {
+            $requestOldIdArr = explode('-',$request->reqReferenceNumber);
+            $requestOldId = intval($requestOldIdArr[2]);
+            if($requestOldId > 1000)
+            {
+                $requestId = $requestOldId;
+            }
+        }
+        $requestIdNumber = sprintf('%06d', $requestId + 1);
+        $this->requestId = str_replace(['{YEAR}', '{000000}'], [Carbon::now()->format('Y'), $requestIdNumber], self::Applicant_REQUEST_ID_PATTERN);
+
+        return $this;
+    }
+
+
+    public function createRequest()
+    {
+        DB::beginTransaction();
 
         try {
-            $profileData = ProfileDTO::fromRequest($this->requests)->toArray();
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
+            $role = $this->user->roles->pluck('name')->first();
+            if($role == 'applicant'){
+                $profile = $this->userService->userProfileCreateOrUpdate($this->requests);
+            }
+
+
+            $requestData = RequestDTO::fromRequest($this->requests,$this->requestId)->toArray();
+            $request = $this->requestsInterface->store($requestData);
+
+
+            $requestMetaData = RequestMetasDTO::fromRequest($this->requests,$request->id)->toArray();
+            $requestAttributesData = collect(RequestAttributesDTO::fromRequest($this->requests,$request->id))
+            ->map(fn($dto) => $dto->toArray())
+            ->all();
+
+
+            $requestMeta = $this->requestsInterface->createRequestMetaData($requestMetaData);
+            $requestAttributes = $this->requestsInterface->createRequestAttributes($requestAttributesData);
+
+
+            DB::commit();
+
+
+            return $this->success(
+                data: ['request'=>$request,'requestMeta'=>$requestMeta,'requestAttributes'=>$requestAttributes],
+                message: 'Request created successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Request creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
         }
-
-        try {
-            $passportData = PassportDTO::fromRequest($this->requests)->toArray();
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
-        }
-
-        try {
-            $commsData = CommunicationDTO::fromRequest($this->requests)->toArray();
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
-        }
-
-        try {
-            $addressData = AddressDTO::fromRequest($this->requests)->toArray();
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
-        }
-
-        try {
-            $qatarInfoData = QatarInfoDTO::fromRequest($this->requests)->toArray();
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
-        }
-
-        if (!empty($error)) {
-            throw new \Exception($error);
-        }
-
-        $profile = $this->userInterface->createUpdateProfile($profileData,$this->user->id);
-        $passport = $this->userInterface->createUpdatePassport($passportData,$this->user->id);
-        $comms = $this->userInterface->createUpdateComms($commsData,$this->user->id);
-        $address = $this->userInterface->createUpdateAddress($addressData,$this->user->id);
-        $qatarInfo = $this->userInterface->createUpdateQatarInfo($qatarInfoData,$this->user->id);
-
-        return $this->requests;
     }
 }

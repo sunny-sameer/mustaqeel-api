@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Requests;
 
+use App\Exceptions\BadRequestException;
 use App\Exceptions\UserNotFoundException;
+
+
 use App\Http\Controllers\Api\BaseController;
 
 
@@ -28,10 +31,12 @@ class RequestsController extends BaseController
             return $this->requests
                 ->setInputs($request)
                 ->userExists()
-                ->userProfile();
-
+                ->createRequestReferenceNumber()
+                ->createRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }

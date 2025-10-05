@@ -30,7 +30,7 @@ class RequestsRequest extends FormRequest
         return [
             'category' => 'required|exists:categories,slug',
             'subCategory' => 'nullable|exists:sub_categories,slug',
-            'sector' => 'required_if:category,tal,ent|exists:sectors,slug',
+            'sector' => 'required|exists:sectors,slug',
             'activity' => 'required_if:category,tal,ent|exists:activities,slug',
             'subActivity' => 'nullable|exists:sub_activities,slug',
             'entity' => 'required_if:category,tal|nullable|exists:entities,slug',
@@ -71,8 +71,8 @@ class RequestsRequest extends FormRequest
             'poBox' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
 
             'email' => 'required|email|min:5|max:100',
-            'mobileNo' => 'required|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
-            'phoneNo' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
+            'mobileNumber' => 'required|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
+            'phoneNumber' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
             'arabicLevel' => 'required|in:fluent,intermediate,basic,no proficiency',
             'englishLevel' => 'required|in:fluent,intermediate,basic,no proficiency',
 
@@ -137,7 +137,6 @@ class RequestsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'sector.required_if' => 'The sector field is required.',
             'activity.required_if' => 'The activity field is required.',
             'entity.required_if' => 'The entity field is required.',
             'incubator.required_if' => 'The incubator field is required.',

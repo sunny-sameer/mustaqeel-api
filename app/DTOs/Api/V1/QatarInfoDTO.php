@@ -2,8 +2,12 @@
 
 namespace App\DTOs\Api\V1;
 
-use App\Constants\Api\V1\WorkPermitConstant;
+
 use Illuminate\Http\Request;
+
+
+use App\Constants\Api\V1\WorkPermitConstant;
+
 
 final readonly class QatarInfoDTO
 {

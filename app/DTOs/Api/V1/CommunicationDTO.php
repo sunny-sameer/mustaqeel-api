@@ -2,7 +2,9 @@
 
 namespace App\DTOs\Api\V1;
 
+
 use Illuminate\Http\Request;
+
 
 final readonly class CommunicationDTO
 {
@@ -18,8 +20,8 @@ final readonly class CommunicationDTO
     {
         $map = [
             'email' => $data['email'],
-            'mobileNo' => $data['mobileNo'],
-            'phoneNo' => $data['phoneNo'] ?? '',
+            'mobileNumber' => $data['mobileNumber'],
+            'phoneNumber' => $data['phoneNumber'] ?? '',
             'arabicLevel' => $data['arabicLevel'],
             'englishLevel' => $data['englishLevel'],
         ];

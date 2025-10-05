@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             SectorsSeeder::class,
             UserAdminSeeder::class,
-            StageSeeder::class
+            StageSeeder::class,
+            NationalitySeeder::class
         ]);
 
         Model::reguard();

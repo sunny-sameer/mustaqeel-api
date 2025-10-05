@@ -2,6 +2,12 @@
 
 namespace App\Services\V1\User;
 
+use App\DTOs\Api\V1\AddressDTO;
+use App\DTOs\Api\V1\CommunicationDTO;
+use App\DTOs\Api\V1\PassportDTO;
+use App\DTOs\Api\V1\ProfileDTO;
+use App\DTOs\Api\V1\QatarInfoDTO;
+use App\Exceptions\BadRequestException;
 use App\Exceptions\UserNotFoundException;
 use App\Services\V1\BaseService;
 use App\Repositories\V1\Users\UsersInterface;
@@ -127,5 +133,40 @@ class UserService extends BaseService
             data: ['user' => $this->user, 'role' => $this->user->roles->pluck('name')->first()],
             message: 'User resolver triggered successfully'
         );
+    }
+
+    public function userProfileCreateOrUpdate($requests)
+    {
+        DB::beginTransaction();
+
+        try {
+            $profileData = ProfileDTO::fromRequest($requests)->toArray();
+            $passportData = PassportDTO::fromRequest($requests)->toArray();
+            $commsData = CommunicationDTO::fromRequest($requests)->toArray();
+            $addressData = AddressDTO::fromRequest($requests)->toArray();
+            $qatarInfoData = QatarInfoDTO::fromRequest($requests)->toArray();
+
+
+            $profile = $this->userInterface->createUpdateProfile($profileData,auth()->id());
+            $passport = $this->userInterface->createUpdatePassport($passportData,auth()->id());
+            $comms = $this->userInterface->createUpdateComms($commsData,auth()->id());
+            $address = $this->userInterface->createUpdateAddress($addressData,auth()->id());
+            $qatarInfo = $this->userInterface->createUpdateQatarInfo($qatarInfoData,auth()->id());
+
+            DB::commit();
+
+            return $this->success(
+                data: ['profile'=>$profile,'passport'=>$passport,'comms'=>$comms,'address'=>$address,'qatarInfo'=>$qatarInfo],
+                message: 'Profile created or updated successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Profile creation or updation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 }
