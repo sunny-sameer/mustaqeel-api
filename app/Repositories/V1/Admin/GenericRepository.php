@@ -303,6 +303,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
             ->where('categoryId', $catId)
             ->where('status',true)
             ->get();
+
             return ['sectors'=>$sectors,'subCategories'=>$subCategories,'incubator'=>$incubator];
         }
 
