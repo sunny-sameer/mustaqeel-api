@@ -280,50 +280,74 @@ class GenericRepository extends CoreRepository implements GenericInterface
         ->get();
     }
 
-    public function getAllSectorsSubCategoriesAndIncubators($catId)
+    public function getAllSectorsSubCategoriesAndIncubators($catSlug)
     {
-        $sectors = Sector::whereHas('categories', function ($query) use ($catId) {
-            $query->where('categoryId', $catId);
-        })
-        ->select('id','slug', 'name', 'nameAr')
-        ->where('status',true)
-        ->get();
+        $category =  Category::where('slug',$catSlug)
+        ->first();
 
-        $subCategories =  SubCategory::select('id','slug','name','nameAr')
-        ->where('categoryId', $catId)
-        ->where('status',true)
-        ->get();
+        if(isset($category->id)){
+            $catId = $category->id;
+            $sectors = Sector::whereHas('categories', function ($query) use ($catId) {
+                $query->where('categoryId', $catId);
+            })
+            ->select('id','slug', 'name', 'nameAr')
+            ->where('status',true)
+            ->get();
 
-        $incubator =  Incubator::select('id','slug','name','nameAr')
-        ->where('categoryId', $catId)
-        ->where('status',true)
-        ->get();
+            $subCategories =  SubCategory::select('id','slug','name','nameAr')
+            ->where('categoryId', $catId)
+            ->where('status',true)
+            ->get();
 
-        return ['sectors'=>$sectors,'subCategories'=>$subCategories,'incubator'=>$incubator];
+            $incubator =  Incubator::select('id','slug','name','nameAr')
+            ->where('categoryId', $catId)
+            ->where('status',true)
+            ->get();
+            return ['sectors'=>$sectors,'subCategories'=>$subCategories,'incubator'=>$incubator];
+        }
+
+        return false;
     }
 
-    public function getAllActivities($secId)
+    public function getAllActivities($secSlug)
     {
-        return Activity::select('id','slug','name','nameAr')
-        ->where('sectorId', $secId)
-        ->where('status',true)
-        ->get();
+        $sector =  Sector::where('slug',$secSlug)
+        ->first();
+
+        if(isset($sector->id)){
+            $secId = $sector->id;
+            return Activity::select('id','slug','name','nameAr')
+            ->where('sectorId', $secId)
+            ->where('status',true)
+            ->get();
+        }
+
+        return false;
     }
 
-    public function getAllEntitiesAndSubActivities($actId)
+    public function getAllEntitiesAndSubActivities($actSlug)
     {
-        $entities = Entity::whereHas('activities', function ($query) use ($actId) {
-            $query->where('activityId', $actId);
-        })
-        ->select('id','slug', 'name', 'nameAr')
-        ->where('status',true)
-        ->get();
+        $activity =  Activity::where('slug',$actSlug)
+        ->first();
 
-        $subActivities =  SubActivity::select('id','slug','name','nameAr')
-        ->where('activityId', $actId)
-        ->where('status',true)
-        ->get();
+        if(isset($activity->id)){
+            $actId = $activity->id;
 
-        return ['entities'=>$entities,'subActivities'=>$subActivities];
+            $entities = Entity::whereHas('activities', function ($query) use ($actId) {
+                $query->where('activityId', $actId);
+            })
+            ->select('id','slug', 'name', 'nameAr')
+            ->where('status',true)
+            ->get();
+
+            $subActivities =  SubActivity::select('id','slug','name','nameAr')
+            ->where('activityId', $actId)
+            ->where('status',true)
+            ->get();
+
+            return ['entities'=>$entities,'subActivities'=>$subActivities];
+        }
+
+        return false;
     }
 }

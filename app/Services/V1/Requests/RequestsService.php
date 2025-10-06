@@ -27,8 +27,7 @@ use App\Repositories\V1\Requests\RequestsInterface;
 
 
 use Carbon\Carbon;
-
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
@@ -45,6 +44,7 @@ class RequestsService extends BaseService
     private ?object $user = null;
     private ?object $requests = null;
     private ?string $requestId = null;
+    private ?string $status = 'Pending';
 
 
     public function __construct(RequestsInterface $requestsInterface, GenericInterface $genericInterface, UserService $userService)
@@ -62,6 +62,12 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function setRequestInputs(Request $request)
+    {
+        $this->status = isset($request->status) ? $request->status : 'Pending';
+        return $this;
+    }
+
     public function userExists()
     {
         $this->user = User::with('profile')->find(auth()->id());
@@ -71,6 +77,17 @@ class RequestsService extends BaseService
         }
 
         return $this;
+    }
+
+    public function getRequests()
+    {
+        $role = $this->user->roles->pluck('name')->first();
+        $request = $this->requestsInterface->getAllRequests($this->status, $role);
+
+        return $this->success(
+            data: ['request' => $request],
+            message: 'Requests fetched successfully'
+        );
     }
 
     public function createRequestReferenceNumber()
@@ -141,18 +158,18 @@ class RequestsService extends BaseService
         return $this->genericInterface->getAllCategories();
     }
 
-    public function getAllSectorsSubCategoriesAndIncubators($catId)
+    public function getAllSectorsSubCategoriesAndIncubators($catSlug)
     {
-        return $this->genericInterface->getAllSectorsSubCategoriesAndIncubators($catId);
+        return $this->genericInterface->getAllSectorsSubCategoriesAndIncubators($catSlug);
     }
 
-    public function getAllActivities($secId)
+    public function getAllActivities($secSlug)
     {
-        return $this->genericInterface->getAllActivities($secId);
+        return $this->genericInterface->getAllActivities($secSlug);
     }
 
-    public function getAllEntitiesAndSubActivities($actId)
+    public function getAllEntitiesAndSubActivities($actSlug)
     {
-        return $this->genericInterface->getAllEntitiesAndSubActivities($actId);
+        return $this->genericInterface->getAllEntitiesAndSubActivities($actSlug);
     }
 }

@@ -63,7 +63,7 @@ interface GenericInterface extends CoreInterface
 
     // ===== REQUEST METAS =====
     public function getAllCategories();
-    public function getAllSectorsSubCategoriesAndIncubators($catId);
-    public function getAllActivities($secId);
-    public function getAllEntitiesAndSubActivities($actId);
+    public function getAllSectorsSubCategoriesAndIncubators($catSlug);
+    public function getAllActivities($secSlug);
+    public function getAllEntitiesAndSubActivities($actSlug);
 }

@@ -11,4 +11,19 @@ class Requests extends Model
 
     protected $table = 'requests';
     protected $guarded = [];
+
+    public function metas()
+    {
+        return $this->hasOne(RequestMetaData::class,'reqId','id');
+    }
+
+    public function attributes()
+    {
+        return $this->hasMany(RequestAttribute::class,'reqId','id');
+    }
+
+    public function stage()
+    {
+        return $this->hasMany(RequestStages::class,'reqId','id');
+    }
 }

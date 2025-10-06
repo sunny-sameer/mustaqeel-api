@@ -11,4 +11,9 @@ class RequestStages extends Model
 
     protected $table = 'request_stages';
     protected $guarded = [];
+
+    public function status()
+    {
+        return $this->hasMany(RequestStatuses::class,'reqStageId','id');
+    }
 }

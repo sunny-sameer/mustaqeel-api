@@ -32,13 +32,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
         // Requests
         Route::prefix('requests')->group(function () {
+            Route::get('/', [RequestsController::class, 'getRequests']);
             Route::post('/', [RequestsController::class, 'createRequest']);
 
 
             Route::get('categories', [RequestsController::class,'getAllCategories']);
-            Route::get('sectors-sub-categories-incubators/{catId}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
-            Route::get('activities/{secId}', [RequestsController::class,'getAllActivities']);
-            Route::get('entities-sub-activities/{actId}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
+            Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
+            Route::get('activities/{secSlug}', [RequestsController::class,'getAllActivities']);
+            Route::get('entities-sub-activities/{actSlug}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
         });
     });
 

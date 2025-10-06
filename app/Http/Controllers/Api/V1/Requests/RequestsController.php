@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Requests;
 
+
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UserNotFoundException;
 
@@ -12,6 +13,7 @@ use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\Api\V1\RequestsRequest;
 
 
+use Illuminate\Http\Request;
 use App\Services\V1\Requests\RequestsService;
 
 
@@ -23,6 +25,18 @@ class RequestsController extends BaseController
     public function __construct(RequestsService $requests)
     {
         $this->requests = $requests;
+    }
+
+    public function getRequests(Request $request)
+    {
+        try {
+            return $this->requests
+                ->setRequestInputs($request)
+                ->userExists()
+                ->getRequests();
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     public function createRequest(RequestsRequest $request)
@@ -47,21 +61,33 @@ class RequestsController extends BaseController
         return $this->sendSuccessResponse($this->requests->getAllCategories());
     }
 
-    public function getAllSectorsSubCategoriesAndIncubators($catId)
+    public function getAllSectorsSubCategoriesAndIncubators($catSlug)
     {
-        if (empty($catId)) return $this->sendErrorResponse('Invalid category id', 'Invalid category id', 400);
-        return $this->sendSuccessResponse($this->requests->getAllSectorsSubCategoriesAndIncubators($catId));
+        if (empty($catSlug)) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
+
+        $data = $this->requests->getAllSectorsSubCategoriesAndIncubators($catSlug);
+        if (!$data) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
+
+        return $this->sendSuccessResponse($data);
     }
 
-    public function getAllActivities($secId)
+    public function getAllActivities($secSlug)
     {
-        if (empty($secId)) return $this->sendErrorResponse('Invalid sector id', 'Invalid sector id', 400);
-        return $this->sendSuccessResponse($this->requests->getAllActivities($secId));
+        if (empty($secSlug)) return $this->sendErrorResponse('Invalid sector slug', 'Invalid sector slug', 400);
+
+        $data = $this->requests->getAllActivities($secSlug);
+        if (!$data) return $this->sendErrorResponse('Invalid sector slug', 'Invalid sector slug', 400);
+
+        return $this->sendSuccessResponse($data);
     }
 
-    public function getAllEntitiesAndSubActivities($actId)
+    public function getAllEntitiesAndSubActivities($actSlug)
     {
-        if (empty($actId)) return $this->sendErrorResponse('Invalid activity id', 'Invalid activity id', 400);
-        return $this->sendSuccessResponse($this->requests->getAllEntitiesAndSubActivities($actId));
+        if (empty($actSlug)) return $this->sendErrorResponse('Invalid activity slug', 'Invalid activity slug', 400);
+
+        $data = $this->requests->getAllEntitiesAndSubActivities($actSlug);
+        if (!$data) return $this->sendErrorResponse('Invalid activity slug', 'Invalid activity slug', 400);
+
+        return $this->sendSuccessResponse($data);
     }
 }
