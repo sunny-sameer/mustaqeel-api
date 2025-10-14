@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Api\V1;
+namespace App\DTOs\Api\V1\Requests;
 
 
 use Illuminate\Http\Request;
@@ -22,20 +22,7 @@ final readonly class RequestAttributesDTO
     {
         $attributes = [];
 
-        $map['request'] = Arr::except($data,['previousJobs',
-            'certificatesAndAcademicQualifications',
-            'currentResidenceInOtherCountries',
-            'activeOrPreviousNationalities',
-            'countryVisitedInLastTenYears',
-            'familyMembers',
-            'category','subCategory','sector','activity','subActivity','entity','incubator'
-        ]);
-        $map['previousJobs'] = Arr::only($data,'previousJobs');
-        $map['certificatesAndAcademicQualifications'] = Arr::only($data,'certificatesAndAcademicQualifications');
-        $map['currentResidenceInOtherCountries'] = Arr::only($data,'currentResidenceInOtherCountries');
-        $map['activeOrPreviousNationalities'] = Arr::only($data,'activeOrPreviousNationalities');
-        $map['countryVisitedInLastTenYears'] = Arr::only($data,'countryVisitedInLastTenYears');
-        $map['familyMembers'] = Arr::only($data,'familyMembers');
+        $map = Arr::except($data,['personalInfo.identificationData']);
 
 
         foreach ($map as $key => $value) {

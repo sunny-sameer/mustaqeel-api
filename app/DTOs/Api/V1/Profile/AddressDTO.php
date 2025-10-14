@@ -1,35 +1,27 @@
 <?php
 
-namespace App\DTOs\Api\V1;
+namespace App\DTOs\Api\V1\Profile;
 
 
 use Illuminate\Http\Request;
 
 
-final readonly class CommunicationDTO
+final readonly class AddressDTO
 {
     public function __construct(
         public int $userId,
-        public string $key,
-        public string $value,
+        public ?string $zip = null,
+        public string $address,
         public bool $status = true,
     ) {}
 
 
     public static function fromArray(array $data): self
     {
-        $map = [
-            'email' => $data['email'],
-            'mobileNumber' => $data['mobileNumber'],
-            'phoneNumber' => $data['phoneNumber'] ?? '',
-            'arabicLevel' => $data['arabicLevel'],
-            'englishLevel' => $data['englishLevel'],
-        ];
-
         return new self(
             userId: auth()->id(),
-            key: 'profile',
-            value: json_encode(array_filter($map)),
+            zip: $data['personalInfo']['contactInfo']['poBox'] ?? NULL,
+            address: $data['personalInfo']['contactInfo']['permanentAddress'],
             status: true,
         );
     }
@@ -43,8 +35,8 @@ final readonly class CommunicationDTO
     {
         return [
             'userId' => $this->userId,
-            'key' => $this->key,
-            'value' => $this->value,
+            'zip' => $this->zip,
+            'address' => $this->address,
             'status' => $this->status,
         ];
     }

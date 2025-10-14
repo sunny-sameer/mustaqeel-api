@@ -12,4 +12,9 @@ class StagesStatuses extends Model
 
     protected $table = 'stages_statuses';
     protected $guarded = [];
+
+    public function stage()
+    {
+        return $this->belongsTo(Stages::class,'stageId','id');
+    }
 }

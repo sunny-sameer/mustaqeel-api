@@ -6,20 +6,30 @@ namespace App\Services\V1\Requests;
 use App\Models\User;
 
 
+use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\RequestsRequest;
+use App\Http\Requests\Api\V1\RequestsRequestDocument;
+use App\Http\Requests\Api\V1\RequestsRequestPartial;
 
 
 use App\Services\V1\BaseService;
 use App\Services\V1\User\UserService;
+use App\Services\V1\Artifacts\ArtifactsService;
 
 
-use App\DTOs\Api\V1\RequestAttributesDTO;
-use App\DTOs\Api\V1\RequestDTO;
-use App\DTOs\Api\V1\RequestMetasDTO;
+use App\DTOs\Api\V1\Requests\RequestDTO;
+use App\DTOs\Api\V1\Requests\RequestMetasDTO;
+use App\DTOs\Api\V1\Requests\RequestAttributesDTO;
+use App\DTOs\Api\V1\Requests\RequestStageDTO;
+use App\DTOs\Api\V1\Requests\RequestStatusDTO;
 
 
 use App\Exceptions\BadRequestException;
+use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\UserNotFoundException;
+
+
+use App\Models\Requests;
 
 
 use App\Repositories\V1\Admin\GenericInterface;
@@ -27,7 +37,8 @@ use App\Repositories\V1\Requests\RequestsInterface;
 
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+
+
 use Illuminate\Support\Facades\DB;
 
 
@@ -39,6 +50,7 @@ class RequestsService extends BaseService
     protected $requestsInterface;
     protected $genericInterface;
 
+    protected $artifactsService;
     protected $userService;
 
     private ?object $user = null;
@@ -47,24 +59,45 @@ class RequestsService extends BaseService
     private ?string $status = 'Pending';
 
 
-    public function __construct(RequestsInterface $requestsInterface, GenericInterface $genericInterface, UserService $userService)
+    public function __construct(
+        RequestsInterface $requestsInterface,
+        GenericInterface $genericInterface,
+
+        ArtifactsService $artifactsService,
+        UserService $userService
+    )
     {
         $this->requestsInterface = $requestsInterface;
         $this->genericInterface = $genericInterface;
 
+        $this->artifactsService = $artifactsService;
         $this->userService = $userService;
     }
 
-
-    public function setInputs(RequestsRequest $request): self
+    public function setRequestInputs(Request $request)
     {
         $this->requests = $request;
         return $this;
     }
 
-    public function setRequestInputs(Request $request)
+    public function setInputs(RequestsRequest $request, $status): self
     {
-        $this->status = isset($request->status) ? $request->status : 'Pending';
+        $this->requests = $request;
+        $this->status = $status;
+        return $this;
+    }
+
+    public function setInputsPartial(RequestsRequestPartial $request, $status): self
+    {
+        $this->requests = $request;
+        $this->status = $status;
+        return $this;
+    }
+
+    public function setInputsDocument(RequestsRequestDocument $request)
+    {
+        $this->requests = $request;
+        $this->status = 'Draft';
         return $this;
     }
 
@@ -79,10 +112,9 @@ class RequestsService extends BaseService
         return $this;
     }
 
-    public function getRequests()
+    public function getAllRequests()
     {
-        $role = $this->user->roles->pluck('name')->first();
-        $request = $this->requestsInterface->getAllRequests($this->status, $role);
+        $request = $this->requestsInterface->getAllRequests($this->requests);
 
         return $this->success(
             data: ['request' => $request],
@@ -92,7 +124,7 @@ class RequestsService extends BaseService
 
     public function createRequestReferenceNumber()
     {
-        $request = $this->requestsInterface->getLastRequest();
+        $request = $this->requestsInterface->getLastRequest($this->requests->id);
         $requestId = 1000;
         if(isset($request->reqReferenceNumber))
         {
@@ -109,6 +141,18 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function requestAlreadyExists()
+    {
+        if(isset($this->requests->id) && !empty($this->requests->id)){
+            $req = $this->requestsInterface->getRequest($this->requests->id);
+
+            if (isset($req->reqReferenceNumber) && !empty($req->reqReferenceNumber)) {
+                throw new RequestAlreadyExistException();
+            }
+        }
+
+        return $this;
+    }
 
     public function createRequest()
     {
@@ -122,7 +166,7 @@ class RequestsService extends BaseService
 
 
             $requestData = RequestDTO::fromRequest($this->requests,$this->requestId)->toArray();
-            $request = $this->requestsInterface->store($requestData);
+            $request = $this->requestsInterface->updateOrCreateRequest($requestData,$this->requests->id);
 
 
             $requestMetaData = RequestMetasDTO::fromRequest($this->requests,$request->id)->toArray();
@@ -131,16 +175,20 @@ class RequestsService extends BaseService
             ->all();
 
 
-            $requestMeta = $this->requestsInterface->createRequestMetaData($requestMetaData);
-            $requestAttributes = $this->requestsInterface->createRequestAttributes($requestAttributesData);
+            $requestMeta = $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData,$request->id);
+            $requestAttributes = $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData,$request->id);
+
+
+            $stageStatus = $this->createOrUpdateStageStatus('Application',$request->id);
 
 
             DB::commit();
 
 
+            $message = $this->status == 'Draft' ? 'Request partially created successfully' : 'Request created successfully';
             return $this->success(
-                data: ['request'=>$request,'requestMeta'=>$requestMeta,'requestAttributes'=>$requestAttributes],
-                message: 'Request created successfully'
+                data: ['request'=>$request,'requestMeta'=>$requestMeta,'requestAttributes'=>$requestAttributes,'stageStatus'=>$stageStatus],
+                message: $message
             );
         } catch (BadRequestException $e) {
             DB::rollBack();
@@ -151,6 +199,75 @@ class RequestsService extends BaseService
                 statusCode: 500
             );
         }
+    }
+
+    public function createOrUpdateStageStatus($stageName, $reqId)
+    {
+        $stage = $this->requestsInterface->getStage(['name'=>$stageName]);
+        $data = ['reqId'=>$reqId,'stageSlug'=>$stage->slug];
+        $requestStageData = RequestStageDTO::fromRequest($data)->toArray();
+        $requestStage = $this->requestsInterface->createRequestStage($data,$requestStageData);
+
+        $stageStatus = $this->requestsInterface->getStageStatus(['stageId'=>$stage->id,'name'=>$this->status]);
+        $data2 = ['reqStageId'=>$requestStage->id,'stageStatusSlug'=>$stageStatus->slug];
+        $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
+        $requestStatus = $this->requestsInterface->createRequestStageStatus($data2,$requestStatusData,$this->status);
+
+
+        $stageStatus = $this->requestsInterface->getRequestStage($data);
+        return $stageStatus;
+    }
+
+    public function createDocument()
+    {
+        DB::beginTransaction();
+        try {
+            $request = $this->requestsInterface->updateOrCreateRequest(
+                ['userId'=>auth()->id(),'submittedAt'=>Carbon::now()],
+                $this->requests->id
+            );
+
+            $stageStatus = $this->createOrUpdateStageStatus('Application',$request->id);
+
+            $this->requests['entityId'] = $request->id;
+            $this->requests['entityType'] = Requests::class;
+            $response = $this->artifactsService->createDocuments($this->requests);
+
+            if(!$response->ok){
+                DB::rollBack();
+
+                return $this->error(
+                    message: $response->message,
+                    errors: $response->ok,
+                    statusCode: $response->status
+                );
+            }
+
+            DB::commit();
+
+            return $this->success(
+                data: ['document'=>$response->document],
+                message: 'Document created successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Document creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function getRequest($id)
+    {
+        $request = $this->requestsInterface->getRequest($id);
+
+        return $this->success(
+            data: ['request' => $request],
+            message: 'Request fetched successfully'
+        );
     }
 
     public function getAllCategories()

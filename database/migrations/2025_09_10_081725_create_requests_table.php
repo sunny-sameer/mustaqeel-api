@@ -16,12 +16,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('userId')->constrained('users')->onDelete('cascade');
 
-            $table->string('reqReferenceNumber',50)->unique();
-            $table->string('nameEn',100);
+            $table->string('reqReferenceNumber',50)->unique()->nullable();
+            $table->string('nameEn',100)->nullable();
             $table->string('nameAr')->nullable();
-            $table->string('email',100);
-            $table->string('mobileNumber',18);
-            $table->string('passportNumber',15);
+            $table->string('email',100)->nullable();
+            $table->string('mobileNumber',18)->nullable();
+            $table->string('passportNumber',15)->nullable();
             $table->string('qid',15)->nullable();
             $table->tinyInteger('status')->default(0);
 

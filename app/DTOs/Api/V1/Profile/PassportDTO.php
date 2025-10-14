@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Api\V1;
+namespace App\DTOs\Api\V1\Profile;
 
 
 use Illuminate\Http\Request;
@@ -28,13 +28,13 @@ final readonly class PassportDTO
     {
         return new self(
             userId: auth()->id(),
-            passportNumber: $data['passportNumber'],
-            passportType: $data['passportType'],
-            passportIssuerDate: Carbon::parse($data['passportIssueDate']),
-            passportIssuingCountry: $data['passportIssuingCountry'],
-            passportIssueBy: $data['passportIssueBy'],
-            passportExpiryDate: Carbon::parse($data['passportExpiryDate']),
-            passportPlaceOfIssue: $data['passportPlaceOfIssue'],
+            passportNumber: $data['personalInfo']['passportDetails']['number'],
+            passportType: $data['personalInfo']['passportDetails']['type'],
+            passportIssuerDate: Carbon::parse($data['personalInfo']['passportDetails']['issueDate']),
+            passportIssuingCountry: $data['personalInfo']['passportDetails']['issueCountry'],
+            passportIssueBy: $data['personalInfo']['passportDetails']['issueBy'],
+            passportExpiryDate: Carbon::parse($data['personalInfo']['passportDetails']['expiryDate']),
+            passportPlaceOfIssue: $data['personalInfo']['passportDetails']['issuePlace'],
             status: true,
         );
     }

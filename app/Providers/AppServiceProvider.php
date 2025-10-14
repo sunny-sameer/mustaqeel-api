@@ -16,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
         $repoArray = [
             "Core" => ["Core"],
             "Admin" => ["Generic"],
+            "Artifacts" => ["Artifacts"],
             "Users" => ["Users"],
             "Comms" => ["Comms"],
             "Requests" => ["Requests"],

@@ -32,8 +32,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
         // Requests
         Route::prefix('requests')->group(function () {
-            Route::get('/', [RequestsController::class, 'getRequests']);
+            Route::get('/', [RequestsController::class, 'getAllRequests']);
+            Route::post('/partial', [RequestsController::class, 'createRequestPartially']);
             Route::post('/', [RequestsController::class, 'createRequest']);
+            Route::post('/document', [RequestsController::class, 'createRequestDocument']);
+            Route::get('/{id}', [RequestsController::class, 'getRequest']);
 
 
             Route::get('categories', [RequestsController::class,'getAllCategories']);

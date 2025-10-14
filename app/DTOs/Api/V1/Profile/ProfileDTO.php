@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Api\V1;
+namespace App\DTOs\Api\V1\Profile;
 
 
 use Illuminate\Http\Request;
@@ -30,15 +30,15 @@ final readonly class ProfileDTO
     {
         return new self(
             userId: auth()->id(),
-            occupation: ($data['isQatarResident'] && ($data['category'] == 'tal' || $data['category'] == 'ent')) ? ($data['profession'] ?? NULL) : NULL,
-            gender: $data['gender'],
-            nationality: $data['nationality'],
-            countryOfResidence: $data['currentCountryOfResidence'],
-            religion: $data['religion'],
-            dob: Carbon::parse($data['dateOfBirth']),
-            pob: $data['placeOfBirth'],
-            maritalStatus: $data['maritalStatus'],
-            shortBiography: $data['shortBiography'],
+            occupation: ($data['personalInfo']['applicantInfo']['areYouQatarResident'] && ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent')) ? ($data['personalInfo']['employmentDetails']['profession'] ?? NULL) : NULL,
+            gender: $data['personalInfo']['applicantInfo']['gender'],
+            nationality: $data['personalInfo']['applicantInfo']['nationality'],
+            countryOfResidence: $data['personalInfo']['applicantInfo']['currentCountry'],
+            religion: $data['personalInfo']['applicantInfo']['religion'],
+            dob: Carbon::parse($data['personalInfo']['applicantInfo']['dob']),
+            pob: $data['personalInfo']['applicantInfo']['placeOfBirth'],
+            maritalStatus: $data['personalInfo']['applicantInfo']['maritalStatus'],
+            shortBiography: $data['personalInfo']['applicantInfo']['shortBio'],
             status: true,
         );
     }

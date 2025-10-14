@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('name', 50);
-            $table->string('nameAr', 50);
+            $table->string('nameAr', 50)->nullable();
             $table->string('slug', 50);
             $table->text('description')->nullable();
             $table->tinyInteger('status')->default(1);
@@ -29,10 +29,10 @@ return new class extends Migration
         Schema::create('stages_statuses', function (Blueprint $table) {
             $table->id();
 
-            $table->bigInteger('stageId')->constrained('stages')->onDelete('cascade');
+            $table->foreignId('stageId')->constrained('stages')->onDelete('cascade');
 
             $table->string('name', 50);
-            $table->string('nameAr', 50);
+            $table->string('nameAr', 50)->nullable();
             $table->string('slug', 50);
             $table->tinyInteger('status')->default(1);
 
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->string('stageSlug',50);
 
             $table->date('startDate');
-            $table->date('endDate');
+            $table->date('endDate')->nullable();
             $table->tinyInteger('status')->default(0);
 
             $table->timestamps();
@@ -58,13 +58,16 @@ return new class extends Migration
         Schema::create('request_statuses', function (Blueprint $table) {
             $table->id();
 
-            $table->bigInteger('reqStageId');
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
 
-            $table->string('stageStatuSlug',50);
+            $table->foreignId('reqStageId')->constrained('request_stages')->onDelete('cascade');
+
+            $table->string('stageStatusSlug',50);
 
             $table->date('startDate');
-            $table->date('endDate');
-            $table->text('comments')->nullable();
+            $table->date('endDate')->nullable();
+            $table->text('commentsEn')->nullable();
+            $table->text('commentsAr')->nullable();
             $table->tinyInteger('status')->default(0);
 
             $table->timestamps();

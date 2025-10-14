@@ -16,16 +16,12 @@ class StageSeeder extends Seeder
     {
         $stages = [
             [
-                'name'=>'Applicant',
+                'name'=>'Application',
                 'nameAr'=>'مقدم الطلب',
             ],
             [
                 'name'=>'Jusour',
                 'nameAr'=>'جسور',
-            ],
-            [
-                'name'=>'Reviewer',
-                'nameAr'=>'المراجعة',
             ],
             [
                 'name'=>'Entity',
@@ -156,8 +152,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>4,
-                'name'=>'Accepted',
-                'nameAr'=>'قبلت'
+                'name'=>'Approved',
+                'nameAr'=>'معتمد'
             ],
             [
                 'stageId'=>4,
@@ -190,16 +186,6 @@ class StageSeeder extends Seeder
                 'nameAr'=>'مرفوض'
             ],
             [
-                'stageId'=>5,
-                'name'=>'Additional Documents Requested',
-                'nameAr'=>'مستندات إضافية مطلوبة'
-            ],
-            [
-                'stageId'=>5,
-                'name'=>'Additional Documents Submitted',
-                'nameAr'=>'تم تقديم المستندات الإضافية'
-            ],
-            [
                 'stageId'=>6,
                 'name'=>'Pending',
                 'nameAr'=>'معلق'
@@ -226,21 +212,6 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>7,
-                'name'=>'Rejected',
-                'nameAr'=>'مرفوض'
-            ],
-            [
-                'stageId'=>8,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
-            ],
-            [
-                'stageId'=>8,
-                'name'=>'Approved',
-                'nameAr'=>'معتمد'
-            ],
-            [
-                'stageId'=>8,
                 'name'=>'Rejected',
                 'nameAr'=>'مرفوض'
             ],

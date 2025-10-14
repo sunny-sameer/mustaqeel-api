@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Api\V1;
+namespace App\DTOs\Api\V1\Requests;
 
 
 use Illuminate\Http\Request;
@@ -24,13 +24,13 @@ final readonly class RequestMetasDTO
     {
         return new self(
             reqId: $reqId,
-            catSlug: $data['category'],
-            subCatSlug: $data['subCategory'] ?? null,
-            sectorSlug: $data['sector'],
-            activitySlug: ($data['category'] == 'tal' || $data['category'] == 'ent') ? $data['activity'] : NULL,
-            subActivitySlug: ($data['category'] == 'tal' || $data['category'] == 'ent') ? ($data['subActivity'] ?? NULL) : NULL,
-            entitySlug: $data['category'] == 'tal' ? $data['entity'] : NULL,
-            incubatorSlug: $data['category'] == 'ent' ? $data['incubator'] : NULL,
+            catSlug: $data['personalInfo']['identificationData']['category'],
+            subCatSlug: $data['personalInfo']['identificationData']['subCategory'] ?? NULL,
+            sectorSlug: $data['personalInfo']['identificationData']['sector'],
+            activitySlug: ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent') ? $data['personalInfo']['identificationData']['activity'] : NULL,
+            subActivitySlug: ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent') ? ($data['personalInfo']['identificationData']['subActivity'] ?? NULL) : NULL,
+            entitySlug: $data['personalInfo']['identificationData']['category'] == 'tal' ? $data['personalInfo']['identificationData']['entity'] : NULL,
+            incubatorSlug: $data['personalInfo']['identificationData']['category'] == 'ent' ? $data['personalInfo']['identificationData']['incubator'] : NULL,
         );
     }
 

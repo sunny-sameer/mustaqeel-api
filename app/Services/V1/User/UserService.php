@@ -6,11 +6,11 @@ namespace App\Services\V1\User;
 use App\Models\User;
 
 
-use App\DTOs\Api\V1\AddressDTO;
-use App\DTOs\Api\V1\CommunicationDTO;
-use App\DTOs\Api\V1\PassportDTO;
-use App\DTOs\Api\V1\ProfileDTO;
-use App\DTOs\Api\V1\QatarInfoDTO;
+use App\DTOs\Api\V1\Profile\AddressDTO;
+use App\DTOs\Api\V1\Profile\CommunicationDTO;
+use App\DTOs\Api\V1\Profile\PassportDTO;
+use App\DTOs\Api\V1\Profile\ProfileDTO;
+use App\DTOs\Api\V1\Profile\QatarInfoDTO;
 
 
 use App\Exceptions\BadRequestException;

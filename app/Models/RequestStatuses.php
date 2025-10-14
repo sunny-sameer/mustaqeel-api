@@ -11,4 +11,21 @@ class RequestStatuses extends Model
 
     protected $table = 'request_statuses';
     protected $guarded = [];
+
+
+    public function stageStatus()
+    {
+        return $this->belongsTo(StagesStatuses::class,'stageStatusSlug','slug')
+        ->orderBy('created_at','DESC');
+    }
+
+    public function requestStage()
+    {
+        return $this->belongsTo(RequestStages::class,'reqStageId','id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class,'userId','id');
+    }
 }

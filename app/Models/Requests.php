@@ -26,4 +26,9 @@ class Requests extends Model
     {
         return $this->hasMany(RequestStages::class,'reqId','id');
     }
+
+    public function documents()
+    {
+        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId');
+    }
 }

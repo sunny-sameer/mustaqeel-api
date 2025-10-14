@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('entityType')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

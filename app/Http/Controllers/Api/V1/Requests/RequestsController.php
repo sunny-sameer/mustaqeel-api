@@ -4,21 +4,25 @@ namespace App\Http\Controllers\Api\V1\Requests;
 
 
 use App\Exceptions\BadRequestException;
+use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\UserNotFoundException;
 
 
 use App\Http\Controllers\Api\BaseController;
 
 
-use App\Http\Requests\Api\V1\RequestsRequest;
-
-
 use Illuminate\Http\Request;
+use App\Http\Requests\Api\V1\RequestsRequest;
+use App\Http\Requests\Api\V1\RequestsRequestDocument;
+use App\Http\Requests\Api\V1\RequestsRequestPartial;
+
+
 use App\Services\V1\Requests\RequestsService;
 
 
 class RequestsController extends BaseController
 {
+    protected $status = 'Draft';
     protected $requests;
 
 
@@ -27,13 +31,34 @@ class RequestsController extends BaseController
         $this->requests = $requests;
     }
 
-    public function getRequests(Request $request)
+    public function getAllRequests(Request $request)
     {
         try {
             return $this->requests
                 ->setRequestInputs($request)
                 ->userExists()
-                ->getRequests();
+                ->getAllRequests();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function createRequestPartially(RequestsRequestPartial $request)
+    {
+        try {
+            return $this->requests
+                ->setInputsPartial($request,$this->status)
+                ->userExists()
+                ->requestAlreadyExists()
+                ->createRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestAlreadyExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 409);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
@@ -42,15 +67,51 @@ class RequestsController extends BaseController
     public function createRequest(RequestsRequest $request)
     {
         try {
+            $this->status = 'Pending';
             return $this->requests
-                ->setInputs($request)
+                ->setInputs($request,$this->status)
                 ->userExists()
                 ->createRequestReferenceNumber()
+                ->requestAlreadyExists()
                 ->createRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestAlreadyExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 409);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function createRequestDocument(RequestsRequestDocument $request)
+    {
+        try {
+            return $this->requests
+                ->setInputsDocument($request)
+                ->userExists()
+                ->requestAlreadyExists()
+                ->createDocument();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestAlreadyExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 409);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function getRequest($id)
+    {
+        try {
+            return $this->requests
+                ->userExists()
+                ->getRequest($id);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
