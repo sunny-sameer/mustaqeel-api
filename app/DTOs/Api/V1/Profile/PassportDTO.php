@@ -13,13 +13,13 @@ final readonly class PassportDTO
 {
     public function __construct(
         public int $userId,
-        public string $passportNumber,
-        public string $passportType,
-        public Carbon $passportIssuerDate,
-        public string $passportIssuingCountry,
-        public string $passportIssueBy,
-        public Carbon $passportExpiryDate,
-        public string $passportPlaceOfIssue,
+        public ?string $passportNumber = null,
+        public ?string $passportType = null,
+        public ?Carbon $passportIssuerDate = null,
+        public ?string $passportIssuingCountry = null,
+        public ?string $passportIssueBy = null,
+        public ?Carbon $passportExpiryDate = null,
+        public ?string $passportPlaceOfIssue = null,
         public bool $status = true,
     ) {}
 
@@ -28,13 +28,13 @@ final readonly class PassportDTO
     {
         return new self(
             userId: auth()->id(),
-            passportNumber: $data['personalInfo']['passportDetails']['number'],
-            passportType: $data['personalInfo']['passportDetails']['type'],
-            passportIssuerDate: Carbon::parse($data['personalInfo']['passportDetails']['issueDate']),
-            passportIssuingCountry: $data['personalInfo']['passportDetails']['issueCountry'],
-            passportIssueBy: $data['personalInfo']['passportDetails']['issueBy'],
-            passportExpiryDate: Carbon::parse($data['personalInfo']['passportDetails']['expiryDate']),
-            passportPlaceOfIssue: $data['personalInfo']['passportDetails']['issuePlace'],
+            passportNumber: $data['personalInfo']['passportDetails']['number'] ?? NULL,
+            passportType: $data['personalInfo']['passportDetails']['type'] ?? NULL,
+            passportIssuerDate: $data['personalInfo']['passportDetails']['issueDate'] ? Carbon::parse($data['personalInfo']['passportDetails']['issueDate']) : NULL,
+            passportIssuingCountry: $data['personalInfo']['passportDetails']['issueCountry'] ?? NULL,
+            passportIssueBy: $data['personalInfo']['passportDetails']['issueBy'] ?? NULL,
+            passportExpiryDate: $data['personalInfo']['passportDetails']['expiryDate'] ? Carbon::parse($data['personalInfo']['passportDetails']['expiryDate']) : NULL,
+            passportPlaceOfIssue: $data['personalInfo']['passportDetails']['issuePlace'] ?? NULL,
             status: true,
         );
     }

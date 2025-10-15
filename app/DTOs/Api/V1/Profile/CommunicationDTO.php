@@ -19,11 +19,11 @@ final readonly class CommunicationDTO
     public static function fromArray(array $data): self
     {
         $map = [
-            'email' => $data['personalInfo']['contactInfo']['email'],
-            'mobileNumber' => $data['personalInfo']['contactInfo']['mobile'],
+            'email' => $data['personalInfo']['contactInfo']['email'] ?? NULL,
+            'mobileNumber' => $data['personalInfo']['contactInfo']['mobile'] ?? NULL,
             'phoneNumber' => $data['personalInfo']['contactInfo']['phone'] ?? NULL,
-            'arabicLevel' => $data['personalInfo']['applicantInfo']['langProficiencyAr'],
-            'englishLevel' => $data['personalInfo']['applicantInfo']['langProficiencyEn'],
+            'arabicLevel' => $data['personalInfo']['applicantInfo']['langProficiencyAr'] ?? NULL,
+            'englishLevel' => $data['personalInfo']['applicantInfo']['langProficiencyEn'] ?? NULL,
         ];
 
         return new self(

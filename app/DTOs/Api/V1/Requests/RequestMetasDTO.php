@@ -10,9 +10,9 @@ final readonly class RequestMetasDTO
 {
     public function __construct(
         public int $reqId,
-        public string $catSlug,
+        public ?string $catSlug = null,
         public ?string $subCatSlug = null,
-        public string $sectorSlug,
+        public ?string $sectorSlug = null,
         public ?string $activitySlug = null,
         public ?string $subActivitySlug = null,
         public ?string $entitySlug = null,
@@ -24,9 +24,9 @@ final readonly class RequestMetasDTO
     {
         return new self(
             reqId: $reqId,
-            catSlug: $data['personalInfo']['identificationData']['category'],
+            catSlug: $data['personalInfo']['identificationData']['category'] ?? NULL,
             subCatSlug: $data['personalInfo']['identificationData']['subCategory'] ?? NULL,
-            sectorSlug: $data['personalInfo']['identificationData']['sector'],
+            sectorSlug: $data['personalInfo']['identificationData']['sector'] ?? NULL,
             activitySlug: ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent') ? $data['personalInfo']['identificationData']['activity'] : NULL,
             subActivitySlug: ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent') ? ($data['personalInfo']['identificationData']['subActivity'] ?? NULL) : NULL,
             entitySlug: $data['personalInfo']['identificationData']['category'] == 'tal' ? $data['personalInfo']['identificationData']['entity'] : NULL,

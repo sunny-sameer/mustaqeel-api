@@ -11,7 +11,7 @@ final readonly class AddressDTO
     public function __construct(
         public int $userId,
         public ?string $zip = null,
-        public string $address,
+        public ?string $address = null,
         public bool $status = true,
     ) {}
 
@@ -21,7 +21,7 @@ final readonly class AddressDTO
         return new self(
             userId: auth()->id(),
             zip: $data['personalInfo']['contactInfo']['poBox'] ?? NULL,
-            address: $data['personalInfo']['contactInfo']['permanentAddress'],
+            address: $data['personalInfo']['contactInfo']['permanentAddress'] ?? NULL,
             status: true,
         );
     }
