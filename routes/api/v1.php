@@ -39,11 +39,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('document', [RequestsController::class, 'createRequestDocument']);
         });
 
-        Route::get('nationalities', [RequestsController::class,'getAllNationalities']);
-        Route::get('categories', [RequestsController::class,'getAllCategories']);
-        Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
-        Route::get('activities/{secSlug}', [RequestsController::class,'getAllActivities']);
-        Route::get('entities-sub-activities/{actSlug}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
+        Route::prefix('classifications')->group(function () {
+            Route::get('nationalities', [RequestsController::class,'getAllNationalities']);
+            Route::get('categories', [RequestsController::class,'getAllCategories']);
+            Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
+            Route::get('activities/{secSlug}', [RequestsController::class,'getAllActivities']);
+            Route::get('entities-sub-activities/{actSlug}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
+        });
     });
 
     Route::group(['middleware' => ['role:admin|super-admin']], function () {
