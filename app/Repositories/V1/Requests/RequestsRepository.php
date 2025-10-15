@@ -11,6 +11,10 @@ use App\Models\Stages;
 use App\Models\StagesStatuses;
 use App\Models\User;
 // Core Repository
+
+use Illuminate\Support\Str;
+
+
 use App\Repositories\V1\Core\CoreRepository;
 
 class RequestsRepository extends CoreRepository implements RequestsInterface
@@ -63,14 +67,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $req = $req->orderBy('created_at','DESC')->paginate(12);
 
 
-        $req->map(function ($query) use ($role){
-            $query->application = $this->getRequestStatus('Application',$query->id);
-            if($role == 'super-admin' || $role == 'admin'){
-                $query->jusour = $this->getRequestStatus('Jusour',$query->id);
-            }
-            if($role == 'entity-manager' || $role == 'entity-supervisor' || $role == 'entity-officer'){
-                $query->entity = $this->getRequestStatus('Entity',$query->id);
-            }
+        $req->map(function ($query){
+            $query->statuses = $this->getRequestStatus($query->id);
 
             return $query;
         });
@@ -188,12 +186,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             return $query;
         });
 
-        $req['application'] = $this->getRequestStatuses('Application',$reqId);
+        $req['status'] = $this->getRequestStatuses('Application',$reqId);
 
-        if($role !== 'applicant') {
-            $req['jusour'] = $this->getRequestStatuses('Jusour',$reqId);
-            $req['entity'] = $this->getRequestStatuses('Entity',$reqId);
-        }
+        // if($role !== 'applicant') {
+        //     $req['jusour'] = $this->getRequestStatuses('Jusour',$reqId);
+        //     $req['entity'] = $this->getRequestStatuses('Entity',$reqId);
+        // }
 
         foreach ($this->getAllAttributes($reqId) as $key => $value) {
             $req->{$key} = $value;
@@ -202,57 +200,76 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $req;
     }
 
-    public function getRequestStatus($stage, $reqId)
+    public function getRequestStatus($reqId)
     {
         $id = auth()->id();
-        $user = User::find($id);
-        $role = $user->roles->pluck('name')->first();
 
-        $requestStatus = $this->requestStatuses
-        ->with('stageStatus','user.roles','requestStage.stage')
-        ->whereHas('requestStage', function ($query) use ($reqId){
-            $query->where('reqId',$reqId);
-        })->whereHas('requestStage.stage', function ($query) use ($stage){
-            $query->where('name',$stage);
-        });
-        if($stage <> 'Application'){
-            $requestStatus = $requestStatus->where('userId',auth()->id());
+        $stages = $this->stages->all();
+
+        $data = [];
+        foreach ($stages as $stage) {
+            $requestStatus = $this->requestStatuses
+            ->with('stageStatus','user.roles','requestStage.stage')
+            ->whereHas('requestStage', function ($query) use ($reqId,$stage){
+                $query->where('reqId',$reqId);
+                $query->where('stageSlug',$stage->slug);
+            });
+            if($stage->name <> 'Application'){
+                $requestStatus = $requestStatus->where('userId',$id);
+            }
+            $requestStatus = $requestStatus->orderBy('created_at','DESC')->first();
+
+            $key = Str::lower($stage->name);
+            $data[$key] = [
+                'status'=>$requestStatus?->stageStatus?->name ?? 'Pending',
+                'stage'=>$requestStatus?->requestStage?->stage?->name ?? $stage->name,
+                'username'=>$requestStatus?->user?->name ?? null,
+                'role'=>$requestStatus?->user?->roles->pluck('name')->first() ?? null
+            ];
         }
-        $requestStatus = $requestStatus->orderBy('created_at','DESC')->first();
 
-        $data = [
-            'status'=>$requestStatus?->stageStatus?->name ?? 'Pending',
-            'stage'=>$requestStatus?->requestStage?->stage?->name ?? $stage,
-            'username'=>$requestStatus?->user?->name ?? $user->name,
-            'role'=>$requestStatus?->user?->roles->pluck('name')->first() ?? $role
-        ];
         return $data;
     }
 
     public function getRequestStatuses($stage, $reqId)
     {
-        $requestStatus = $this->requestStatuses
-        ->with('stageStatus','user.roles','requestStage.stage')
-        ->whereHas('requestStage', function ($query) use ($reqId){
-            $query->where('reqId',$reqId);
-        })
-        ->whereHas('requestStage.stage', function ($query) use ($stage){
-            $query->where('name',$stage);
-        })
-        ->orderBy('created_at','DESC')->get()->unique('userId');
+        $stages = $this->stages->all();
 
         $data = [];
-        foreach ($requestStatus as $key => $value) {
-            $data[] = [
-                'status'=>$value?->stageStatus?->name ?? 'Pending',
-                'stage'=>$value?->requestStage?->stage?->name ?? $stage,
-                'username'=>$value?->user?->name,
-                'role'=>$value?->user?->roles->pluck('name')->first(),
-                'commentEn'=>$value?->commentsEn,
-                'commentAr'=>$value?->commentsAr
-            ];
+        foreach ($stages as $stage) {
+            $requestStatus = $this->requestStatuses
+            ->with('stageStatus','user.roles','requestStage.stage')
+            ->whereHas('requestStage', function ($query) use ($reqId,$stage){
+                $query->where('reqId',$reqId);
+                $query->where('stageSlug',$stage->slug);
+            })
+            ->orderBy('created_at','DESC')->get()->unique('userId');
+
+            $key = Str::lower($stage->name);
+            if(isset($requestStatus) && count($requestStatus) > 0){
+                foreach ($requestStatus as $value) {
+                    $data[$key][] = [
+                        'status'=>$value?->stageStatus?->name ?? 'Pending',
+                        'stage'=>$value?->requestStage?->stage?->name ?? $stage->name,
+                        'username'=>$value?->user?->name,
+                        'role'=>$value?->user?->roles->pluck('name')->first(),
+                        'commentEn'=>$value?->commentsEn,
+                        'commentAr'=>$value?->commentsAr
+                    ];
+                }
+            }
+            else{
+                $data[$key][] = [
+                    'status'=>'Pending',
+                    'stage'=>$stage->name,
+                    'username'=>null,
+                    'role'=>null,
+                    'commentEn'=>null,
+                    'commentAr'=>null
+                ];
+            }
         }
-        return count($data) === 1 ? $data[0] : $data;
+        return $data;
     }
 
     public function getAllAttributes($reqId)

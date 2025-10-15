@@ -21,7 +21,8 @@ class RequestStatuses extends Model
 
     public function requestStage()
     {
-        return $this->belongsTo(RequestStages::class,'reqStageId','id');
+        return $this->belongsTo(RequestStages::class,'reqStageId','id')
+        ->orderBy('created_at','DESC');
     }
 
     public function user()
