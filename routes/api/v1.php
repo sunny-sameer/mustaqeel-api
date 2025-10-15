@@ -33,17 +33,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         // Requests
         Route::prefix('requests')->group(function () {
             Route::get('/', [RequestsController::class, 'getAllRequests']);
-            Route::post('/partial', [RequestsController::class, 'createRequestPartially']);
+            Route::get('{id}', [RequestsController::class, 'getRequest']);
+            Route::post('partial', [RequestsController::class, 'createRequestPartially']);
             Route::post('/', [RequestsController::class, 'createRequest']);
-            Route::post('/document', [RequestsController::class, 'createRequestDocument']);
-            Route::get('/{id}', [RequestsController::class, 'getRequest']);
-
-
-            Route::get('categories', [RequestsController::class,'getAllCategories']);
-            Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
-            Route::get('activities/{secSlug}', [RequestsController::class,'getAllActivities']);
-            Route::get('entities-sub-activities/{actSlug}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
+            Route::post('document', [RequestsController::class, 'createRequestDocument']);
         });
+
+        Route::get('nationalities', [RequestsController::class,'getAllNationalities']);
+        Route::get('categories', [RequestsController::class,'getAllCategories']);
+        Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
+        Route::get('activities/{secSlug}', [RequestsController::class,'getAllActivities']);
+        Route::get('entities-sub-activities/{actSlug}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
     });
 
     Route::group(['middleware' => ['role:admin|super-admin']], function () {

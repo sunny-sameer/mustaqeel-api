@@ -122,7 +122,7 @@ class UserService extends BaseService
 
     public function checkUserResolver()
     {
-        $this->user = User::with('profile')->find(auth()->id());
+        $this->user = User::with('profile','communication','passport','address','qatarInfo')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();

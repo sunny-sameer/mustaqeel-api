@@ -117,6 +117,11 @@ class RequestsController extends BaseController
         }
     }
 
+    public function getAllNationalities()
+    {
+        return $this->sendSuccessResponse($this->requests->getAllNationalities());
+    }
+
     public function getAllCategories()
     {
         return $this->sendSuccessResponse($this->requests->getAllCategories());

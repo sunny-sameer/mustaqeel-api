@@ -179,7 +179,7 @@ class RequestsService extends BaseService
             $requestAttributes = $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData,$request->id);
 
 
-            $stageStatus = $this->createOrUpdateStageStatus('Application',$request->id);
+            $status = $this->createOrUpdateStageStatus('Application',$request->id);
 
 
             DB::commit();
@@ -187,7 +187,7 @@ class RequestsService extends BaseService
 
             $message = $this->status == 'Draft' ? 'Request partially created successfully' : 'Request created successfully';
             return $this->success(
-                data: ['request'=>$request,'requestMeta'=>$requestMeta,'requestAttributes'=>$requestAttributes,'stageStatus'=>$stageStatus],
+                data: ['request'=>$request,'requestMeta'=>$requestMeta,'requestAttributes'=>$requestAttributes,'status'=>$status],
                 message: $message
             );
         } catch (BadRequestException $e) {
@@ -214,7 +214,7 @@ class RequestsService extends BaseService
         $requestStatus = $this->requestsInterface->createRequestStageStatus($data2,$requestStatusData,$this->status);
 
 
-        $stageStatus = $this->requestsInterface->getRequestStage($data);
+        $stageStatus = $this->requestsInterface->getRequestStatus($reqId);
         return $stageStatus;
     }
 
@@ -268,6 +268,11 @@ class RequestsService extends BaseService
             data: ['request' => $request],
             message: 'Request fetched successfully'
         );
+    }
+
+    public function getAllNationalities()
+    {
+        return $this->genericInterface->getAllNationalities();
     }
 
     public function getAllCategories()

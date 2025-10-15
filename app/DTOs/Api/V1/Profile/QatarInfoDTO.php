@@ -26,19 +26,19 @@ final readonly class QatarInfoDTO
         ];
 
         if($data['personalInfo']['applicantInfo']['areYouQatarResident']){
-            if($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent'){
-                $map['nameOfSponsor'] = $data['personalInfo']['employmentDetails']['nameOfSponsor'] ?? NULL;
-                $map['addressOfSponsor'] = $data['personalInfo']['employmentDetails']['addressOfSponsor'] ?? NULL;
-            }
+            // if($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent'){
+            //     $map['nameOfSponsor'] = $data['employmentAndEducation']['employmentDetails']['nameOfSponsor'] ?? NULL;
+            //     $map['addressOfSponsor'] = $data['employmentAndEducation']['employmentDetails']['addressOfSponsor'] ?? NULL;
+            // }
             $map['qid'] = $data['personalInfo']['applicantInfo']['qidNumber'] ?? NULL;
             $map['qatarAddress'] = $data['personalInfo']['contactInfo']['qatarAddress'] ?? NULL;
             $map['qidType'] = $data['personalInfo']['applicantInfo']['qidType'] ?? NULL;
-            if($data['personalInfo']['applicantInfo']['qidType'] == 'Work Residency'){
-                $map['workPermit'] = $data['personalInfo']['applicantInfo']['workPermit'] == 'yes' ? WorkPermitConstant::WORK_PERMIT_YES : ($data['personalInfo']['applicantInfo']['workPermit'] == 'no' ? WorkPermitConstant::WORK_PERMIT_NO : NULL);
-                if($data['personalInfo']['applicantInfo']['workPermit'] == 'yes'){
-                    $map['maintainWorkPermit'] = $data['personalInfo']['applicantInfo']['maintainWorkPermit'] == 'yes' ? WorkPermitConstant::MAINTAIN_WORK_PERMIT_YES : ($data['personalInfo']['applicantInfo']['maintainWorkPermit'] == 'no' ? WorkPermitConstant::MAINTAIN_WORK_PERMIT_NO : NULL);
-                }
-            }
+            // if($data['personalInfo']['applicantInfo']['qidType'] == 'Work Residency'){
+            //     $map['workPermit'] = $data['personalInfo']['applicantInfo']['workPermit'] == 'yes' ? WorkPermitConstant::WORK_PERMIT_YES : ($data['personalInfo']['applicantInfo']['workPermit'] == 'no' ? WorkPermitConstant::WORK_PERMIT_NO : NULL);
+            //     if($data['personalInfo']['applicantInfo']['workPermit'] == 'yes'){
+            //         $map['maintainWorkPermit'] = $data['personalInfo']['applicantInfo']['maintainWorkPermit'] == 'yes' ? WorkPermitConstant::MAINTAIN_WORK_PERMIT_YES : ($data['personalInfo']['applicantInfo']['maintainWorkPermit'] == 'no' ? WorkPermitConstant::MAINTAIN_WORK_PERMIT_NO : NULL);
+            //     }
+            // }
         }
 
         return new self(

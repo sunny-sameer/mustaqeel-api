@@ -13,6 +13,7 @@ use App\Models\Activities as Activity;
 use App\Models\SubActivities as SubActivity;
 use App\Models\Entities as Entity;
 use App\Models\Incubator;
+use App\Models\Nationality;
 use Illuminate\Support\Arr;
 
 class GenericRepository extends CoreRepository implements GenericInterface
@@ -273,6 +274,11 @@ class GenericRepository extends CoreRepository implements GenericInterface
 
 
     // ===== REQUEST METAS =====
+    public function getAllNationalities()
+    {
+        return Nationality::select('name','phonecode')->get();
+    }
+
     public function getAllCategories()
     {
         return Category::select('id','slug','name','nameAr')

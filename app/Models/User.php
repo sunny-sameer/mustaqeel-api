@@ -81,4 +81,24 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profiles::class,'userId','id');
     }
+
+    public function communication()
+    {
+        return $this->hasOne(Communications::class,'userId','id');
+    }
+
+    public function passport()
+    {
+        return $this->hasOne(PassportDetails::class,'userId','id');
+    }
+
+    public function address()
+    {
+        return $this->hasOne(Addresses::class,'userId','id');
+    }
+
+    public function qatarInfo()
+    {
+        return $this->hasOne(QatarInfo::class,'userId','id');
+    }
 }

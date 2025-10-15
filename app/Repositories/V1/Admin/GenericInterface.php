@@ -62,6 +62,7 @@ interface GenericInterface extends CoreInterface
     public function attachActivitiesToEntity($entityId, $activityIds);
 
     // ===== REQUEST METAS =====
+    public function getAllNationalities();
     public function getAllCategories();
     public function getAllSectorsSubCategoriesAndIncubators($catSlug);
     public function getAllActivities($secSlug);

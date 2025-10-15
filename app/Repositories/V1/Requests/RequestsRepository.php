@@ -186,12 +186,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             return $query;
         });
 
-        $req['status'] = $this->getRequestStatuses('Application',$reqId);
-
-        // if($role !== 'applicant') {
-        //     $req['jusour'] = $this->getRequestStatuses('Jusour',$reqId);
-        //     $req['entity'] = $this->getRequestStatuses('Entity',$reqId);
-        // }
+        $req['status'] = $this->getRequestStatuses($reqId);
 
         foreach ($this->getAllAttributes($reqId) as $key => $value) {
             $req->{$key} = $value;
@@ -231,7 +226,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $data;
     }
 
-    public function getRequestStatuses($stage, $reqId)
+    public function getRequestStatuses($reqId)
     {
         $stages = $this->stages->all();
 

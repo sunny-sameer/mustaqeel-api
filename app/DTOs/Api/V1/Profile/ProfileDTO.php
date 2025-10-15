@@ -13,7 +13,7 @@ final readonly class ProfileDTO
 {
     public function __construct(
         public int $userId,
-        public ?string $occupation = null,
+        // public ?string $occupation = null,
         public string $gender,
         public string $nationality,
         public string $countryOfResidence,
@@ -30,7 +30,7 @@ final readonly class ProfileDTO
     {
         return new self(
             userId: auth()->id(),
-            occupation: ($data['personalInfo']['applicantInfo']['areYouQatarResident'] && ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent')) ? ($data['personalInfo']['employmentDetails']['profession'] ?? NULL) : NULL,
+            // occupation: ($data['personalInfo']['applicantInfo']['areYouQatarResident'] && ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent')) ? ($data['employmentAndEducation']['employmentDetails']['profession'] ?? NULL) : NULL,
             gender: $data['personalInfo']['applicantInfo']['gender'],
             nationality: $data['personalInfo']['applicantInfo']['nationality'],
             countryOfResidence: $data['personalInfo']['applicantInfo']['currentCountry'],
@@ -52,7 +52,7 @@ final readonly class ProfileDTO
     {
         return [
             'userId' => $this->userId,
-            'occupation' => $this->occupation,
+            // 'occupation' => $this->occupation,
             'gender' => $this->gender,
             'nationality' => $this->nationality,
             'countryOfResidence' => $this->countryOfResidence,

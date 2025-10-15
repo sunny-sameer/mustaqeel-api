@@ -29,15 +29,19 @@ class RequestsRequestPartial extends FormRequest
             'personalInfo' => 'nullable|array',
             'personalInfo.identificationData' => 'nullable|array',
             'personalInfo.applicantInfo' => 'nullable|array',
-            'personalInfo.employmentDetails' => 'nullable|array',
             'personalInfo.contactInfo' => 'nullable|array',
             'personalInfo.passportDetails' => 'nullable|array',
-            'previousJobs' => 'nullable|array',
-            'educations' => 'nullable|array',
-            'residences' => 'nullable|array',
-            'otherNationalities' => 'nullable|array',
-            'countriesVisitedLast10Years' => 'nullable|array',
-            'familyMembers' => 'nullable|array',
+
+            'employmentAndEducation' => 'nullable|array',
+            'employmentAndEducation.employmentDetails' => 'nullable|array',
+            'employmentAndEducation.previousJobs' => 'nullable|array',
+            'employmentAndEducation.educations' => 'nullable|array',
+
+            'ResidencyAndTravelAndFamily' => 'nullable|array',
+            'ResidencyAndTravelAndFamily.residences' => 'nullable|array',
+            'ResidencyAndTravelAndFamily.otherNationalities' => 'nullable|array',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years' => 'nullable|array',
+            'ResidencyAndTravelAndFamily.familyMembers' => 'nullable|array',
 
 
             'personalInfo.identificationData.category' => 'nullable|exists:categories,slug',
@@ -51,11 +55,11 @@ class RequestsRequestPartial extends FormRequest
             'personalInfo.applicantInfo.nameEn' => 'nullable|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/',
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
 
-            'personalInfo.employmentDetails.companyName' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
-            'personalInfo.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/',
-            'personalInfo.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/',
+            'employmentAndEducation.employmentDetails.companyName' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/',
+            'employmentAndEducation.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/',
 
-            'personalInfo.employmentDetails.profession' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.profession' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'personalInfo.applicantInfo.gender' => 'nullable|in:Female,Male',
             'personalInfo.applicantInfo.dob' => ['nullable', 'date', 'before_or_equal:' . now()->subYears(18)->toDateString()],
             'personalInfo.applicantInfo.religion' => 'nullable|in:Islam,Hinduism,Christian,Other',
@@ -83,48 +87,48 @@ class RequestsRequestPartial extends FormRequest
             'personalInfo.applicantInfo.langProficiencyEn' => 'nullable|in:fluent,intermediate,basic,no proficiency',
 
             'personalInfo.applicantInfo.areYouQatarResident'=>'nullable|boolean',
-            'personalInfo.employmentDetails.nameOfSponsor' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'personalInfo.employmentDetails.addressOfSponsor' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.nameOfSponsor' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.addressOfSponsor' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'personalInfo.applicantInfo.qidNumber'=>'nullable|integer|digits:11',
             'personalInfo.contactInfo.qatarAddress' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'personalInfo.applicantInfo.qidType'=>'nullable|in:Work Residency,Family Dependent,Real Estate Owner,Investor,Entrepreneur,Talent,Permanent',
             'personalInfo.applicantInfo.workPermit'=>'nullable|in:yes,no',
             'personalInfo.applicantInfo.maintainWorkPermit'=>'nullable|in:yes,no',
 
-            'previousJobs.*.entity' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'previousJobs.*.title' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'previousJobs.*.jobCountry' => 'nullable|exists:nationalities,name',
-            'previousJobs.*.jobDuration' => 'nullable|in:Less than 1 year,1 year,2 years,3 years,4 years,5 years,6 years,7 years,8 years,9 years,10 years,11 years,12 years,13 years,14 years,15 years,15+ years',
-            'previousJobs.*.jobStatus' => 'nullable|in:Current,Previous',
+            'employmentAndEducation.previousJobs.*.entity' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.previousJobs.*.title' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.previousJobs.*.jobCountry' => 'nullable|exists:nationalities,name',
+            'employmentAndEducation.previousJobs.*.jobDuration' => 'nullable|in:Less than 1 year,1 year,2 years,3 years,4 years,5 years,6 years,7 years,8 years,9 years,10 years,11 years,12 years,13 years,14 years,15 years,15+ years',
+            'employmentAndEducation.previousJobs.*.jobStatus' => 'nullable|in:Current,Previous',
 
-            'educations.*.qualification' => 'nullable|in:Unknown,No qualification,Primary,Prep / secondary,Diploma,Academic,Bachelor,Master,Doctor,PhD,Other',
-            'educations.*.otherQualification' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'educations.*.university' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'educations.*.eduPeriod' => 'nullable|in:No qualification,1 year,2 years,3 years,4 years,5 years,6 years,7 years,8 years,9 years,10 years',
-            'educations.*.eduCountry' => 'nullable|exists:nationalities,name',
-            'educations.*.specialization' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.educations.*.qualification' => 'nullable|in:Unknown,No qualification,Primary,Prep / secondary,Diploma,Academic,Bachelor,Master,Doctor,PhD,Other',
+            'employmentAndEducation.educations.*.otherQualification' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.educations.*.university' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.educations.*.eduPeriod' => 'nullable|in:No qualification,1 year,2 years,3 years,4 years,5 years,6 years,7 years,8 years,9 years,10 years',
+            'employmentAndEducation.educations.*.eduCountry' => 'nullable|exists:nationalities,name',
+            'employmentAndEducation.educations.*.specialization' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
 
-            'residences.*.country' => 'nullable|exists:nationalities,name',
-            'residences.*.type' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'residences.*.issueDate' => 'nullable|date|before_or_equal:today',
-            'residences.*.expiryDate' => 'nullable|date|after_or_equal:today',
+            'ResidencyAndTravelAndFamily.residences.*.country' => 'nullable|exists:nationalities,name',
+            'ResidencyAndTravelAndFamily.residences.*.type' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'ResidencyAndTravelAndFamily.residences.*.issueDate' => 'nullable|date|before_or_equal:today',
+            'ResidencyAndTravelAndFamily.residences.*.expiryDate' => 'nullable|date|after_or_equal:today',
 
-            'otherNationalities.*.country' => 'nullable|exists:nationalities,name',
-            'otherNationalities.*.passportNumber' => 'nullable|string|min:6|max:20|alpha_num',
-            'otherNationalities.*.issueDate' => 'nullable|date',
-            'otherNationalities.*.expiryDate' => 'nullable|date',
-            'otherNationalities.*.placeOfIssue' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
-            'otherNationalities.*.countryStatus' => 'nullable|in:Active,Previous',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.country' => 'nullable|exists:nationalities,name',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.passportNumber' => 'nullable|string|min:6|max:20|alpha_num',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.issueDate' => 'nullable|date',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.expiryDate' => 'nullable|date',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.placeOfIssue' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.countryStatus' => 'nullable|in:Active,Previous',
 
-            'countriesVisitedLast10Years.*.country' => 'nullable|exists:nationalities,name',
-            'countriesVisitedLast10Years.*.period' => 'nullable|in:Less than 1 year,1 year,2 years,3 years,4 years,5 years,6 years,7 years,8 years,9 years,10 years,10+ years',
-            'countriesVisitedLast10Years.*.visitingReason' => 'nullable|in:Tourism,Study,Work,Residence,Other',
-            'countriesVisitedLast10Years.*.otherReasonOfVisit' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.country' => 'nullable|exists:nationalities,name',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.period' => 'nullable|in:Less than 1 year,1 year,2 years,3 years,4 years,5 years,6 years,7 years,8 years,9 years,10 years,10+ years',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.visitingReason' => 'nullable|in:Tourism,Study,Work,Residence,Other',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.otherReasonOfVisit' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
 
-            'familyMembers.*.name' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
-            'familyMembers.*.relation' => 'nullable|in:Husband,Wife,Son,Daughter',
-            'familyMembers.*.dob' => 'nullable|date|before_or_equal:today',
-            'familyMembers.*.profession' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'ResidencyAndTravelAndFamily.familyMembers.*.name' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
+            'ResidencyAndTravelAndFamily.familyMembers.*.relation' => 'nullable|in:Husband,Wife,Son,Daughter',
+            'ResidencyAndTravelAndFamily.familyMembers.*.dob' => 'nullable|date|before_or_equal:today',
+            'ResidencyAndTravelAndFamily.familyMembers.*.profession' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
         ];
     }
 
@@ -138,23 +142,27 @@ class RequestsRequestPartial extends FormRequest
 
             'personalInfo.applicantInfo.array' => 'The applicant information must be an array.',
 
-            'personalInfo.employmentDetails.array' => 'The employment details must be an array.',
-
             'personalInfo.contactInfo.array' => 'The contact information must be an array.',
 
             'personalInfo.passportDetails.array' => 'The passport details must be an array.',
 
-            'personalInfo.previousJobs.array' => 'The previous jobs must be an array.',
+            'employmentAndEducation.array' => 'The employment and education must be an array.',
 
-            'personalInfo.educations.array' => 'The education details must be an array.',
+            'employmentAndEducation.employmentDetails.array' => 'The employment details must be an array.',
 
-            'personalInfo.residences.array' => 'The residences must be an array.',
+            'employmentAndEducation.previousJobs.array' => 'The previous jobs must be an array.',
 
-            'personalInfo.otherNationalities.array' => 'The other nationalities must be an array.',
+            'employmentAndEducation.educations.array' => 'The education details must be an array.',
 
-            'personalInfo.countriesVisitedLast10Years.array' => 'The countries visited in the last 10 years must be an array.',
+            'ResidencyAndTravelAndFamily.array' => 'The residency and travel and family must be an array.',
 
-            'personalInfo.familyMembers.array' => 'The family member details must be an array.',
+            'ResidencyAndTravelAndFamily.residences.array' => 'The residences must be an array.',
+
+            'ResidencyAndTravelAndFamily.otherNationalities.array' => 'The other nationalities must be an array.',
+
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.array' => 'The countries visited in the last 10 years must be an array.',
+
+            'ResidencyAndTravelAndFamily.familyMembers.array' => 'The family member details must be an array.',
 
             // Identification Data
             'personalInfo.identificationData.category.exists' => 'The selected category is invalid.',
@@ -206,28 +214,28 @@ class RequestsRequestPartial extends FormRequest
             'personalInfo.applicantInfo.maintainWorkPermit.in' => 'The maintain work permit must be either `In case where my special work permit is rejected, I want to proceed with my Mustaqel residency and leave my current employer.` or `In case where my special work permit is rejected, I want to maintain my current work-based residency permit and abort my Mustaqel application.`.',
 
             // Employment Details
-            'personalInfo.employmentDetails.companyName.min' => 'The company name must be at least 3 characters.',
-            'personalInfo.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
-            'personalInfo.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.companyName.min' => 'The company name must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
+            'employmentAndEducation.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
 
-            'personalInfo.employmentDetails.shareOfTheCapital.min' => 'The share of the capital must be at least 1 character.',
-            'personalInfo.employmentDetails.shareOfTheCapital.max' => 'The share of the capital may not exceed 20 characters.',
-            'personalInfo.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers and commas.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.min' => 'The share of the capital must be at least 1 character.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.max' => 'The share of the capital may not exceed 20 characters.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers and commas.',
 
-            'personalInfo.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
-            'personalInfo.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers and periods.',
+            'employmentAndEducation.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers and periods.',
 
-            'personalInfo.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',
-            'personalInfo.employmentDetails.profession.max' => 'The profession may not exceed 50 characters.',
-            'personalInfo.employmentDetails.profession.regex' => 'The profession may only contain Arabic, English letters, numbers, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.profession.max' => 'The profession may not exceed 50 characters.',
+            'employmentAndEducation.employmentDetails.profession.regex' => 'The profession may only contain Arabic, English letters, numbers, commas, and full stop.',
 
-            'personalInfo.employmentDetails.nameOfSponsor.min' => 'The sponsor name must be at least 3 characters.',
-            'personalInfo.employmentDetails.nameOfSponsor.max' => 'The sponsor name may not exceed 100 characters.',
-            'personalInfo.employmentDetails.nameOfSponsor.regex' => 'The sponsor name may only contain Arabic, English letters, numbers, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.min' => 'The sponsor name must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.max' => 'The sponsor name may not exceed 100 characters.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.regex' => 'The sponsor name may only contain Arabic, English letters, numbers, commas, and full stop.',
 
-            'personalInfo.employmentDetails.addressOfSponsor.min' => 'The sponsor address must be at least 3 characters.',
-            'personalInfo.employmentDetails.addressOfSponsor.max' => 'The sponsor address may not exceed 255 characters.',
-            'personalInfo.employmentDetails.addressOfSponsor.regex' => 'The sponsor address may only contain Arabic, English letters, numbers, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.min' => 'The sponsor address must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.max' => 'The sponsor address may not exceed 255 characters.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.regex' => 'The sponsor address may only contain Arabic, English letters, numbers, commas, and full stop.',
 
             // Passport Details
             'personalInfo.passportDetails.number.min' => 'The passport number must be at least 6 characters.',
@@ -278,103 +286,103 @@ class RequestsRequestPartial extends FormRequest
             'personalInfo.contactInfo.qatarAddress.regex' => 'The qatar address may only contain Arabic, English letters, numbers, commas, and full stop.',
 
             // Previous Jobs
-            'previousJobs.*.entity.string' => 'The previous job entity field must be a string.',
-            'previousJobs.*.entity.min' => 'The previous job entity contains atleast 3 characters.',
-            'previousJobs.*.entity.max' => 'The previous job entity may not exceed 100 characters.',
-            'previousJobs.*.entity.regex' => 'The previous job entity may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'employmentAndEducation.previousJobs.*.entity.string' => 'The previous job entity field must be a string.',
+            'employmentAndEducation.previousJobs.*.entity.min' => 'The previous job entity contains atleast 3 characters.',
+            'employmentAndEducation.previousJobs.*.entity.max' => 'The previous job entity may not exceed 100 characters.',
+            'employmentAndEducation.previousJobs.*.entity.regex' => 'The previous job entity may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
-            'previousJobs.*.title.string' => 'The previous job title field must be a string.',
-            'previousJobs.*.title.min' => 'The previous job title contains atleast 3 characters.',
-            'previousJobs.*.title.max' => 'The previous job title may not exceed 100 characters.',
-            'previousJobs.*.title.regex' => 'The previous job title may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'employmentAndEducation.previousJobs.*.title.string' => 'The previous job title field must be a string.',
+            'employmentAndEducation.previousJobs.*.title.min' => 'The previous job title contains atleast 3 characters.',
+            'employmentAndEducation.previousJobs.*.title.max' => 'The previous job title may not exceed 100 characters.',
+            'employmentAndEducation.previousJobs.*.title.regex' => 'The previous job title may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
-            'previousJobs.*.jobCountry.exists' => 'The selected previous job country is invalid.',
+            'employmentAndEducation.previousJobs.*.jobCountry.exists' => 'The selected previous job country is invalid.',
 
-            'previousJobs.*.jobDuration.in' => 'The previous job duration must be one of the following: Less than 1 year, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years, 11 years, 12 years, 13 years, 14 years, 15 years, 15+ years.',
+            'employmentAndEducation.previousJobs.*.jobDuration.in' => 'The previous job duration must be one of the following: Less than 1 year, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years, 11 years, 12 years, 13 years, 14 years, 15 years, 15+ years.',
 
-            'previousJobs.*.jobStatus.in' => 'The previous job status must be either Current or Previous.',
+            'employmentAndEducation.previousJobs.*.jobStatus.in' => 'The previous job status must be either Current or Previous.',
 
             // Certificates And Academic Qualifications
-            'educations.*.qualification.in' => 'The education qualification must be one of the following: Unknown, No qualification, Primary, Prep / secondary, Diploma, Academic, Bachelor, Master, Doctor, PhD, Other.',
+            'employmentAndEducation.educations.*.qualification.in' => 'The education qualification must be one of the following: Unknown, No qualification, Primary, Prep / secondary, Diploma, Academic, Bachelor, Master, Doctor, PhD, Other.',
 
-            'educations.*.otherQualification.string' => 'The education other qualification field must be a string.',
-            'educations.*.otherQualification.min' => 'The education other qualification contains atleast 3 characters.',
-            'educations.*.otherQualification.max' => 'The education other qualification may not exceed 255 characters.',
-            'educations.*.otherQualification.regex' => 'The education other qualification may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'employmentAndEducation.educations.*.otherQualification.string' => 'The education other qualification field must be a string.',
+            'employmentAndEducation.educations.*.otherQualification.min' => 'The education other qualification contains atleast 3 characters.',
+            'employmentAndEducation.educations.*.otherQualification.max' => 'The education other qualification may not exceed 255 characters.',
+            'employmentAndEducation.educations.*.otherQualification.regex' => 'The education other qualification may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
-            'educations.*.university.string' => 'The education university field must be a string.',
-            'educations.*.university.min' => 'The education university contains atleast 3 characters.',
-            'educations.*.university.max' => 'The education university may not exceed 255 characters.',
-            'educations.*.university.regex' => 'The education university may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'employmentAndEducation.educations.*.university.string' => 'The education university field must be a string.',
+            'employmentAndEducation.educations.*.university.min' => 'The education university contains atleast 3 characters.',
+            'employmentAndEducation.educations.*.university.max' => 'The education university may not exceed 255 characters.',
+            'employmentAndEducation.educations.*.university.regex' => 'The education university may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
-            'educations.*.eduPeriod.in' => 'The education period must be one of the following: No qualification, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years.',
+            'employmentAndEducation.educations.*.eduPeriod.in' => 'The education period must be one of the following: No qualification, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years.',
 
-            'educations.*.eduCountry.exists' => 'The selected education country is invalid.',
+            'employmentAndEducation.educations.*.eduCountry.exists' => 'The selected education country is invalid.',
 
-            'educations.*.specialization.string' => 'The education specialization field must be a string.',
-            'educations.*.specialization.min' => 'The education specialization contains atleast 3 characters.',
-            'educations.*.specialization.max' => 'The education specialization may not exceed 255 characters.',
-            'educations.*.specialization.regex' => 'The education specialization may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'employmentAndEducation.educations.*.specialization.string' => 'The education specialization field must be a string.',
+            'employmentAndEducation.educations.*.specialization.min' => 'The education specialization contains atleast 3 characters.',
+            'employmentAndEducation.educations.*.specialization.max' => 'The education specialization may not exceed 255 characters.',
+            'employmentAndEducation.educations.*.specialization.regex' => 'The education specialization may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
             // Current Residence In Other Countries
-            'residences.*.country.exists' => 'The residence country is invalid.',
+            'ResidencyAndTravelAndFamily.residences.*.country.exists' => 'The residence country is invalid.',
 
-            'residences.*.type.string' => 'The residence type field must be a string.',
-            'residences.*.type.min' => 'The residence type field must contain at least 3 characters.',
-            'residences.*.type.max' => 'The residence type field may not exceed 50 characters.',
-            'residences.*.type.regex' => 'The residence type field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'ResidencyAndTravelAndFamily.residences.*.type.string' => 'The residence type field must be a string.',
+            'ResidencyAndTravelAndFamily.residences.*.type.min' => 'The residence type field must contain at least 3 characters.',
+            'ResidencyAndTravelAndFamily.residences.*.type.max' => 'The residence type field may not exceed 50 characters.',
+            'ResidencyAndTravelAndFamily.residences.*.type.regex' => 'The residence type field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
-            'residences.*.issueDate.date' => 'The residence issue date field must be a valid date.',
-            'residences.*.issueDate.before_or_equal' => 'The residence issue date field must be today or before today.',
+            'ResidencyAndTravelAndFamily.residences.*.issueDate.date' => 'The residence issue date field must be a valid date.',
+            'ResidencyAndTravelAndFamily.residences.*.issueDate.before_or_equal' => 'The residence issue date field must be today or before today.',
 
-            'residences.*.expiryDate.date' => 'The residence expiry date field must be a valid date.',
-            'residences.*.expiryDate.after_or_equal' => 'The residence expiry date field must be today or after today.',
+            'ResidencyAndTravelAndFamily.residences.*.expiryDate.date' => 'The residence expiry date field must be a valid date.',
+            'ResidencyAndTravelAndFamily.residences.*.expiryDate.after_or_equal' => 'The residence expiry date field must be today or after today.',
 
             // Active Or Previous Nationalities
-            'otherNationalities.*.country.exists' => 'The other nationality country is invalid.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.country.exists' => 'The other nationality country is invalid.',
 
-            'otherNationalities.*.passportNumber.string' => 'The other nationality passport number field must be a string.',
-            'otherNationalities.*.passportNumber.min' => 'The other nationality passport number field must contain at least 6 characters.',
-            'otherNationalities.*.passportNumber.max' => 'The other nationality passport number field may not exceed 20 characters.',
-            'otherNationalities.*.passportNumber.alpha_num' => 'The other nationality passport number field may only contain letters and numbers.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.passportNumber.string' => 'The other nationality passport number field must be a string.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.passportNumber.min' => 'The other nationality passport number field must contain at least 6 characters.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.passportNumber.max' => 'The other nationality passport number field may not exceed 20 characters.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.passportNumber.alpha_num' => 'The other nationality passport number field may only contain letters and numbers.',
 
-            'otherNationalities.*.issueDate.date' => 'The other nationality issue date field must be a valid date.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.issueDate.date' => 'The other nationality issue date field must be a valid date.',
 
-            'otherNationalities.*.expiryDate.date' => 'The other nationality expiry date field must be a valid date.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.expiryDate.date' => 'The other nationality expiry date field must be a valid date.',
 
-            'otherNationalities.*.placeOfIssue.string' => 'The other nationality place of issue field must be a string.',
-            'otherNationalities.*.placeOfIssue.min' => 'The other nationality place of issue field must contain at least 3 characters.',
-            'otherNationalities.*.placeOfIssue.max' => 'The other nationality place of issue field may not exceed 100 characters.',
-            'otherNationalities.*.placeOfIssue.regex' => 'The other nationality place of issue field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.placeOfIssue.string' => 'The other nationality place of issue field must be a string.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.placeOfIssue.min' => 'The other nationality place of issue field must contain at least 3 characters.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.placeOfIssue.max' => 'The other nationality place of issue field may not exceed 100 characters.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.placeOfIssue.regex' => 'The other nationality place of issue field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
-            'otherNationalities.*.countryStatus.in' => 'The other nationality country status field must be either Active or Previous.',
+            'ResidencyAndTravelAndFamily.otherNationalities.*.countryStatus.in' => 'The other nationality country status field must be either Active or Previous.',
 
             // Country Visited In Last Ten Years
-            'countriesVisitedLast10Years.*.country.exists' => 'The country visited in last 10 years country is invalid.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.country.exists' => 'The country visited in last 10 years country is invalid.',
 
-            'countriesVisitedLast10Years.*.period.in' => 'The country visited in last 10 years period field must be one of the following: Less than 1 year, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years, or 10+ years.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.period.in' => 'The country visited in last 10 years period field must be one of the following: Less than 1 year, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years, or 10+ years.',
 
-            'countriesVisitedLast10Years.*.visitingReason.in' => 'The country visited in last 10 years visiting reason field must be one of the following: Tourism, Study, Work, Residence, or Other.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.visitingReason.in' => 'The country visited in last 10 years visiting reason field must be one of the following: Tourism, Study, Work, Residence, or Other.',
 
-            'countriesVisitedLast10Years.*.otherReasonOfVisit.string' => 'The country visited in last 10 years other reason of visit field must be a string.',
-            'countriesVisitedLast10Years.*.otherReasonOfVisit.min' => 'The country visited in last 10 years other reason of visit field must contain at least 3 characters.',
-            'countriesVisitedLast10Years.*.otherReasonOfVisit.max' => 'The country visited in last 10 years other reason of visit field may not exceed 255 characters.',
-            'countriesVisitedLast10Years.*.otherReasonOfVisit.regex' => 'The country visited in last 10 years other reason of visit field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.otherReasonOfVisit.string' => 'The country visited in last 10 years other reason of visit field must be a string.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.otherReasonOfVisit.min' => 'The country visited in last 10 years other reason of visit field must contain at least 3 characters.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.otherReasonOfVisit.max' => 'The country visited in last 10 years other reason of visit field may not exceed 255 characters.',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.*.otherReasonOfVisit.regex' => 'The country visited in last 10 years other reason of visit field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
             // Family Members
-            'familyMembers.*.name.string' => 'The family member name field must be a string.',
-            'familyMembers.*.name.min' => 'The family member name field must contain at least 3 characters.',
-            'familyMembers.*.name.max' => 'The family member name field may not exceed 50 characters.',
-            'familyMembers.*.name.regex' => 'The family member name field may only contain Arabic, English letters, dots, commas and spaces.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.name.string' => 'The family member name field must be a string.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.name.min' => 'The family member name field must contain at least 3 characters.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.name.max' => 'The family member name field may not exceed 50 characters.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.name.regex' => 'The family member name field may only contain Arabic, English letters, dots, commas and spaces.',
 
-            'familyMembers.*.relation.in' => 'The family member relation field must be one of the following: Husband, Wife, Son, or Daughter.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.relation.in' => 'The family member relation field must be one of the following: Husband, Wife, Son, or Daughter.',
 
-            'familyMembers.*.dob.date' => 'The family member date of birth field must be a valid date.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.dob.date' => 'The family member date of birth field must be a valid date.',
 
-            'familyMembers.*.profession.string' => 'The family member profession field must be a string.',
-            'familyMembers.*.profession.min' => 'The family member profession field must contain at least 3 characters.',
-            'familyMembers.*.profession.max' => 'The family member profession field may not exceed 255 characters.',
-            'familyMembers.*.profession.regex' => 'The family member profession field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.profession.string' => 'The family member profession field must be a string.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.profession.min' => 'The family member profession field must contain at least 3 characters.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.profession.max' => 'The family member profession field may not exceed 255 characters.',
+            'ResidencyAndTravelAndFamily.familyMembers.*.profession.regex' => 'The family member profession field may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
             // Documents
             'passportCopy.mimes' => 'The passport copy must be a PNG, JPG, or JPEG file.',

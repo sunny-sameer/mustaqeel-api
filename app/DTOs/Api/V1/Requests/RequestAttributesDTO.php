@@ -22,7 +22,7 @@ final readonly class RequestAttributesDTO
     {
         $attributes = [];
 
-        $map = Arr::except($data,['personalInfo.identificationData']);
+        $map = Arr::except($data,['personalInfo.identificationData','documents']);
 
 
         foreach ($map as $key => $value) {
