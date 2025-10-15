@@ -182,12 +182,13 @@ class RequestsService extends BaseService
             $status = $this->createOrUpdateStageStatus('Application',$request->id);
 
 
+            $response = $this->requestsInterface->getRequest($request->id);
             DB::commit();
 
 
             $message = $this->status == 'Draft' ? 'Request partially created successfully' : 'Request created successfully';
             return $this->success(
-                data: ['request'=>$request,'requestMeta'=>$requestMeta,'requestAttributes'=>$requestAttributes,'status'=>$status],
+                data: ['request'=>$response],
                 message: $message
             );
         } catch (BadRequestException $e) {
