@@ -37,10 +37,10 @@ return [
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', 'smtp.mandrillapp.com'),
+            'host' => env('MAIL_HOST', 'smtp.office365.com'),
             'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME', 'Mustaqel'),
+            'encryption' => env('MAIL_ENCRYPTION', 'STARTTLS'),
+            'username' => env('MAIL_USERNAME', 'no-reply@jusour.qa'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
             'local_domain' => env("MAIL_DOMAIN", 'jusour.qa'),
