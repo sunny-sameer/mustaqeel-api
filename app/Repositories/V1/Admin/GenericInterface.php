@@ -67,4 +67,6 @@ interface GenericInterface extends CoreInterface
     public function getAllSectorsSubCategoriesAndIncubators($catSlug);
     public function getAllActivities($secSlug);
     public function getAllEntitiesAndSubActivities($actSlug);
+
+    public function getAllActivitiesWithEntity($entSlug);
 }

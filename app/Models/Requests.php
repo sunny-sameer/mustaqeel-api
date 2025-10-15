@@ -22,7 +22,7 @@ class Requests extends Model
         return $this->hasMany(RequestAttribute::class,'reqId','id');
     }
 
-    public function stage()
+    public function requestStage()
     {
         return $this->hasMany(RequestStages::class,'reqId','id');
     }

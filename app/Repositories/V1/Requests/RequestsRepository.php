@@ -280,4 +280,31 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
         return $data;
     }
+
+    public function canSubmitRequest($activitiesIds,$entitySlug)
+    {
+        $isExist = $this->model
+        ->where(function ($q) use ($activitiesIds,$entitySlug){
+            $q->where(function ($q2) use ($activitiesIds,$entitySlug){
+                $q2->whereHas('metas',function ($query) use ($entitySlug){
+                    $query->where('entitySlug',$entitySlug);
+                })
+                ->whereHas('metas.activity',function ($query) use ($activitiesIds){
+                    $query->whereIn('id',$activitiesIds);
+                })
+                ->whereHas('requestStage.stage',function ($query){
+                    $query->where('name','Application');
+                })
+                ->whereHas('requestStage.requestStatuses.stageStatus',function ($query){
+                    $query->where('name','Rejected');
+                });
+            })
+            ->orWheredoesntHave('metas',function ($query) use ($entitySlug){
+                $query->where('entitySlug',$entitySlug);
+            });
+        })
+        ->where('userId',auth()->id())->exists();
+
+        return $isExist;
+    }
 }

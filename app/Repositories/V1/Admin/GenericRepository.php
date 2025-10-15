@@ -357,4 +357,17 @@ class GenericRepository extends CoreRepository implements GenericInterface
 
         return false;
     }
+
+    public function getAllActivitiesWithEntity($entSlug)
+    {
+        $activityIds = Entity::with('activities')
+        ->where('slug',$entSlug)
+        ->with('activities:id')
+        ->first()
+        ?->activities
+        ->pluck('id')
+        ->toArray();
+
+        return $activityIds;
+    }
 }

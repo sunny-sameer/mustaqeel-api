@@ -45,6 +45,19 @@ class RequestsController extends BaseController
         }
     }
 
+    public function getRequest($id)
+    {
+        try {
+            return $this->requests
+                ->userExists()
+                ->getRequest($id);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
     public function createRequestPartially(RequestsRequestPartial $request)
     {
         try {
@@ -104,12 +117,12 @@ class RequestsController extends BaseController
         }
     }
 
-    public function getRequest($id)
+    public function canSubmitApplication($entitySlug)
     {
         try {
             return $this->requests
                 ->userExists()
-                ->getRequest($id);
+                ->canSubmitResponse($entitySlug);
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {

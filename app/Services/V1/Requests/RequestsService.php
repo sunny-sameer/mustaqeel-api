@@ -154,6 +154,13 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function canSubmitResponse($entitySlug)
+    {
+        $activitiesIds = $this->genericInterface->getAllActivitiesWithEntity($entitySlug);
+        $req = $this->requestsInterface->canSubmitRequest($activitiesIds,$entitySlug);
+        return response()->json(['canSubmit'=>$req],200);
+    }
+
     public function createRequest()
     {
         DB::beginTransaction();
