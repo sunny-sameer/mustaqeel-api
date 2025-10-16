@@ -13,6 +13,11 @@ class Stages extends Model
     protected $table = 'stages';
     protected $guarded = [];
 
+    public function stageStatuses()
+    {
+        return $this->hasMany(StagesStatuses::class,'stageId','id');
+    }
+
     public static function boot()
     {
         parent::boot();

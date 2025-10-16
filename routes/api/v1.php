@@ -38,6 +38,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('/', [RequestsController::class, 'createRequest']);
             Route::post('document', [RequestsController::class, 'createRequestDocument']);
             Route::post('can-submit/{entitySlug}', [RequestsController::class, 'canSubmitApplication']);
+
+            Route::put('{id}/update-status', [RequestsController::class, 'updateStatus']);
         });
 
         Route::prefix('classifications')->group(function () {

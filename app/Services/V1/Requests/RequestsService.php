@@ -8,8 +8,8 @@ use App\Models\User;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\RequestsRequest;
-use App\Http\Requests\Api\V1\RequestsRequestDocument;
-use App\Http\Requests\Api\V1\RequestsRequestPartial;
+use App\Http\Requests\Api\V1\RequestsDocumentRequest;
+use App\Http\Requests\Api\V1\RequestsPartialRequest;
 
 
 use App\Services\V1\BaseService;
@@ -87,14 +87,14 @@ class RequestsService extends BaseService
         return $this;
     }
 
-    public function setInputsPartial(RequestsRequestPartial $request, $status): self
+    public function setInputsPartial(RequestsPartialRequest $request, $status): self
     {
         $this->requests = $request;
         $this->status = $status;
         return $this;
     }
 
-    public function setInputsDocument(RequestsRequestDocument $request)
+    public function setInputsDocument(RequestsDocumentRequest $request)
     {
         $this->requests = $request;
         $this->status = 'Draft';

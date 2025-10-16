@@ -5,7 +5,7 @@ namespace App\Http\Requests\Api\V1;
 use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RequestsRequestPartial extends FormRequest
+class RequestsPartialRequest extends FormRequest
 {
     use FailedValidationTrait;
 

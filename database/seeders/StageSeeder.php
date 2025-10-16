@@ -62,7 +62,7 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>1,
-                'name'=>'Accepted',
+                'name'=>'Approved',
                 'nameAr'=>'قبلت'
             ],
             [
@@ -127,7 +127,7 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>3,
-                'name'=>'Accepted',
+                'name'=>'Approved',
                 'nameAr'=>'قبلت'
             ],
             [

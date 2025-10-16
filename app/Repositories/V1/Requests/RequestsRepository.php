@@ -45,6 +45,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $user = User::find($id);
         $role = $user->roles->pluck('name')->first();
 
+        $search = $request->search ?? NULL;
+        $perPage = $request->perPage ?? 10;
 
         $req = $this->model->with([
             'metas.category:name,nameAr,slug',
@@ -56,6 +58,29 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             'metas.incubator:name,nameAr,slug',
         ]);
 
+        if(!empty($search)){
+            $req = $req->where(function ($query) use ($search){
+                $query->where('nameEn','LIKE','%'.$search.'%')
+                ->orWhere('nameAr','LIKE','%'.$search.'%')
+                ->orWhere('reqReferenceNumber','LIKE','%'.$search.'%')
+                ->orWhereHas('metas.category', function ($category) use ($search){
+                    $category->where('name','LIKE','%'.$search.'%');
+                })
+                ->orWhereHas('metas.sector', function ($sector) use ($search){
+                    $sector->where('name','LIKE','%'.$search.'%');
+                })
+                ->orWhereHas('metas.activity', function ($activity) use ($search){
+                    $activity->where('name','LIKE','%'.$search.'%');
+                })
+                ->orWhereHas('metas.entity', function ($entity) use ($search){
+                    $entity->where('name','LIKE','%'.$search.'%');
+                })
+                ->orWhereHas('metas.incubator', function ($incubator) use ($search){
+                    $incubator->where('name','LIKE','%'.$search.'%');
+                });
+            });
+        }
+
         if($role == 'applicant')
         {
             $req = $req->where(function ($query) use ($id,$user){
@@ -64,7 +89,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             });
         }
 
-        $req = $req->orderBy('created_at','DESC')->paginate(12);
+        $req = $req->orderBy('created_at','DESC')->paginate($perPage);
 
 
         $req->map(function ($query){

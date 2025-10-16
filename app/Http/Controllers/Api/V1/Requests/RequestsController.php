@@ -13,10 +13,10 @@ use App\Http\Controllers\Api\BaseController;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\V1\RequestsRequest;
-use App\Http\Requests\Api\V1\RequestsRequestDocument;
-use App\Http\Requests\Api\V1\RequestsRequestPartial;
-
-
+use App\Http\Requests\Api\V1\RequestsDocumentRequest;
+use App\Http\Requests\Api\V1\RequestsPartialRequest;
+use App\Http\Requests\Api\V1\RequestStatusUpdateRequest;
+use App\Models\Stages;
 use App\Services\V1\Requests\RequestsService;
 
 
@@ -58,7 +58,7 @@ class RequestsController extends BaseController
         }
     }
 
-    public function createRequestPartially(RequestsRequestPartial $request)
+    public function createRequestPartially(RequestsPartialRequest $request)
     {
         try {
             return $this->requests
@@ -98,7 +98,7 @@ class RequestsController extends BaseController
         }
     }
 
-    public function createRequestDocument(RequestsRequestDocument $request)
+    public function createRequestDocument(RequestsDocumentRequest $request)
     {
         try {
             return $this->requests
@@ -128,6 +128,11 @@ class RequestsController extends BaseController
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
+    }
+
+    public function updateStatus(RequestStatusUpdateRequest $request, $id)
+    {
+        return $this->sendSuccessResponse();
     }
 
     public function getAllNationalities()
