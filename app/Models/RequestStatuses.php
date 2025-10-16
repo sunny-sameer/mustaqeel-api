@@ -29,4 +29,13 @@ class RequestStatuses extends Model
     {
         return $this->belongsTo(User::class,'userId','id');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

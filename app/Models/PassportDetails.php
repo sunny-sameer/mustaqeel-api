@@ -11,4 +11,13 @@ class PassportDetails extends Model
 
     protected $table = 'passport_details';
     protected $guarded = [];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

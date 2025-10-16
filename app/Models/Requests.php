@@ -31,4 +31,13 @@ class Requests extends Model
     {
         return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

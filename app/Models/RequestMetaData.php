@@ -46,4 +46,13 @@ class RequestMetaData extends Model
     {
         return $this->belongsTo(Incubator::class,'incubatorSlug','slug');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

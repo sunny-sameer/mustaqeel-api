@@ -13,4 +13,12 @@ class Stages extends Model
     protected $table = 'stages';
     protected $guarded = [];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

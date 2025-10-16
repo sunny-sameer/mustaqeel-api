@@ -11,4 +11,13 @@ class RequestTypeCodes extends Model
 
     protected $table = 'request_type_codes';
     protected $guarded = [];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

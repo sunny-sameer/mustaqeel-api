@@ -35,4 +35,13 @@ class Activities extends Model
     {
         return $this->belongsToMany(Entities::class, 'activity_entity', 'activityId', 'entityId');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

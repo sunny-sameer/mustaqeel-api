@@ -25,4 +25,13 @@ class Sectors extends Model
     {
         return $this->hasMany(Activities::class);
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

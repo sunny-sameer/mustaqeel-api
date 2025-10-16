@@ -17,4 +17,13 @@ class Incubator extends Model
     {
         return $this->belongsTo(Categories::class,'categoryId','id');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

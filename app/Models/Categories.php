@@ -25,4 +25,13 @@ class Categories extends Model
     {
         return $this->hasMany(Incubator::class);
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

@@ -28,4 +28,13 @@ class RequestStages extends Model
     {
         return $this->belongsTo(Stages::class,'stageSlug','slug');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

@@ -101,4 +101,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(QatarInfo::class,'userId','id');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }

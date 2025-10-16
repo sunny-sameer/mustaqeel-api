@@ -11,4 +11,13 @@ class RequestCodesDocuments extends Model
 
     protected $table = 'request_codes_documents';
     protected $guarded = [];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            $model::$snakeAttributes = false;
+        });
+    }
 }
