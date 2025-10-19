@@ -124,6 +124,32 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        // Nationalities
+        Schema::create('nationalities', function (Blueprint $table) {
+            $table->id();
+            $table->text('name');
+            $table->text('slug');
+            $table->text('phonecode')->nullable();
+            $table->timestamps();
+        });
+
+        // Form Fields
+        Schema::create('form_fields', function (Blueprint $table) {
+            $table->id();
+            $table->string('nameEn');
+            $table->string('nameAr');
+            $table->string('slug');
+            $table->string('type');
+            $table->string('onshoreOffShore');
+            $table->boolean('isRequired');
+            $table->longText('meta')->nullable();
+
+            $table->tinyInteger('status')->default(1);
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -140,5 +166,7 @@ return new class extends Migration
         Schema::dropIfExists('category_sector');
         Schema::dropIfExists('sectors');
         Schema::dropIfExists('categories');
+        Schema::dropIfExists('nationalities');
+        Schema::dropIfExists('form_fields');
     }
 };

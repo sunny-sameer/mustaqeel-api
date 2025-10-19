@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -22,7 +24,7 @@ use Symfony\Component\HttpKernel\Profiler\Profile;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, UserRules, HasApiTokens, HasRoles, SoftDeletes;
+    use HasFactory, Notifiable, UserRules, HasApiTokens, HasRoles, SoftDeletes, DisableSnakeAttributes;
 
     /**
      * The attributes that are mass assignable.
@@ -102,12 +104,5 @@ class User extends Authenticatable
         return $this->hasOne(QatarInfo::class,'userId','id');
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

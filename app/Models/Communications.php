@@ -12,12 +12,5 @@ class Communications extends Model
     protected $table = 'communications';
     protected $guarded = [];
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

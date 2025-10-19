@@ -12,12 +12,5 @@ class RequestAttribute extends Model
     protected $table = 'request_attributes';
     protected $guarded = [];
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

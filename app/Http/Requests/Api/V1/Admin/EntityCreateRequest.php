@@ -21,7 +21,7 @@ class EntityCreateRequest extends FormRequest
             'activityIds' => 'required|array',
             'activityIds.*' => 'required|integer|exists:activities,id',
 
-            'name' => 'required|string|min:3|max:50|unique:entities,name|regex:/^[a-zA-Z.,، ]+$/',
+            'name' => 'required|string|min:3|max:50|unique:entities,name|regex:/^[a-zA-Z.,، ]+$/u',
             'nameAr' => self::arabicNameRule('unique:entities,nameAr'),
             'status' => 'required|boolean',
         ];

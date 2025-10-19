@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Traits\HasSlug;
+use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activities extends Model
 {
-    use HasSlug, SoftDeletes;
+    use HasSlug, SoftDeletes, DisableSnakeAttributes;
 
     protected $table = 'activities';
     protected $guarded = [];
@@ -26,22 +27,10 @@ class Activities extends Model
         return $this->hasMany(SubActivities::class, 'activityId', 'id');
     }
 
-    // public function entities()
-    // {
-    //     return $this->belongsToMany(Entities::class, 'activity_entity');
-    // }
-
     public function entities()
     {
         return $this->belongsToMany(Entities::class, 'activity_entity', 'activityId', 'entityId');
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

@@ -56,6 +56,13 @@ interface GenericInterface extends CoreInterface
     public function updateIncubator($id, $data);
     public function deleteIncubator($id);
 
+    // ===== FORM FIELDS =====
+    public function allFormFields($paginate);
+    public function findFormField($id);
+    public function createFormField($data);
+    public function updateFormField($id, $data);
+    public function deleteFormField($id);
+
     // ===== PIVOTS =====
     public function attachCategoriesToSector($sectorId, $categoryIds);
     public function attachEntitiesToActivity($activityId, $entityIds);

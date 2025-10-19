@@ -22,7 +22,7 @@ class SectorUpdateRequest extends FormRequest
         return [
             'categoryIds' => 'required|array',
             'categoryIds.*' => 'required|integer|exists:categories,id',
-            'name' => 'required|string|min:3|max:50|unique:sectors,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
+            'name' => 'required|string|min:3|max:50|unique:sectors,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/u',
             'nameAr' => self::arabicNameRule('unique:sectors,nameAr,'.$id),
             'status' => 'required|boolean',
         ];

@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Requests extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, DisableSnakeAttributes;
 
     protected $table = 'requests';
     protected $guarded = [];
 
     public function metas()
     {
-        return $this->hasOne(RequestMetaData::class,'reqId','id');
+        return $this->morphOne(RequestMetaData::class,'model','modelType','modelId');
     }
 
     public function attributes()
@@ -32,12 +33,5 @@ class Requests extends Model
         return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId');
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

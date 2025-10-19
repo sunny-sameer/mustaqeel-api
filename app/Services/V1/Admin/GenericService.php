@@ -2,16 +2,25 @@
 
 namespace App\Services\V1\Admin;
 
+use App\DTOs\Api\V1\Requests\FormFieldsDTO;
+use App\DTOs\Api\V1\Requests\RequestMetasDTO;
+
+
+use App\Models\FormFields;
+
 
 use App\Repositories\V1\Admin\GenericInterface;
+use App\Repositories\V1\Requests\RequestsInterface;
 
 class GenericService
 {
     protected $genericInterface;
+    protected $requestsInterface;
 
-    public function __construct(GenericInterface $genericInterface)
+    public function __construct(GenericInterface $genericInterface, RequestsInterface $requestsInterface)
     {
         $this->genericInterface = $genericInterface;
+        $this->requestsInterface = $requestsInterface;
     }
 
     // Category
@@ -166,6 +175,40 @@ class GenericService
     public function deleteIncubator($id)
     {
         return $this->genericInterface->deleteIncubator($id);
+    }
+
+    // Form Fields
+    public function allFormFields($paginate = 10)
+    {
+        return $this->genericInterface->allFormFields($paginate);
+    }
+    public function findFormField($id)
+    {
+        return $this->genericInterface->findFormField($id);
+    }
+    public function createFormField($data)
+    {
+        $formFieldData = FormFieldsDTO::fromRequest($data->all())->toArray();
+        $formField = $this->genericInterface->createFormField($formFieldData);
+
+        $formFieldMetaData = RequestMetasDTO::fromRequest($data->all(),$formField->id,FormFields::class)->toArray();
+        $formFieldMeta = $this->requestsInterface->updateOrCreateRequestMetaData($formFieldMetaData,$formField->id,FormFields::class);
+
+        return $this->genericInterface->findFormField($formField->id);
+    }
+    public function updateFormField($id, $data)
+    {
+        $formFieldData = FormFieldsDTO::fromRequest($data->all())->toArray();
+        $formField = $this->genericInterface->updateFormField($id, $formFieldData);
+
+        $formFieldMetaData = RequestMetasDTO::fromRequest($data->all(),$formField->id,FormFields::class)->toArray();
+        $formFieldMeta = $this->requestsInterface->updateOrCreateRequestMetaData($formFieldMetaData,$formField->id,FormFields::class);
+
+        return $this->genericInterface->findFormField($formField->id);
+    }
+    public function deleteFormField($id)
+    {
+        return $this->genericInterface->deleteFormField($id);
     }
 
     // Pivot helpers

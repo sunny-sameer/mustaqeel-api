@@ -20,12 +20,16 @@ use App\Http\Requests\API\V1\Admin\EntityCreateRequest;
 use App\Http\Requests\API\V1\Admin\EntityUpdateRequest;
 use App\Http\Requests\API\V1\Admin\IncubatorCreateRequest;
 use App\Http\Requests\API\V1\Admin\IncubatorUpdateRequest;
+use App\Http\Requests\API\V1\Admin\FormFieldCreateRequest;
+use App\Http\Requests\API\V1\Admin\FormFieldUpdateRequest;
 use App\Http\Requests\API\V1\Admin\AttachCategoryToSectorRequest;
 use App\Http\Requests\Api\V1\Admin\AttachEntityOfActivityRequest;
+use App\Http\Requests\Api\V1\Admin\AttachActivityOfEntityRequest;
 
 
 use App\Http\Controllers\Api\BaseController;
-use App\Http\Requests\Api\V1\Admin\AttachActivityOfEntityRequest;
+
+
 use App\Services\V1\Admin\GenericService;
 
 
@@ -205,6 +209,35 @@ class GenericController extends BaseController
     public function deleteIncubator($id)
     {
         $this->service->deleteIncubator($id);
+        return response()->json(['message' => 'Deleted']);
+    }
+
+    // ===== FORM FIELDS =====
+    public function formFields()
+    {
+        return response()->json($this->service->allFormFields($this->paginate));
+    }
+    public function formField($id)
+    {
+        return response()->json($this->service->findFormField($id));
+    }
+    public function createFormField(FormFieldCreateRequest $request)
+    {
+        $request->merge([
+            'personalInfo.identificationData'=>$request->identificationData
+        ]);
+        return response()->json($this->service->createFormField($request), 201);
+    }
+    public function updateFormField(FormFieldUpdateRequest $request, $id)
+    {
+        $request->merge([
+            'personalInfo.identificationData'=>$request->identificationData
+        ]);
+        return response()->json($this->service->updateFormField($id, $request));
+    }
+    public function deleteFormField($id)
+    {
+        $this->service->deleteFormField($id);
         return response()->json(['message' => 'Deleted']);
     }
 }

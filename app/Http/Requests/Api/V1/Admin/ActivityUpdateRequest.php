@@ -36,7 +36,7 @@ class ActivityUpdateRequest extends FormRequest
                 'string',
                 'min:3',
                 'max:50',
-                'regex:/^[a-zA-Z.,، ]+$/',
+                'regex:/^[a-zA-Z.,، ]+$/u',
                 Rule::unique('activities', 'name')
                     ->ignore($id)
                     ->where(fn ($q) => $q->where('sectorId', $sectorId)),

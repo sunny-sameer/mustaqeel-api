@@ -23,7 +23,7 @@ class CategoryUpdateRequest extends FormRequest
         $id = (int) $this->route('id');
 
         return [
-            'name' => 'required|string|min:3|max:50|unique:categories,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
+            'name' => 'required|string|min:3|max:50|unique:categories,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/u',
             'nameAr' => self::arabicNameRule('unique:categories,nameAr,'.$id),
             'status' => 'required|boolean',
         ];

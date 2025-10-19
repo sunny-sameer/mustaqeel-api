@@ -52,12 +52,12 @@ class RequestsPartialRequest extends FormRequest
             'personalInfo.identificationData.entity' => 'nullable|exists:entities,slug',
             'personalInfo.identificationData.incubator' => 'nullable|exists:incubators,slug',
 
-            'personalInfo.applicantInfo.nameEn' => 'nullable|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/',
+            'personalInfo.applicantInfo.nameEn' => 'nullable|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/u',
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
 
             'employmentAndEducation.employmentDetails.companyName' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
-            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/',
-            'employmentAndEducation.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/u',
 
             'employmentAndEducation.employmentDetails.profession' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'personalInfo.applicantInfo.gender' => 'nullable|in:Female,Male',
@@ -81,8 +81,8 @@ class RequestsPartialRequest extends FormRequest
             'personalInfo.contactInfo.poBox' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
 
             'personalInfo.contactInfo.email' => 'nullable|email|min:5|max:100',
-            'personalInfo.contactInfo.mobile' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
-            'personalInfo.contactInfo.phone' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
+            'personalInfo.contactInfo.mobile' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
+            'personalInfo.contactInfo.phone' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
             'personalInfo.applicantInfo.langProficiencyAr' => 'nullable|in:fluent,intermediate,basic,no proficiency',
             'personalInfo.applicantInfo.langProficiencyEn' => 'nullable|in:fluent,intermediate,basic,no proficiency',
 

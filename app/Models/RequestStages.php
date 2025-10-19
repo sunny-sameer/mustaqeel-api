@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequestStages extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, DisableSnakeAttributes;
 
     protected $table = 'request_stages';
     protected $guarded = [];
@@ -29,12 +30,5 @@ class RequestStages extends Model
         return $this->belongsTo(Stages::class,'stageSlug','slug');
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

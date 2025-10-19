@@ -33,15 +33,17 @@ return new class extends Migration
         Schema::create('request_meta_data', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('reqId')->constrained('requests')->onDelete('cascade');
+            $table->bigInteger('modelId');
 
             $table->string('catSlug',50);
             $table->string('subCatSlug',50)->nullable();
-            $table->string('sectorSlug',50);
-            $table->string('activitySlug',50);
+            $table->string('sectorSlug',50)->nullable();
+            $table->string('activitySlug',50)->nullable();
             $table->string('subActivitySlug',50)->nullable();
             $table->string('entitySlug',50)->nullable();
             $table->string('incubatorSlug',50)->nullable();
+
+            $table->string('modelType');
 
             $table->timestamps();
             $table->softDeletes();

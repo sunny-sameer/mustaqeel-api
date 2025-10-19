@@ -26,7 +26,7 @@ class EntityUpdateRequest extends FormRequest
             'activityIds' => 'required|array',
             'activityIds.*' => 'required|integer|exists:activities,id',
 
-            'name' => 'required|string|min:3|max:50|unique:entities,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/',
+            'name' => 'required|string|min:3|max:50|unique:entities,name,'.$id.'|regex:/^[a-zA-Z.,، ]+$/u',
             'nameAr' => self::arabicNameRule('unique:entities,nameAr,'.$id),
             'status' => 'required|boolean',
         ];

@@ -27,7 +27,7 @@ class SubCategoryUpdateRequest extends FormRequest
         $id = (int) $this->route('id');
         return [
             'categoryId' => 'required|integer|exists:categories,id',
-            'name' => ['required','string','min:3','max:50','regex:/^[a-zA-Z.,، ]+$/',
+            'name' => ['required','string','min:3','max:50','regex:/^[a-zA-Z.,، ]+$/u',
                 Rule::unique('sub_categories', 'name')->ignore($id)->where(function ($query) use ($categoryId) {
                     return $query->where('categoryId', $categoryId);
                 })

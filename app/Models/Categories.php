@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Traits\HasSlug;
+use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Categories extends Model
 {
-    use HasSlug, SoftDeletes;
+    use HasSlug, SoftDeletes, DisableSnakeAttributes;
 
     protected $table = 'categories';
     protected $guarded = [];
@@ -26,12 +27,5 @@ class Categories extends Model
         return $this->hasMany(Incubator::class);
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

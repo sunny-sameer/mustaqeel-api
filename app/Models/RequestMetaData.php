@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequestMetaData extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, DisableSnakeAttributes;
 
     protected $table = 'request_meta_data';
     protected $guarded = [];
@@ -47,12 +48,5 @@ class RequestMetaData extends Model
         return $this->belongsTo(Incubator::class,'incubatorSlug','slug');
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

@@ -7,7 +7,7 @@ interface RequestsInterface  extends CoreInterface {
     public function getAllRequests($request);
     public function getLastRequest($id = null);
     public function updateOrCreateRequest($request, $requestId);
-    public function updateOrCreateRequestMetaData($request, $requestId);
+    public function updateOrCreateRequestMetaData($request, $requestId, $requestType);
     public function updateOrCreateRequestAttributes($request, $requestId);
     public function getStage($params = []);
     public function getRequestStage($params = []);

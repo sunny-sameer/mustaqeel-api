@@ -26,7 +26,7 @@ class SubCategoryCreateRequest extends FormRequest
         $categoryId = $this->input('categoryId');
         return [
             'categoryId' => 'required|integer|exists:categories,id',
-            'name' => ['required','string','min:3','max:50','regex:/^[a-zA-Z.,، ]+$/',
+            'name' => ['required','string','min:3','max:50','regex:/^[a-zA-Z.,، ]+$/u',
                 Rule::unique('sub_categories', 'name')->where(function ($query) use ($categoryId) {
                     return $query->where('categoryId', $categoryId);
                 })

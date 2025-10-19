@@ -176,13 +176,13 @@ class RequestsService extends BaseService
             $request = $this->requestsInterface->updateOrCreateRequest($requestData,$this->requests->id);
 
 
-            $requestMetaData = RequestMetasDTO::fromRequest($this->requests,$request->id)->toArray();
+            $requestMetaData = RequestMetasDTO::fromRequest($this->requests->all(),$request->id,Requests::class)->toArray();
             $requestAttributesData = collect(RequestAttributesDTO::fromRequest($this->requests,$request->id))
             ->map(fn($dto) => $dto->toArray())
             ->all();
 
 
-            $requestMeta = $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData,$request->id);
+            $requestMeta = $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData,$request->id,Requests::class);
             $requestAttributes = $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData,$request->id);
 
 

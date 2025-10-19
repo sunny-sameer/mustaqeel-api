@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\DisableSnakeAttributes;
 use App\Models\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StagesStatuses extends Model
 {
-    use HasSlug, SoftDeletes;
+    use HasSlug, SoftDeletes, DisableSnakeAttributes;
 
     protected $table = 'stages_statuses';
     protected $guarded = [];
@@ -18,12 +19,5 @@ class StagesStatuses extends Model
         return $this->belongsTo(Stages::class,'stageId','id');
     }
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

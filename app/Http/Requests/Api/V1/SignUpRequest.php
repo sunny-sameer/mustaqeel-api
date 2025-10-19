@@ -19,7 +19,7 @@ class SignupRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/',
+            'name' => 'required|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/u',
             'nameArabic' => 'nullable|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
             'email' => 'required|min:5|max:255|email|unique:users,email',
             'password' => [

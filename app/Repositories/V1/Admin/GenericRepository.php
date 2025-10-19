@@ -12,6 +12,7 @@ use App\Models\Sectors as Sector;
 use App\Models\Activities as Activity;
 use App\Models\SubActivities as SubActivity;
 use App\Models\Entities as Entity;
+use App\Models\FormFields;
 use App\Models\Incubator;
 use App\Models\Nationality;
 use Illuminate\Support\Arr;
@@ -251,6 +252,65 @@ class GenericRepository extends CoreRepository implements GenericInterface
         return Incubator::findOrFail($id)->delete();
     }
 
+    // ===== FORM FIELDS =====
+    public function allFormFields($paginate)
+    {
+        $ff = FormFields::with([
+            'formMetas.category:name,nameAr,slug',
+            'formMetas.subCategory:name,nameAr,slug',
+            'formMetas.sector:name,nameAr,slug',
+            'formMetas.activity:name,nameAr,slug',
+            'formMetas.subActivity:name,nameAr,slug',
+            'formMetas.entity:name,nameAr,slug',
+            'formMetas.incubator:name,nameAr,slug',
+        ])->paginate($paginate);
+
+
+        $ff->map(function ($query){
+            $query->meta = $query->meta ? json_decode($query->meta) : NULL;
+
+            return $query;
+        });
+
+        return $ff;
+    }
+    public function findFormField($id)
+    {
+        $ff = FormFields::with([
+            'formMetas.category:name,nameAr,slug',
+            'formMetas.subCategory:name,nameAr,slug',
+            'formMetas.sector:name,nameAr,slug',
+            'formMetas.activity:name,nameAr,slug',
+            'formMetas.subActivity:name,nameAr,slug',
+            'formMetas.entity:name,nameAr,slug',
+            'formMetas.incubator:name,nameAr,slug',
+        ])->findOrFail($id);
+
+
+        $ff->meta = $ff->meta ? json_decode($ff->meta) : NULL;
+
+        return $ff;
+    }
+    public function createFormField($data)
+    {
+        $ff = FormFields::create($data);
+
+        return $ff;
+    }
+    public function updateFormField($id, $data)
+    {
+        $ff = FormFields::findOrFail($id);
+        $ff->update($data);
+
+        return $ff;
+    }
+    public function deleteFormField($id)
+    {
+        $ff = FormFields::findOrFail($id);
+        $ff->formMetas()->delete();
+        return $ff->delete();
+    }
+
     // ===== PIVOTS (category_sector / activity_entity) =====
     public function attachCategoriesToSector($sectorId, $categoryIds)
     {
@@ -310,7 +370,23 @@ class GenericRepository extends CoreRepository implements GenericInterface
             ->where('status',true)
             ->get();
 
-            return ['sectors'=>$sectors,'subCategories'=>$subCategories,'incubator'=>$incubator];
+            $formFields = FormFields::whereHas('formMetas', function ($q) use ($catSlug){
+                $q->where('catSlug',$catSlug)
+                ->where('subCatSlug',NULL)
+                ->where('sectorSlug',NULL)
+                ->where('activitySlug',NULL)
+                ->where('subActivitySlug',NULL)
+                ->where('entitySlug',NULL)
+                ->where('incubatorSlug',NULL);
+            })->get();
+
+            $formFields->map(function ($query){
+                $query->meta = $query->meta ? json_decode($query->meta) : NULL;
+
+                return $query;
+            });
+
+            return ['sectors'=>$sectors,'subCategories'=>$subCategories,'incubator'=>$incubator,'formFields'=>$formFields];
         }
 
         return false;

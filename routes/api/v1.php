@@ -104,6 +104,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('incubators', [GenericController::class, 'createIncubator']);
             Route::put('incubators/{id}', [GenericController::class, 'updateIncubator']);
             Route::delete('incubators/{id}', [GenericController::class, 'deleteIncubator']);
+
+            // FORM FIELDS
+            Route::get('form-fields', [GenericController::class, 'formFields']);
+            Route::get('form-fields/{id}', [GenericController::class, 'formField']);
+            Route::post('form-fields', [GenericController::class, 'createFormField']);
+            Route::put('form-fields/{id}', [GenericController::class, 'updateFormField']);
+            Route::delete('form-fields/{id}', [GenericController::class, 'deleteFormField']);
         });
     });
 });

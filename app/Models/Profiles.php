@@ -12,12 +12,5 @@ class Profiles extends Model
     protected $table = 'profiles';
     protected $guarded = [];
 
-    public static function boot()
-    {
-        parent::boot();
 
-        static::retrieved(function ($model) {
-            $model::$snakeAttributes = false;
-        });
-    }
 }

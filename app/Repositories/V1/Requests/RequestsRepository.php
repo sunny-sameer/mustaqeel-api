@@ -120,9 +120,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $this->model->create($request);
     }
 
-    public function updateOrCreateRequestMetaData($request,$requestId)
+    public function updateOrCreateRequestMetaData($request,$requestId,$requestType)
     {
-        return $this->requestMetaData->updateOrCreate(['reqId'=>$requestId],$request);
+        return $this->requestMetaData->updateOrCreate(['modelId'=>$requestId,'modelType'=>$requestType],$request);
     }
 
     public function updateOrCreateRequestAttributes($request,$requestId)

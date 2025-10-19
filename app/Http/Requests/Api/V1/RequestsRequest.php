@@ -49,17 +49,17 @@ class RequestsRequest extends FormRequest
             'personalInfo.identificationData.category' => 'required|exists:categories,slug',
             'personalInfo.identificationData.subCategory' => 'nullable|exists:sub_categories,slug',
             'personalInfo.identificationData.sector' => 'required|exists:sectors,slug',
-            'personalInfo.identificationData.activity' => 'required_if:personalInfo.identificationData.category,tal,ent|exists:activities,slug',
+            'personalInfo.identificationData.activity' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|exists:activities,slug',
             'personalInfo.identificationData.subActivity' => 'nullable|exists:sub_activities,slug',
             'personalInfo.identificationData.entity' => 'required_if:personalInfo.identificationData.category,tal|nullable|exists:entities,slug',
             'personalInfo.identificationData.incubator' => 'required_if:personalInfo.identificationData.category,ent|nullable|exists:incubators,slug',
 
-            'personalInfo.applicantInfo.nameEn' => 'required|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/',
+            'personalInfo.applicantInfo.nameEn' => 'required|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/u',
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
 
             'employmentAndEducation.employmentDetails.companyName' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
-            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/',
-            'employmentAndEducation.employmentDetails.amountOfCapital' => 'required_if:personalInfo.identificationData.category,inv|nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.amountOfCapital' => 'required_if:personalInfo.identificationData.category,inv|nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/u',
             'employmentAndEducation.employmentDetails.profession' => [
                 Rule::requiredIf(function () {
                     return request('personalInfo.applicantInfo.areYouQatarResident') === true
@@ -89,8 +89,8 @@ class RequestsRequest extends FormRequest
             'personalInfo.contactInfo.poBox' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
 
             'personalInfo.contactInfo.email' => 'required|email|min:5|max:100',
-            'personalInfo.contactInfo.mobile' => 'required|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
-            'personalInfo.contactInfo.phone' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/',
+            'personalInfo.contactInfo.mobile' => 'required|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
+            'personalInfo.contactInfo.phone' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
             'personalInfo.applicantInfo.langProficiencyAr' => 'required|in:fluent,intermediate,basic,no proficiency',
             'personalInfo.applicantInfo.langProficiencyEn' => 'required|in:fluent,intermediate,basic,no proficiency',
 
@@ -152,22 +152,22 @@ class RequestsRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.dob' => 'required_if:personalInfo.applicantInfo.maritalStatus,Married|nullable|date|before_or_equal:today',
             'ResidencyAndTravelAndFamily.familyMembers.*.profession' => 'required_if:personalInfo.applicantInfo.maritalStatus,Married|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
 
-            'documents.passportCopy' => 'required|string|exists:documents,documentName',
-            'documents.personalPhoto' => 'required|string|exists:documents,documentName',
+            // 'documents.passportCopy' => 'required|string|exists:documents,documentName',
+            // 'documents.personalPhoto' => 'required|string|exists:documents,documentName',
 
-            'documents.policeClearanceCertificate' => 'required_if:personalInfo.applicantInfo.areYouQatarResident,false|nullable|string|exists:documents,documentName',
+            // 'documents.policeClearanceCertificate' => 'required_if:personalInfo.applicantInfo.areYouQatarResident,false|nullable|string|exists:documents,documentName',
 
-            'documents.degree' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|string|exists:documents,documentName',
-            'documents.bankStatement' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|string|exists:documents,documentName',
-            'documents.cv' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|string|exists:documents,documentName',
+            // 'documents.degree' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|string|exists:documents,documentName',
+            // 'documents.bankStatement' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|string|exists:documents,documentName',
+            // 'documents.cv' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|string|exists:documents,documentName',
 
-            'documents.jobContractFinancialCapacityStatement' => 'required_if:personalInfo.identificationData.category,tal|nullable|string|exists:documents,documentName',
+            // 'documents.jobContractFinancialCapacityStatement' => 'required_if:personalInfo.identificationData.category,tal|nullable|string|exists:documents,documentName',
 
-            'documents.validCR' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|exists:documents,documentName',
-            'documents.taxReport' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|exists:documents,documentName',
+            // 'documents.validCR' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|exists:documents,documentName',
+            // 'documents.taxReport' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|exists:documents,documentName',
 
-            'documents.estCard' => 'required_if:personalInfo.applicantInfo.areYouQatarResident,true|nullable|string|exists:documents,documentName',
-            'documents.qidCopy' => 'required_if:personalInfo.applicantInfo.areYouQatarResident,true|nullable|string|exists:documents,documentName',
+            // 'documents.estCard' => 'required_if:personalInfo.applicantInfo.areYouQatarResident,true|nullable|string|exists:documents,documentName',
+            // 'documents.qidCopy' => 'required_if:personalInfo.applicantInfo.areYouQatarResident,true|nullable|string|exists:documents,documentName',
         ];
     }
 
@@ -482,49 +482,49 @@ class RequestsRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.profession.regex' => 'The family member profession may only contain Arabic, English letters, numbers, dots, commas and spaces.',
 
             // Documents
-            'documents.passportCopy.required' => 'The passport copy is required.',
-            'documents.passportCopy.string' => 'The passport copy must be a string.',
-            'documents.passportCopy.exists' => 'The passport copy name is invalid.',
+            // 'documents.passportCopy.required' => 'The passport copy is required.',
+            // 'documents.passportCopy.string' => 'The passport copy must be a string.',
+            // 'documents.passportCopy.exists' => 'The passport copy name is invalid.',
 
-            'documents.personalPhoto.required' => 'The personal photo is required.',
-            'documents.personalPhoto.string' => 'The personal photo must be a string.',
-            'documents.personalPhoto.exists' => 'The personal photo name is invalid.',
+            // 'documents.personalPhoto.required' => 'The personal photo is required.',
+            // 'documents.personalPhoto.string' => 'The personal photo must be a string.',
+            // 'documents.personalPhoto.exists' => 'The personal photo name is invalid.',
 
-            'documents.policeClearanceCertificate.required_if' => 'The police clearance/good behavior certificate is required.',
-            'documents.policeClearanceCertificate.string' => 'The police clearance/good behavior certificate must be a string.',
-            'documents.policeClearanceCertificate.exists' => 'The police clearance/good behavior certificate name is invalid.',
+            // 'documents.policeClearanceCertificate.required_if' => 'The police clearance/good behavior certificate is required.',
+            // 'documents.policeClearanceCertificate.string' => 'The police clearance/good behavior certificate must be a string.',
+            // 'documents.policeClearanceCertificate.exists' => 'The police clearance/good behavior certificate name is invalid.',
 
-            'documents.degree.required_if' => 'The certified academic degree is required.',
-            'documents.degree.string' => 'The certified academic degree must be a string.',
-            'documents.degree.exists' => 'The certified academic degree name is invalid.',
+            // 'documents.degree.required_if' => 'The certified academic degree is required.',
+            // 'documents.degree.string' => 'The certified academic degree must be a string.',
+            // 'documents.degree.exists' => 'The certified academic degree name is invalid.',
 
-            'documents.bankStatement.required_if' => 'The 3 months bank statement is required.',
-            'documents.bankStatement.string' => 'The 3 months bank statement must be a string.',
-            'documents.bankStatement.exists' => 'The 3 months bank statement name is invalid.',
+            // 'documents.bankStatement.required_if' => 'The 3 months bank statement is required.',
+            // 'documents.bankStatement.string' => 'The 3 months bank statement must be a string.',
+            // 'documents.bankStatement.exists' => 'The 3 months bank statement name is invalid.',
 
-            'documents.cv.required_if' => 'The cv with experience letter is required.',
-            'documents.cv.string' => 'The cv with experience letter must be a string.',
-            'documents.cv.exists' => 'The cv with experience letter name is invalid.',
+            // 'documents.cv.required_if' => 'The cv with experience letter is required.',
+            // 'documents.cv.string' => 'The cv with experience letter must be a string.',
+            // 'documents.cv.exists' => 'The cv with experience letter name is invalid.',
 
-            'documents.jobContractFinancialCapacityStatement.required_if' => 'The job contract/financial capacity statement is required.',
-            'documents.jobContractFinancialCapacityStatement.string' => 'The job contract/financial capacity statement must be a string.',
-            'documents.jobContractFinancialCapacityStatement.exists' => 'The job contract/financial capacity statement name is invalid.',
+            // 'documents.jobContractFinancialCapacityStatement.required_if' => 'The job contract/financial capacity statement is required.',
+            // 'documents.jobContractFinancialCapacityStatement.string' => 'The job contract/financial capacity statement must be a string.',
+            // 'documents.jobContractFinancialCapacityStatement.exists' => 'The job contract/financial capacity statement name is invalid.',
 
-            'documents.estCard.required_if' => 'The establishment card/QID of the sponsor is required.',
-            'documents.estCard.string' => 'The establishment card/QID of the sponsor must be a string.',
-            'documents.estCard.exists' => 'The establishment card/QID of the sponsor name is invalid.',
+            // 'documents.estCard.required_if' => 'The establishment card/QID of the sponsor is required.',
+            // 'documents.estCard.string' => 'The establishment card/QID of the sponsor must be a string.',
+            // 'documents.estCard.exists' => 'The establishment card/QID of the sponsor name is invalid.',
 
-            'documents.qidCopy.required_if' => 'The QID copy is required.',
-            'documents.qidCopy.string' => 'The QID copy must be a string.',
-            'documents.qidCopy.exists' => 'The QID copy name is invalid.',
+            // 'documents.qidCopy.required_if' => 'The QID copy is required.',
+            // 'documents.qidCopy.string' => 'The QID copy must be a string.',
+            // 'documents.qidCopy.exists' => 'The QID copy name is invalid.',
 
-            'documents.validCR.required_if' => 'The valid commercial registration (CR) is required.',
-            'documents.validCR.string' => 'The valid commercial registration (CR) must be a string.',
-            'documents.validCR.exists' => 'The valid commercial registration (CR) name is invalid.',
+            // 'documents.validCR.required_if' => 'The valid commercial registration (CR) is required.',
+            // 'documents.validCR.string' => 'The valid commercial registration (CR) must be a string.',
+            // 'documents.validCR.exists' => 'The valid commercial registration (CR) name is invalid.',
 
-            'documents.taxReport.required_if' => 'The tax report for the last 3 years is required.',
-            'documents.taxReport.string' => 'The tax report for the last 3 years must be a string.',
-            'documents.taxReport.exists' => 'The tax report for the last 3 years name is invalid.',
+            // 'documents.taxReport.required_if' => 'The tax report for the last 3 years is required.',
+            // 'documents.taxReport.string' => 'The tax report for the last 3 years must be a string.',
+            // 'documents.taxReport.exists' => 'The tax report for the last 3 years name is invalid.',
         ];
     }
 
