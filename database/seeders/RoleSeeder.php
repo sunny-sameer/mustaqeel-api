@@ -14,21 +14,46 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
-            'super-admin',
-            'admin',
-            'applicant',
-            'entity-manager',
-            'entity-supervisor',
-            'entity-officer',
-            'incubator',
-            'pilot',
-            'investor',
-            'moci',
-            'bank'
+            [
+                'name'=>'super-admin',
+                'type'=>'jusour',
+            ],
+            [
+                'name'=>'admin',
+                'type'=>'jusour',
+            ],
+            [
+                'name'=>'applicant',
+                'type'=>'applicant',
+            ],
+            [
+                'name'=>'investor',
+                'type'=>'applicant',
+            ],
+            [
+                'name'=>'entity-manager',
+                'type'=>'entity',
+            ],
+            [
+                'name'=>'entity-supervisor',
+                'type'=>'entity',
+            ],
+            [
+                'name'=>'entity-officer',
+                'type'=>'entity',
+            ],
+            [
+                'name'=>'incubator',
+                'type'=>'entity',
+            ],
+            [
+                'name'=>'moci',
+                'type'=>'entity',
+            ]
         ];
 
         foreach ($roles as $role) {
-            Role::create(['name' => $role]);
+            Role::create($role);
         }
 
         // $admin->givePermissionTo([
