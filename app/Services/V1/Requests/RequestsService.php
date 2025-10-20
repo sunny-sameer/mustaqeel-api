@@ -302,4 +302,9 @@ class RequestsService extends BaseService
     {
         return $this->genericInterface->getAllEntitiesAndSubActivities($actSlug);
     }
+
+    public function getFormFields($request)
+    {
+        return $this->genericInterface->getFormFields($request);
+    }
 }

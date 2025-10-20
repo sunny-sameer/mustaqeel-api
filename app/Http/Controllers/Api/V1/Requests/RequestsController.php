@@ -174,4 +174,11 @@ class RequestsController extends BaseController
 
         return $this->sendSuccessResponse($data);
     }
+
+    public function getFormFields(Request $request)
+    {
+        if (empty($request->category) && !isset($request->category)) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
+
+        return $this->requests->getFormFields($request->all());
+    }
 }
