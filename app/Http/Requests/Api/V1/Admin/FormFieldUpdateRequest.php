@@ -48,6 +48,7 @@ class FormFieldUpdateRequest extends FormRequest
             'formFields.type' => 'required|in:text,select,textarea,file,radio,checkbox',
             'formFields.onshoreOffShore' => 'required|in:offshore,onshore,both',
             'formFields.isRequired' => 'required|boolean',
+            'formFields.status' => 'required|boolean',
 
             'metaFields.extensions' => 'required_if:formFields.type,file|nullable|array',
             'metaFields.extensions.*' => 'required_if:formFields.type,file|nullable|in:pdf,jpg,jpeg,png,doc,docx',
@@ -87,6 +88,9 @@ class FormFieldUpdateRequest extends FormRequest
 
             'formFields.isRequired.required' => 'The required is required.',
             'formFields.isRequired.in' => 'The required must be either true or false.',
+
+            'formFields.status.required' => 'The status is required.',
+            'formFields.status.in' => 'The status must be either true or false.',
 
             'metaFields.extensions.*.required_if' => 'The extensions are required.',
             'metaFields.extensions.*.in' => 'The extensions allowed only PDF, JPG, JPEG, PNG, DOC and DOCX.',

@@ -11,6 +11,11 @@ use App\Services\V1\User\UserService;
 
 class UserController extends BaseController
 {
+    /**
+     * See Swagger annotations in \App\Swaggers\Api\V1\User\UserSwagger
+    */
+
+
     private $userService;
 
 

@@ -14,7 +14,13 @@ use App\Services\V1\User\UserService;
 
 class TwoFactorController extends BaseController
 {
+    /**
+     * See Swagger annotations in \App\Swaggers\Api\V1\Auth\AuthSwagger
+    */
+
+
     public function __construct(private TwoFactorService $twoFactor, private UserService $UserService) {}
+
 
     public function verify(OtpVerifyRequest $request): JsonResponse
     {

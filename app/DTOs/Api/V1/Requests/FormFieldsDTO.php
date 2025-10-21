@@ -30,7 +30,7 @@ final readonly class FormFieldsDTO
             onshoreOffShore: $data['formFields']['onshoreOffShore'],
             isRequired: $data['formFields']['isRequired'],
             meta: json_encode(array_filter($map['metaFields'])),
-            status: true,
+            status: $data['formFields']['status'] ?? true,
         );
     }
 

@@ -1,0 +1,3415 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Mustaqel API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/admin/categories": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Categories",
+                "operationId": "7038bcbae00587f2a39e066ad4ac47db",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Category",
+                "description": "Creates a new Category with given data",
+                "operationId": "1f0621d78462d45ae2045258e507e89d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Category by ID",
+                "description": "Returns Category details for the given ID",
+                "operationId": "933de2f5fa29e4cdb52734b413e1428b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Category",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Category by ID",
+                "description": "Updates an existing Category",
+                "operationId": "7995ea6729f96333d15d34286c170e0b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Category to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category updated successfully"
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Category by ID",
+                "description": "Deletes the Category identified by the given ID",
+                "operationId": "f636e365cf94c88c7b926880e95167f7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Category deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/sub-categories": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Sub Categories",
+                "operationId": "e3c371a9728e7655b36f1f3bd02553fb",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Sub Category",
+                "description": "Creates a new Sub Category with given data",
+                "operationId": "1591626f11b14b5266dfed8cbd800c68",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "categoryId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "categoryId": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sub Category created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/sub-categories/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Sub Category by ID",
+                "description": "Returns Sub Category details for the given ID",
+                "operationId": "98b1e75843a0dd62b481a38f435a5242",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sub Category",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sub Category found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Sub Category by ID",
+                "description": "Updates an existing Sub Category",
+                "operationId": "a2e3d85397d6ec065c516c0a2c4a6741",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sub Category to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "categoryId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "categoryId": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sub Category updated successfully"
+                    },
+                    "404": {
+                        "description": "Sub Category not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Sub Category by ID",
+                "description": "Deletes the Sub Category identified by the given ID",
+                "operationId": "7913b2c99cf25ac7772ab93adf36d7bf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sub Category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Sub Category deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Sub Category not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/sectors": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Sectors",
+                "operationId": "77e2d5616866e668eeaa868f706069e1",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Sector",
+                "description": "Creates a new Sector with given data",
+                "operationId": "5bc70be40a4c3635c56ef16dee857c56",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "categoryIds",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "categoryIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3
+                                        ]
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sector created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/sectors/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Sector by ID",
+                "description": "Returns Sector details for the given ID",
+                "operationId": "8656dd5dbea052faafbfdf24482cd427",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sector",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sector found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Sector by ID",
+                "description": "Updates an existing Sector",
+                "operationId": "012f7ee5051877a445838a8f5ae0fa55",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sector to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "categoryIds",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "categoryIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3
+                                        ]
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sector updated successfully"
+                    },
+                    "404": {
+                        "description": "Sector not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Sector by ID",
+                "description": "Deletes the Sector identified by the given ID",
+                "operationId": "2f48647df08e81ca0d74567c3138b049",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sector to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Sector deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Sector not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/activities": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Activities",
+                "operationId": "a9eb54b82fa701658044c1c776463f9b",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Activity",
+                "description": "Creates a new Activity with given data",
+                "operationId": "a339b154e122f133d63b008998bdc8e5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "sectorId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "sectorId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Activity created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/activities/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Activity by ID",
+                "description": "Returns Activity details for the given ID",
+                "operationId": "4aab40435494c0b072becbabb48f5b69",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Activity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Activity found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Activity by ID",
+                "description": "Updates an existing Activity",
+                "operationId": "e864336084bb41abea6510c4c9fdd271",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Activity to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "sectorId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "sectorId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Activity updated successfully"
+                    },
+                    "404": {
+                        "description": "Activity not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Activity by ID",
+                "description": "Deletes the Activity identified by the given ID",
+                "operationId": "a6746d18236d50b0432dd3a29907ff99",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Activity to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Activity deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Activity not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/activities/{id}/entities": {
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Entities of Activity by ID",
+                "description": "Updates an existing Entities of  Activity",
+                "operationId": "ed73484c4e61bd4c34b1ed3a4770603a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Activity to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "entityIds"
+                                ],
+                                "properties": {
+                                    "entityIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Entities of Activity updated successfully"
+                    },
+                    "404": {
+                        "description": "Entities of Activity not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/sub-activities": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Sub Activities",
+                "operationId": "5810d9ab3a19b3ca471d8b650e3cc10f",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Sub Activity",
+                "description": "Creates a new Sub Activity with given data",
+                "operationId": "798f74381e7c03f700989e06f323c308",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "activityId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "activityId": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sub Activity created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/sub-activities/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Sub Activity by ID",
+                "description": "Returns Sub Activity details for the given ID",
+                "operationId": "1d20e30ec0a02b12fafdc160e25f5f96",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sub Activity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sub Activity found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Sub Activity by ID",
+                "description": "Updates an existing Sub Activity",
+                "operationId": "7da7cced5506093d4725f1b6dac77eb7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sub Activity to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "activityId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "activityId": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sub Activity updated successfully"
+                    },
+                    "404": {
+                        "description": "Sub Activity not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Sub Activity by ID",
+                "description": "Deletes the Sub Activity identified by the given ID",
+                "operationId": "a90678b4d258fed965e13042922fcb3e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Sub Activity to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Sub Activity deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Sub Activity not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/entities": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Entities",
+                "operationId": "483d8fe6d8955d21d05ba6a2c505b503",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Entity",
+                "description": "Creates a new Entity with given data",
+                "operationId": "ffa52bd7116ebc8fa78035ade9f5455d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "activityIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Entity created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/entities/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Entity by ID",
+                "description": "Returns Entity details for the given ID",
+                "operationId": "7efb418eeb5ad5769e412bef04a3cbc6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Entity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Entity found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Entity by ID",
+                "description": "Updates an existing Entity",
+                "operationId": "4f1d56a846871937e6cdacc542f01ba7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Entity to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "activityIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Entity updated successfully"
+                    },
+                    "404": {
+                        "description": "Entity not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Entity by ID",
+                "description": "Deletes the Entity identified by the given ID",
+                "operationId": "5c1a5f330bd968648202ca5d497b0995",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Entity to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Entity deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Entity not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/entities/{id}/activities": {
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Activities of Entity by ID",
+                "description": "Updates an existing Activities of Entity",
+                "operationId": "0c51ec794f9ec447a95a87a7f5643cee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Entity to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "activityIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Activities of Entity updated successfully"
+                    },
+                    "404": {
+                        "description": "Activities of Entity not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/incubators": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Incubators",
+                "operationId": "35eeb767c931c6e212130516fb03cbea",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Incubator",
+                "description": "Creates a new Incubator with given data",
+                "operationId": "e76e342bf8c24b42694a5735db3f8032",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "categoryId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "categoryId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Incubator created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/incubators/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Incubator by ID",
+                "description": "Returns Incubator details for the given ID",
+                "operationId": "dc443d7ad2b930b2f637e8b61bb71ee6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Incubator",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Incubator found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Incubator by ID",
+                "description": "Updates an existing Incubator",
+                "operationId": "fbb77f4c7f8a37931517836045a647e4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Incubator to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "nameAr",
+                                    "categoryId",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Technology"
+                                    },
+                                    "nameAr": {
+                                        "type": "string",
+                                        "example": "تكنولوجيا"
+                                    },
+                                    "categoryId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Incubator updated successfully"
+                    },
+                    "404": {
+                        "description": "Incubator not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Incubator by ID",
+                "description": "Deletes the Incubator identified by the given ID",
+                "operationId": "25e6875b2b5a9ec23d7e51aeeb1ad21c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Incubator to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Incubator deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Incubator not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/form-fields": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all Form Fields",
+                "operationId": "701f09c76886513ff0907278f860257e",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new Form Field",
+                "description": "Creates a new Form Field with given data",
+                "operationId": "56ed57e55b28697665626fe3f35ffbda",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "identificationData": {
+                                        "required": [
+                                            "category"
+                                        ],
+                                        "properties": {
+                                            "category": {
+                                                "type": "string",
+                                                "example": "tal"
+                                            },
+                                            "subCategory": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "sector": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "activity": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "subActivity": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "entity": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "incubator": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "formFields": {
+                                        "required": [
+                                            "nameEn",
+                                            "nameAr",
+                                            "type",
+                                            "onshoreOffShore",
+                                            "isRequired",
+                                            "status"
+                                        ],
+                                        "properties": {
+                                            "nameEn": {
+                                                "type": "string",
+                                                "example": "Personal Photo"
+                                            },
+                                            "nameAr": {
+                                                "type": "string",
+                                                "example": "صورة شخصية"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "example": "file"
+                                            },
+                                            "onshoreOffShore": {
+                                                "type": "string",
+                                                "example": "onshore"
+                                            },
+                                            "isRequired": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "status": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "metaFields": {
+                                        "properties": {
+                                            "extensions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "example": "jpg"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Form Field created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/form-fields/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a single Form Field by ID",
+                "description": "Returns Form Field details for the given ID",
+                "operationId": "b0e6dffe8c3594b8ba8ae17760d95149",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Form Field",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Form Field found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a Form Field by ID",
+                "description": "Updates an existing Form Field",
+                "operationId": "4b9f095732ea744d649a1a24024b30ec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Form Field to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "identificationData": {
+                                        "required": [
+                                            "category"
+                                        ],
+                                        "properties": {
+                                            "category": {
+                                                "type": "string",
+                                                "example": "tal"
+                                            },
+                                            "subCategory": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "sector": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "activity": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "subActivity": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "entity": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            },
+                                            "incubator": {
+                                                "type": "string",
+                                                "example": "",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "formFields": {
+                                        "required": [
+                                            "nameEn",
+                                            "nameAr",
+                                            "type",
+                                            "onshoreOffShore",
+                                            "isRequired",
+                                            "status"
+                                        ],
+                                        "properties": {
+                                            "nameEn": {
+                                                "type": "string",
+                                                "example": "Personal Photo"
+                                            },
+                                            "nameAr": {
+                                                "type": "string",
+                                                "example": "صورة شخصية"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "example": "file"
+                                            },
+                                            "onshoreOffShore": {
+                                                "type": "string",
+                                                "example": "onshore"
+                                            },
+                                            "isRequired": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "status": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "metaFields": {
+                                        "properties": {
+                                            "extensions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "example": "jpg"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Form Field updated successfully"
+                    },
+                    "404": {
+                        "description": "Form Field not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a Form Field by ID",
+                "description": "Deletes the Form Field identified by the given ID",
+                "operationId": "11707d9bcd2478acac34e208071e5ce8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Form Field to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Form Field deleted successfully (no content)"
+                    },
+                    "404": {
+                        "description": "Form Field not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login a user",
+                "operationId": "5f94c8808b91f1cd513b0310ddc03087",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "superadmin@yopmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "Jusour@2025"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification Token"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/2fa/verify": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify OTP for login or validation",
+                "description": "Verifies the 6-digit OTP sent to the user's email with the pending token.",
+                "operationId": "99a87af12dac8f219804556b4afe7c34",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "otp",
+                                    "pendingToken"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "superadmin@yopmail.com"
+                                    },
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "548798"
+                                    },
+                                    "pendingToken": {
+                                        "type": "string",
+                                        "example": "73065d870aa726adc2390feeb34b1c4c5b536498baaff69d2cc484ee783d6553"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP verified successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Invalid OTP or expired token"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/signup": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "description": "Registers a new user after validating required data and agreement to terms.",
+                "operationId": "e915e6c29e507e977f5abe989dabe674",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "confirmPassword",
+                                    "termsAccepted"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Talha"
+                                    },
+                                    "nameArabic": {
+                                        "type": "string",
+                                        "example": "طلحة"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "talha@yopmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "Qa@123123"
+                                    },
+                                    "confirmPassword": {
+                                        "type": "string",
+                                        "example": "Qa@123123"
+                                    },
+                                    "termsAccepted": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Verification Token"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/user/classifications/nationalities": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get all Nationalities",
+                "operationId": "b0ae3df02e76dc79ce2a85a879030afe",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/classifications/categories": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get all Categories",
+                "operationId": "e3c83773ecaf89ed8064a76a3dca54cb",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/classifications/sectors-sub-categories-incubators/{catSlug}": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get Sectors, Incubatos and SubCategories with Category by Slug",
+                "description": "Returns Sectors, Incubatos and SubCategories details for the given Slug",
+                "operationId": "7b4f65a3b66f377180fc3bd0d25b176c",
+                "parameters": [
+                    {
+                        "name": "catSlug",
+                        "in": "path",
+                        "description": "Slug of the Category",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/classifications/activities/{secSlug}": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get Activities with Sector by Slug",
+                "description": "Returns Activities details for the given Slug",
+                "operationId": "05f52a3c5a7f57b1c49f544df508107f",
+                "parameters": [
+                    {
+                        "name": "secSlug",
+                        "in": "path",
+                        "description": "Slug of the Sector",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sector found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/classifications/entities-sub-activities/{actSlug}": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get Entities and SubActivities with Activity by Slug",
+                "description": "Returns Entities and SubActivities details for the given Slug",
+                "operationId": "5b764c3398959fc814c8fb6a4a3a1ab8",
+                "parameters": [
+                    {
+                        "name": "actSlug",
+                        "in": "path",
+                        "description": "Slug of the Activity",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Activity found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/classifications/form-fields": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get form fields based on classification filters",
+                "description": "Returns dynamic form fields for the given classification filters such as category, subCategory, sector, activity, subActivity, entity, and incubator.",
+                "operationId": "a79f54b5627cbb65c4b9eaa7cbb4ad27",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Slug of the category (required)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "tal"
+                        }
+                    },
+                    {
+                        "name": "subCategory",
+                        "in": "query",
+                        "description": "Slug of the sub-category (optional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "sector",
+                        "in": "query",
+                        "description": "Slug of the sector (optional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "activity",
+                        "in": "query",
+                        "description": "Slug of the activity (optional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "subActivity",
+                        "in": "query",
+                        "description": "Slug of the sub-activity (optional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "entity",
+                        "in": "query",
+                        "description": "Slug of the entity (optional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "incubator",
+                        "in": "query",
+                        "description": "Slug of the incubator (optional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Form fields retrieved successfully"
+                    },
+                    "400": {
+                        "description": "Missing or invalid category"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/requests": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get Requests",
+                "description": "Returns Requests",
+                "operationId": "3c9cf973f465694c87df9e553a9eb2e1",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search by name, name arabic, category, sector, activity, entity",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "No of entries in single page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requests found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Create Fully Request",
+                "description": "Create a fully request with personal, employment, residency, travel, and family information.",
+                "operationId": "fb3aad3ce7695bc945f141a70183256c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "personalInfo",
+                                    "employmentAndEducation",
+                                    "ResidencyAndTravelAndFamily",
+                                    "documents"
+                                ],
+                                "properties": {
+                                    "personalInfo": {
+                                        "required": [
+                                            "identificationData",
+                                            "applicantInfo",
+                                            "contactInfo",
+                                            "passportDetails"
+                                        ],
+                                        "properties": {
+                                            "identificationData": {
+                                                "required": [
+                                                    "category",
+                                                    "sector"
+                                                ],
+                                                "properties": {
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "tal"
+                                                    },
+                                                    "subCategory": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "sector": {
+                                                        "type": "string",
+                                                        "example": "edu"
+                                                    },
+                                                    "activity": {
+                                                        "description": "required_if:category,tal,ent",
+                                                        "type": "string",
+                                                        "example": "ar"
+                                                    },
+                                                    "subActivity": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "entity": {
+                                                        "description": "required_if:category,tal",
+                                                        "type": "string",
+                                                        "example": "moeahe"
+                                                    },
+                                                    "incubator": {
+                                                        "description": "required_if:category,ent",
+                                                        "type": "string",
+                                                        "example": ""
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "applicantInfo": {
+                                                "required": [
+                                                    "nameEn",
+                                                    "gender",
+                                                    "dob",
+                                                    "religion",
+                                                    "maritalStatus",
+                                                    "placeOfBirth",
+                                                    "currentCountry",
+                                                    "nationality",
+                                                    "shortBio",
+                                                    "langProficiencyAr",
+                                                    "langProficiencyEn"
+                                                ],
+                                                "properties": {
+                                                    "nameEn": {
+                                                        "type": "string",
+                                                        "example": "Muhammad Talha Khalid"
+                                                    },
+                                                    "gender": {
+                                                        "type": "string",
+                                                        "example": "Male"
+                                                    },
+                                                    "dob": {
+                                                        "type": "string",
+                                                        "example": "1998-10-24"
+                                                    },
+                                                    "religion": {
+                                                        "type": "string",
+                                                        "example": "Islam"
+                                                    },
+                                                    "maritalStatus": {
+                                                        "type": "string",
+                                                        "example": "Married"
+                                                    },
+                                                    "placeOfBirth": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "currentCountry": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "nationality": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "shortBio": {
+                                                        "type": "string",
+                                                        "example": "Hello world"
+                                                    },
+                                                    "langProficiencyAr": {
+                                                        "type": "string",
+                                                        "example": "no proficiency"
+                                                    },
+                                                    "langProficiencyEn": {
+                                                        "type": "string",
+                                                        "example": "intermediate"
+                                                    },
+                                                    "areYouQatarResident": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "qidNumber": {
+                                                        "description": "required_if:isQatarResident,true",
+                                                        "type": "string"
+                                                    },
+                                                    "qidType": {
+                                                        "description": "required_if:isQatarResident,true",
+                                                        "type": "string"
+                                                    },
+                                                    "workPermit": {
+                                                        "description": "required_if:qid_type,Work Residency",
+                                                        "type": "string"
+                                                    },
+                                                    "maintainWorkPermit": {
+                                                        "description": "required_if:workPermit,yes",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "contactInfo": {
+                                                "required": [
+                                                    "email",
+                                                    "mobile",
+                                                    "permanentAddress"
+                                                ],
+                                                "properties": {
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "talha@yopmail.com"
+                                                    },
+                                                    "mobile": {
+                                                        "type": "string",
+                                                        "example": "+97455040820"
+                                                    },
+                                                    "permanentAddress": {
+                                                        "type": "string",
+                                                        "example": "Karachi, Pakistan"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "poBox": {
+                                                        "type": "string"
+                                                    },
+                                                    "qatarAddress": {
+                                                        "description": "required_if:isQatarResident,true",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "passportDetails": {
+                                                "required": [
+                                                    "number",
+                                                    "type",
+                                                    "issueDate",
+                                                    "issueCountry",
+                                                    "issueBy",
+                                                    "expiryDate",
+                                                    "issuePlace"
+                                                ],
+                                                "properties": {
+                                                    "number": {
+                                                        "type": "string",
+                                                        "example": "AD3434354"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "Ordinary"
+                                                    },
+                                                    "issueDate": {
+                                                        "type": "string",
+                                                        "example": "2023-08-29"
+                                                    },
+                                                    "issueCountry": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "issueBy": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "expiryDate": {
+                                                        "type": "string",
+                                                        "example": "2033-08-31"
+                                                    },
+                                                    "issuePlace": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "employmentAndEducation": {
+                                        "required": [
+                                            "employmentDetails",
+                                            "educations"
+                                        ],
+                                        "properties": {
+                                            "employmentDetails": {
+                                                "required": [
+                                                    "profession",
+                                                    "nameOfSponsor",
+                                                    "addressOfSponsor"
+                                                ],
+                                                "properties": {
+                                                    "profession": {
+                                                        "description": "required_if:category,ent,tal && required_if:isQatarResident,true",
+                                                        "type": "string",
+                                                        "example": "Developer"
+                                                    },
+                                                    "nameOfSponsor": {
+                                                        "description": "required_if:category,ent,tal && required_if:isQatarResident,true",
+                                                        "type": "string",
+                                                        "example": "Jusour"
+                                                    },
+                                                    "addressOfSponsor": {
+                                                        "description": "required_if:category,ent,tal && required_if:isQatarResident,true",
+                                                        "type": "string",
+                                                        "example": "Doha"
+                                                    },
+                                                    "companyName": {
+                                                        "description": "required_if:category,inv",
+                                                        "type": "string"
+                                                    },
+                                                    "shareOfTheCapital": {
+                                                        "type": "string"
+                                                    },
+                                                    "amountOfCapital": {
+                                                        "description": "required_if:category,inv",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "previousJobs": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "entity": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": {
+                                                            "type": "string"
+                                                        },
+                                                        "jobCountry": {
+                                                            "type": "string"
+                                                        },
+                                                        "jobDuration": {
+                                                            "type": "string"
+                                                        },
+                                                        "jobStatus": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "educations": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "qualification": {
+                                                            "description": "required_if:category,tal",
+                                                            "type": "string"
+                                                        },
+                                                        "otherQualification": {
+                                                            "type": "string"
+                                                        },
+                                                        "university": {
+                                                            "description": "required_if:category,tal",
+                                                            "type": "string"
+                                                        },
+                                                        "eduPeriod": {
+                                                            "description": "required_if:category,tal",
+                                                            "type": "string"
+                                                        },
+                                                        "eduCountry": {
+                                                            "description": "required_if:category,tal",
+                                                            "type": "string"
+                                                        },
+                                                        "specialization": {
+                                                            "description": "required_if:category,tal",
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "ResidencyAndTravelAndFamily": {
+                                        "required": [
+                                            "residences",
+                                            "otherNationalities",
+                                            "countriesVisitedLast10Years",
+                                            "familyMembers"
+                                        ],
+                                        "properties": {
+                                            "residences": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "issueDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "expiryDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "otherNationalities": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "passportNumber": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "issueDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "expiryDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "placeOfIssue": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "countryStatus": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "countriesVisitedLast10Years": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "period": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "visitingReason": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "otherReasonOfVisit": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "familyMembers": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "description": "required_if:maritalStatus,Married",
+                                                            "type": "string",
+                                                            "example": "Wife"
+                                                        },
+                                                        "relation": {
+                                                            "description": "required_if:maritalStatus,Married",
+                                                            "type": "string",
+                                                            "example": "Wife"
+                                                        },
+                                                        "dob": {
+                                                            "description": "required_if:maritalStatus,Married",
+                                                            "type": "string",
+                                                            "example": "2000-01-01"
+                                                        },
+                                                        "profession": {
+                                                            "description": "required_if:maritalStatus,Married",
+                                                            "type": "string",
+                                                            "example": "Working"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Applicant created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/requests/{id}": {
+            "get": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Get a single Request by ID",
+                "description": "Returns Request details for the given ID",
+                "operationId": "033b27f8033a12f6b7447a85e70fd74b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the Request",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/requests/partial": {
+            "post": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Create Partial Request",
+                "description": "Create a partial request with personal, employment, residency, travel, and family information.",
+                "operationId": "e68ca277654ca16d65599a17ae093c8e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "personalInfo",
+                                    "employmentAndEducation",
+                                    "ResidencyAndTravelAndFamily"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "personalInfo": {
+                                        "required": [
+                                            "identificationData",
+                                            "applicantInfo",
+                                            "contactInfo",
+                                            "passportDetails"
+                                        ],
+                                        "properties": {
+                                            "identificationData": {
+                                                "properties": {
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "tal"
+                                                    },
+                                                    "subCategory": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "sector": {
+                                                        "type": "string",
+                                                        "example": "edu"
+                                                    },
+                                                    "activity": {
+                                                        "type": "string",
+                                                        "example": "ar"
+                                                    },
+                                                    "subActivity": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "entity": {
+                                                        "type": "string",
+                                                        "example": "moeahe"
+                                                    },
+                                                    "incubator": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "applicantInfo": {
+                                                "properties": {
+                                                    "nameEn": {
+                                                        "type": "string",
+                                                        "example": "Muhammad Talha Khalid"
+                                                    },
+                                                    "nameAr": {
+                                                        "type": "string",
+                                                        "example": "محمد طلحة خالد"
+                                                    },
+                                                    "gender": {
+                                                        "type": "string",
+                                                        "example": "Male"
+                                                    },
+                                                    "dob": {
+                                                        "type": "string",
+                                                        "example": "1998-10-24"
+                                                    },
+                                                    "religion": {
+                                                        "type": "string",
+                                                        "example": "Islam"
+                                                    },
+                                                    "maritalStatus": {
+                                                        "type": "string",
+                                                        "example": "Married"
+                                                    },
+                                                    "placeOfBirth": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "currentCountry": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "nationality": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "shortBio": {
+                                                        "type": "string",
+                                                        "example": "Hello world"
+                                                    },
+                                                    "langProficiencyAr": {
+                                                        "type": "string",
+                                                        "example": "no proficiency"
+                                                    },
+                                                    "langProficiencyEn": {
+                                                        "type": "string",
+                                                        "example": "intermediate"
+                                                    },
+                                                    "areYouQatarResident": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "qidNumber": {
+                                                        "type": "string",
+                                                        "example": "45345323413"
+                                                    },
+                                                    "qidType": {
+                                                        "type": "string",
+                                                        "example": "Work Residency"
+                                                    },
+                                                    "workPermit": {
+                                                        "type": "string",
+                                                        "example": "yes"
+                                                    },
+                                                    "maintainWorkPermit": {
+                                                        "type": "string",
+                                                        "example": "no"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "contactInfo": {
+                                                "properties": {
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "talha@yopmail.com"
+                                                    },
+                                                    "mobile": {
+                                                        "type": "string",
+                                                        "example": "+97455040820"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "+923370361043"
+                                                    },
+                                                    "permanentAddress": {
+                                                        "type": "string",
+                                                        "example": "Karachi, Pakistan"
+                                                    },
+                                                    "poBox": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "qatarAddress": {
+                                                        "type": "string",
+                                                        "example": "Al Meshaf, Qatar"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "passportDetails": {
+                                                "properties": {
+                                                    "number": {
+                                                        "type": "string",
+                                                        "example": "AD3434354"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "Ordinary"
+                                                    },
+                                                    "issueDate": {
+                                                        "type": "string",
+                                                        "example": "2023-08-29"
+                                                    },
+                                                    "issueCountry": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "issueBy": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    },
+                                                    "expiryDate": {
+                                                        "type": "string",
+                                                        "example": "2033-08-31"
+                                                    },
+                                                    "issuePlace": {
+                                                        "type": "string",
+                                                        "example": "Pakistan"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "employmentAndEducation": {
+                                        "required": [
+                                            "employmentDetails",
+                                            "previousJobs",
+                                            "educations"
+                                        ],
+                                        "properties": {
+                                            "employmentDetails": {
+                                                "properties": {
+                                                    "companyName": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "shareOfTheCapital": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "amountOfCapital": {
+                                                        "type": "string",
+                                                        "example": ""
+                                                    },
+                                                    "profession": {
+                                                        "type": "string",
+                                                        "example": "Developer"
+                                                    },
+                                                    "nameOfSponsor": {
+                                                        "type": "string",
+                                                        "example": "Jusour"
+                                                    },
+                                                    "addressOfSponsor": {
+                                                        "type": "string",
+                                                        "example": "Doha"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "previousJobs": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "entity": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "jobCountry": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "jobDuration": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "jobStatus": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "educations": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "qualification": {
+                                                            "type": "string",
+                                                            "example": "Bachelor"
+                                                        },
+                                                        "otherQualification": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "university": {
+                                                            "type": "string",
+                                                            "example": "FUUAST"
+                                                        },
+                                                        "eduPeriod": {
+                                                            "type": "string",
+                                                            "example": "2 years"
+                                                        },
+                                                        "eduCountry": {
+                                                            "type": "string",
+                                                            "example": "Pakistan"
+                                                        },
+                                                        "specialization": {
+                                                            "type": "string",
+                                                            "example": "BSCS"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "ResidencyAndTravelAndFamily": {
+                                        "required": [
+                                            "residences",
+                                            "otherNationalities",
+                                            "countriesVisitedLast10Years",
+                                            "familyMembers"
+                                        ],
+                                        "properties": {
+                                            "residences": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "issueDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "expiryDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "otherNationalities": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "passportNumber": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "issueDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "expiryDate": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "placeOfIssue": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "countryStatus": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "countriesVisitedLast10Years": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "period": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "visitingReason": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "otherReasonOfVisit": {
+                                                            "type": "string",
+                                                            "example": ""
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "familyMembers": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Wife"
+                                                        },
+                                                        "relation": {
+                                                            "type": "string",
+                                                            "example": "Wife"
+                                                        },
+                                                        "dob": {
+                                                            "type": "string",
+                                                            "example": "2000-01-01"
+                                                        },
+                                                        "profession": {
+                                                            "type": "string",
+                                                            "example": "Working"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Partial request created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/requests/document": {
+            "post": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Upload a document for user request",
+                "description": "Uploads a document with a specified key and optional ID.",
+                "operationId": "28c13e0c0b9369d424db267293bdc1c1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "key",
+                                    "document"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "",
+                                        "nullable": true
+                                    },
+                                    "key": {
+                                        "type": "string",
+                                        "example": "passportCopy"
+                                    },
+                                    "document": {
+                                        "description": "The file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Document uploaded successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/requests/can-submit/{entitySlug}": {
+            "post": {
+                "tags": [
+                    "Requests"
+                ],
+                "summary": "Check if user can submit request",
+                "description": "Checks if the user is eligible to submit a request based on the given entity slug.",
+                "operationId": "cc98805c51cabb4f045212987bc8b319",
+                "parameters": [
+                    {
+                        "name": "entitySlug",
+                        "in": "path",
+                        "description": "Slug of the entity to check submission eligibility for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "moeahe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eligibility check successful"
+                    },
+                    "404": {
+                        "description": "Entity not found"
+                    },
+                    "403": {
+                        "description": "User is not eligible to submit"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user/resolve": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user resolver",
+                "operationId": "2a4c75cefa6b77c93acf0a39e9f54df4",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Admin",
+            "description": "All Admin-related APIs (Categories, Sub Categories, Sectors, Activities, Sub Activities, Entities, Incubators and Form Fields.)"
+        },
+        {
+            "name": "Auth",
+            "description": "All Auth-related APIs (Login, Verify Token, Signup)"
+        },
+        {
+            "name": "Requests",
+            "description": "All Requests-related APIs (Complete Request Application and Classification Related to Request)"
+        },
+        {
+            "name": "User",
+            "description": "All User-related APIs (Resolver)"
+        }
+    ]
+}

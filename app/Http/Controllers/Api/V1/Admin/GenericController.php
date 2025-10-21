@@ -32,9 +32,12 @@ use App\Http\Controllers\Api\BaseController;
 
 use App\Services\V1\Admin\GenericService;
 
-
 class GenericController extends BaseController
 {
+    /**
+     * See Swagger annotations in \App\Swaggers\Api\V1\Admin\GenericSwagger
+    */
+
     protected $paginate = 10;
 
     public function __construct(private GenericService $service) {}
