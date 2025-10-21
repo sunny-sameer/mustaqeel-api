@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Swaggers\Api\V1\User;
+namespace App\Swaggers\V1\User;
 
 use OpenApi\Annotations as OA;
 

@@ -15,7 +15,7 @@ use App\Services\V1\User\UserService;
 class TwoFactorController extends BaseController
 {
     /**
-     * See Swagger annotations in \App\Swaggers\Api\V1\Auth\AuthSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Auth\AuthSwagger
     */
 
 

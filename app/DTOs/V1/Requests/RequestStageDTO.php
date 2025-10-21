@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Api\V1\Requests;
+namespace App\DTOs\V1\Requests;
 
 
 use Carbon\Carbon;

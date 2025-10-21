@@ -17,11 +17,11 @@ use App\Services\V1\User\UserService;
 use App\Services\V1\Artifacts\ArtifactsService;
 
 
-use App\DTOs\Api\V1\Requests\RequestDTO;
-use App\DTOs\Api\V1\Requests\RequestMetasDTO;
-use App\DTOs\Api\V1\Requests\RequestAttributesDTO;
-use App\DTOs\Api\V1\Requests\RequestStageDTO;
-use App\DTOs\Api\V1\Requests\RequestStatusDTO;
+use App\DTOs\V1\Requests\RequestDTO;
+use App\DTOs\V1\Requests\RequestMetasDTO;
+use App\DTOs\V1\Requests\RequestAttributesDTO;
+use App\DTOs\V1\Requests\RequestStageDTO;
+use App\DTOs\V1\Requests\RequestStatusDTO;
 
 
 use App\Exceptions\BadRequestException;

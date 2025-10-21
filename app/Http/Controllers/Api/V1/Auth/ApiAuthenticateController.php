@@ -25,7 +25,7 @@ use App\Exceptions\TooManyLoginAttemptsException;
 class ApiAuthenticateController extends BaseController
 {
     /**
-     * See Swagger annotations in \App\Swaggers\Api\V1\Auth\AuthSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Auth\AuthSwagger
     */
 
 

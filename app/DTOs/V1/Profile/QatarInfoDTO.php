@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Api\V1\Profile;
+namespace App\DTOs\V1\Profile;
 
 
 use Illuminate\Http\Request;

@@ -23,7 +23,7 @@ use App\Services\V1\Requests\RequestsService;
 class RequestsController extends BaseController
 {
     /**
-     * See Swagger annotations in \App\Swaggers\Api\V1\Requests\RequestsSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Requests\RequestsSwagger
     */
 
 

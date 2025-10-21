@@ -35,7 +35,7 @@ use App\Services\V1\Admin\GenericService;
 class GenericController extends BaseController
 {
     /**
-     * See Swagger annotations in \App\Swaggers\Api\V1\Admin\GenericSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Admin\GenericSwagger
     */
 
     public function __construct(private GenericService $service) {}

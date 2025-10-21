@@ -2,8 +2,8 @@
 
 namespace App\Services\V1\Admin;
 
-use App\DTOs\Api\V1\Requests\FormFieldsDTO;
-use App\DTOs\Api\V1\Requests\RequestMetasDTO;
+use App\DTOs\V1\Requests\FormFieldsDTO;
+use App\DTOs\V1\Requests\RequestMetasDTO;
 
 
 use App\Models\FormFields;
