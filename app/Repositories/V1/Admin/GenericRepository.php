@@ -24,8 +24,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
         parent::__construct($model);
     }
     // ===== CATEGORIES =====
-    public function allCategories($paginate)
+    public function allCategories($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return Category::paginate($paginate);
     }
     public function findCategory($id)
@@ -48,8 +49,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== SUBCATEGORIES =====
-    public function allSubCategories($paginate)
+    public function allSubCategories($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return SubCategory::with('category')->paginate($paginate);
     }
     public function findSubCategory($id)
@@ -75,8 +77,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== SECTORS =====
-    public function allSectors($paginate)
+    public function allSectors($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return Sector::with('categories')->paginate($paginate)->through(function ($sectors) {
             $sectors->categoryIds = $sectors->categories->pluck('id');
             return $sectors;
@@ -118,8 +121,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== ACTIVITIES =====
-    public function allActivities($paginate)
+    public function allActivities($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return Activity::with('sector', 'entities', 'subActivities')->paginate($paginate)->through(function ($activities) {
             $activities->entityIds = $activities->entities->pluck('id');
             return $activities;
@@ -161,8 +165,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== SUBACTIVITIES =====
-    public function allSubActivities($paginate)
+    public function allSubActivities($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return SubActivity::with('activity')->paginate($paginate);
     }
     public function findSubActivity($id)
@@ -188,8 +193,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== ENTITIES =====
-    public function allEntities($paginate)
+    public function allEntities($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return Entity::with('activities')->paginate($paginate)->through(function ($entities) {
             $entities->activityIds = $entities->activities->pluck('id');
             return $entities;
@@ -226,8 +232,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== INCUBATORS =====
-    public function allIncubators($paginate)
+    public function allIncubators($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         return Incubator::with('category')->paginate($paginate);
     }
     public function findIncubator($id)
@@ -253,8 +260,9 @@ class GenericRepository extends CoreRepository implements GenericInterface
     }
 
     // ===== FORM FIELDS =====
-    public function allFormFields($paginate)
+    public function allFormFields($request)
     {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         $ff = FormFields::with([
             'formMetas.category:name,nameAr,slug',
             'formMetas.subCategory:name,nameAr,slug',

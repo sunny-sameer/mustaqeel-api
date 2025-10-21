@@ -38,14 +38,12 @@ class GenericController extends BaseController
      * See Swagger annotations in \App\Swaggers\Api\V1\Admin\GenericSwagger
     */
 
-    protected $paginate = 10;
-
     public function __construct(private GenericService $service) {}
 
     // ===== CATEGORIES =====
-    public function categories()
+    public function categories(Request $request)
     {
-        return response()->json($this->service->allCategories($this->paginate));
+        return response()->json($this->service->allCategories($request->all()));
     }
     public function category($id)
     {
@@ -66,9 +64,9 @@ class GenericController extends BaseController
     }
 
     // ===== SUBCATEGORIES =====
-    public function subCategories()
+    public function subCategories(Request $request)
     {
-        return response()->json($this->service->allSubCategories($this->paginate));
+        return response()->json($this->service->allSubCategories($request->all()));
     }
     public function subCategory($id)
     {
@@ -89,9 +87,9 @@ class GenericController extends BaseController
     }
 
     // ===== SECTORS =====
-    public function sectors()
+    public function sectors(Request $request)
     {
-        return response()->json($this->service->allSectors($this->paginate));
+        return response()->json($this->service->allSectors($request->all()));
     }
     public function sector($id)
     {
@@ -116,9 +114,9 @@ class GenericController extends BaseController
     }
 
     // ===== ACTIVITIES =====
-    public function activities()
+    public function activities(Request $request)
     {
-        return response()->json($this->service->allActivities($this->paginate));
+        return response()->json($this->service->allActivities($request->all()));
     }
     public function activity($id)
     {
@@ -143,9 +141,9 @@ class GenericController extends BaseController
     }
 
     // ===== SUBACTIVITIES =====
-    public function subActivities()
+    public function subActivities(Request $request)
     {
-        return response()->json($this->service->allSubActivities($this->paginate));
+        return response()->json($this->service->allSubActivities($request->all()));
     }
     public function subActivity($id)
     {
@@ -166,9 +164,9 @@ class GenericController extends BaseController
     }
 
     // ===== ENTITIES =====
-    public function entities()
+    public function entities(Request $request)
     {
-        return response()->json($this->service->allEntities($this->paginate));
+        return response()->json($this->service->allEntities($request->all()));
     }
     public function entity($id)
     {
@@ -193,9 +191,9 @@ class GenericController extends BaseController
     }
 
     // ===== INCUBATORS =====
-    public function incubators()
+    public function incubators(Request $request)
     {
-        return response()->json($this->service->allIncubators($this->paginate));
+        return response()->json($this->service->allIncubators($request->all()));
     }
     public function incubator($id)
     {
@@ -216,9 +214,9 @@ class GenericController extends BaseController
     }
 
     // ===== FORM FIELDS =====
-    public function formFields()
+    public function formFields(Request $request)
     {
-        return response()->json($this->service->allFormFields($this->paginate));
+        return response()->json($this->service->allFormFields($request->all()));
     }
     public function formField($id)
     {

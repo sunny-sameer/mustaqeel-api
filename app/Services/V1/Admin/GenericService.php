@@ -24,9 +24,9 @@ class GenericService
     }
 
     // Category
-    public function allCategories($paginate = 10)
+    public function allCategories($request)
     {
-        return $this->genericInterface->allCategories($paginate);
+        return $this->genericInterface->allCategories($request);
     }
     public function findCategory($id)
     {
@@ -46,9 +46,9 @@ class GenericService
     }
 
     // SubCategory
-    public function allSubCategories($paginate = 10)
+    public function allSubCategories($request)
     {
-        return $this->genericInterface->allSubCategories($paginate);
+        return $this->genericInterface->allSubCategories($request);
     }
     public function findSubCategory($id)
     {
@@ -68,9 +68,9 @@ class GenericService
     }
 
     // Sectors
-    public function allSectors($paginate = 10)
+    public function allSectors($request)
     {
-        return $this->genericInterface->allSectors($paginate);
+        return $this->genericInterface->allSectors($request);
     }
     public function findSector($id)
     {
@@ -90,9 +90,9 @@ class GenericService
     }
 
     // Activities
-    public function allActivities($paginate = 10)
+    public function allActivities($request)
     {
-        return $this->genericInterface->allActivities($paginate);
+        return $this->genericInterface->allActivities($request);
     }
     public function findActivity($id)
     {
@@ -112,9 +112,9 @@ class GenericService
     }
 
     // SubActivities
-    public function allSubActivities($paginate = 10)
+    public function allSubActivities($request)
     {
-        return $this->genericInterface->allSubActivities($paginate);
+        return $this->genericInterface->allSubActivities($request);
     }
     public function findSubActivity($id)
     {
@@ -134,9 +134,9 @@ class GenericService
     }
 
     // Entities
-    public function allEntities($paginate = 10)
+    public function allEntities($request)
     {
-        return $this->genericInterface->allEntities($paginate);
+        return $this->genericInterface->allEntities($request);
     }
     public function findEntity($id)
     {
@@ -156,9 +156,9 @@ class GenericService
     }
 
     // Incubators
-    public function allIncubators($paginate = 10)
+    public function allIncubators($request)
     {
-        return $this->genericInterface->allIncubators($paginate);
+        return $this->genericInterface->allIncubators($request);
     }
     public function findIncubator($id)
     {
@@ -178,9 +178,9 @@ class GenericService
     }
 
     // Form Fields
-    public function allFormFields($paginate = 10)
+    public function allFormFields($request)
     {
-        return $this->genericInterface->allFormFields($paginate);
+        return $this->genericInterface->allFormFields($request);
     }
     public function findFormField($id)
     {
