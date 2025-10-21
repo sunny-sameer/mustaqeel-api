@@ -11,7 +11,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Categories",
-                "operationId": "7038bcbae00587f2a39e066ad4ac47db",
+                "operationId": "531d205e9ef9ae36ecd7036b0c4af570",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -29,7 +29,7 @@
                 ],
                 "summary": "Create a new Category",
                 "description": "Creates a new Category with given data",
-                "operationId": "1f0621d78462d45ae2045258e507e89d",
+                "operationId": "944b5fa6f14f2549441bed95840d23b9",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -81,7 +81,7 @@
                 ],
                 "summary": "Get a single Category by ID",
                 "description": "Returns Category details for the given ID",
-                "operationId": "933de2f5fa29e4cdb52734b413e1428b",
+                "operationId": "907097075d71bd0881d3fa107160a560",
                 "parameters": [
                     {
                         "name": "id",
@@ -110,7 +110,7 @@
                 ],
                 "summary": "Update a Category by ID",
                 "description": "Updates an existing Category",
-                "operationId": "7995ea6729f96333d15d34286c170e0b",
+                "operationId": "df121a515e527ffbb3dd7d5fa6c70cbb",
                 "parameters": [
                     {
                         "name": "id",
@@ -174,7 +174,7 @@
                 ],
                 "summary": "Delete a Category by ID",
                 "description": "Deletes the Category identified by the given ID",
-                "operationId": "f636e365cf94c88c7b926880e95167f7",
+                "operationId": "3163d4b396735f8eec880ec59d3aa133",
                 "parameters": [
                     {
                         "name": "id",
@@ -207,7 +207,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Sub Categories",
-                "operationId": "e3c371a9728e7655b36f1f3bd02553fb",
+                "operationId": "bbf3ba9e700c3951e941f5a9995cf3b7",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -225,7 +225,7 @@
                 ],
                 "summary": "Create a new Sub Category",
                 "description": "Creates a new Sub Category with given data",
-                "operationId": "1591626f11b14b5266dfed8cbd800c68",
+                "operationId": "2aef9856269b5ccc7a342d0cc945f25f",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -282,7 +282,7 @@
                 ],
                 "summary": "Get a single Sub Category by ID",
                 "description": "Returns Sub Category details for the given ID",
-                "operationId": "98b1e75843a0dd62b481a38f435a5242",
+                "operationId": "4dd0cd6862de7847e286630afb05d011",
                 "parameters": [
                     {
                         "name": "id",
@@ -311,7 +311,7 @@
                 ],
                 "summary": "Update a Sub Category by ID",
                 "description": "Updates an existing Sub Category",
-                "operationId": "a2e3d85397d6ec065c516c0a2c4a6741",
+                "operationId": "a47888e676c61531f0d107b39c22a3da",
                 "parameters": [
                     {
                         "name": "id",
@@ -380,7 +380,7 @@
                 ],
                 "summary": "Delete a Sub Category by ID",
                 "description": "Deletes the Sub Category identified by the given ID",
-                "operationId": "7913b2c99cf25ac7772ab93adf36d7bf",
+                "operationId": "2f9cd27cf755ad855b78624942aa5059",
                 "parameters": [
                     {
                         "name": "id",
@@ -413,7 +413,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Sectors",
-                "operationId": "77e2d5616866e668eeaa868f706069e1",
+                "operationId": "414cb7bbd8a13351f587141904756924",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -431,7 +431,7 @@
                 ],
                 "summary": "Create a new Sector",
                 "description": "Creates a new Sector with given data",
-                "operationId": "5bc70be40a4c3635c56ef16dee857c56",
+                "operationId": "0315d7627a21fccd5b58aa14d4b1be0b",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -495,7 +495,7 @@
                 ],
                 "summary": "Get a single Sector by ID",
                 "description": "Returns Sector details for the given ID",
-                "operationId": "8656dd5dbea052faafbfdf24482cd427",
+                "operationId": "883cdb2f283ef28ba120e32226d17d6a",
                 "parameters": [
                     {
                         "name": "id",
@@ -524,7 +524,7 @@
                 ],
                 "summary": "Update a Sector by ID",
                 "description": "Updates an existing Sector",
-                "operationId": "012f7ee5051877a445838a8f5ae0fa55",
+                "operationId": "51acb9b50da419942ceed644e71e932f",
                 "parameters": [
                     {
                         "name": "id",
@@ -600,7 +600,7 @@
                 ],
                 "summary": "Delete a Sector by ID",
                 "description": "Deletes the Sector identified by the given ID",
-                "operationId": "2f48647df08e81ca0d74567c3138b049",
+                "operationId": "df6b0fe893a1375c174cd729cc7dd4df",
                 "parameters": [
                     {
                         "name": "id",
@@ -633,7 +633,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Activities",
-                "operationId": "a9eb54b82fa701658044c1c776463f9b",
+                "operationId": "52c38ac998d3e5dac385cfaac3d866c1",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -651,7 +651,7 @@
                 ],
                 "summary": "Create a new Activity",
                 "description": "Creates a new Activity with given data",
-                "operationId": "a339b154e122f133d63b008998bdc8e5",
+                "operationId": "432ea800f84addb0c069c6cb9207ed07",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -708,7 +708,7 @@
                 ],
                 "summary": "Get a single Activity by ID",
                 "description": "Returns Activity details for the given ID",
-                "operationId": "4aab40435494c0b072becbabb48f5b69",
+                "operationId": "4f030ef5a5833d111d57aa8943345c7e",
                 "parameters": [
                     {
                         "name": "id",
@@ -737,7 +737,7 @@
                 ],
                 "summary": "Update a Activity by ID",
                 "description": "Updates an existing Activity",
-                "operationId": "e864336084bb41abea6510c4c9fdd271",
+                "operationId": "8966eec7916381a390e210ff97f5d1ed",
                 "parameters": [
                     {
                         "name": "id",
@@ -806,7 +806,7 @@
                 ],
                 "summary": "Delete a Activity by ID",
                 "description": "Deletes the Activity identified by the given ID",
-                "operationId": "a6746d18236d50b0432dd3a29907ff99",
+                "operationId": "d5f4b42cac3a422fcd7f43a2f53d6de0",
                 "parameters": [
                     {
                         "name": "id",
@@ -840,7 +840,7 @@
                 ],
                 "summary": "Update a Entities of Activity by ID",
                 "description": "Updates an existing Entities of  Activity",
-                "operationId": "ed73484c4e61bd4c34b1ed3a4770603a",
+                "operationId": "deb8ab76afd0d7ab25fca903b2b483f8",
                 "parameters": [
                     {
                         "name": "id",
@@ -901,7 +901,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Sub Activities",
-                "operationId": "5810d9ab3a19b3ca471d8b650e3cc10f",
+                "operationId": "03988a476174729cb5bea85e2cb924e0",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -919,7 +919,7 @@
                 ],
                 "summary": "Create a new Sub Activity",
                 "description": "Creates a new Sub Activity with given data",
-                "operationId": "798f74381e7c03f700989e06f323c308",
+                "operationId": "1e614ed9ef4b88ad857af4b7af0d60e8",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -976,7 +976,7 @@
                 ],
                 "summary": "Get a single Sub Activity by ID",
                 "description": "Returns Sub Activity details for the given ID",
-                "operationId": "1d20e30ec0a02b12fafdc160e25f5f96",
+                "operationId": "3ee4992a38bf34431bf0c072deee8e24",
                 "parameters": [
                     {
                         "name": "id",
@@ -1005,7 +1005,7 @@
                 ],
                 "summary": "Update a Sub Activity by ID",
                 "description": "Updates an existing Sub Activity",
-                "operationId": "7da7cced5506093d4725f1b6dac77eb7",
+                "operationId": "153a6d4b97500429d3928ca89296dee2",
                 "parameters": [
                     {
                         "name": "id",
@@ -1074,7 +1074,7 @@
                 ],
                 "summary": "Delete a Sub Activity by ID",
                 "description": "Deletes the Sub Activity identified by the given ID",
-                "operationId": "a90678b4d258fed965e13042922fcb3e",
+                "operationId": "f05a3c5d7c6324c7fc5ba0580bade693",
                 "parameters": [
                     {
                         "name": "id",
@@ -1107,7 +1107,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Entities",
-                "operationId": "483d8fe6d8955d21d05ba6a2c505b503",
+                "operationId": "0f1ad50cac629c3d32b655a349face4b",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -1125,7 +1125,7 @@
                 ],
                 "summary": "Create a new Entity",
                 "description": "Creates a new Entity with given data",
-                "operationId": "ffa52bd7116ebc8fa78035ade9f5455d",
+                "operationId": "8b58eb72a196374c209968733e905d41",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1187,7 +1187,7 @@
                 ],
                 "summary": "Get a single Entity by ID",
                 "description": "Returns Entity details for the given ID",
-                "operationId": "7efb418eeb5ad5769e412bef04a3cbc6",
+                "operationId": "934fbcd28bf635e0d624fc5b3214123d",
                 "parameters": [
                     {
                         "name": "id",
@@ -1216,7 +1216,7 @@
                 ],
                 "summary": "Update a Entity by ID",
                 "description": "Updates an existing Entity",
-                "operationId": "4f1d56a846871937e6cdacc542f01ba7",
+                "operationId": "080caccbecf2d7d30521c381135b44ee",
                 "parameters": [
                     {
                         "name": "id",
@@ -1290,7 +1290,7 @@
                 ],
                 "summary": "Delete a Entity by ID",
                 "description": "Deletes the Entity identified by the given ID",
-                "operationId": "5c1a5f330bd968648202ca5d497b0995",
+                "operationId": "504d720e7012909ef118599cf95e8548",
                 "parameters": [
                     {
                         "name": "id",
@@ -1324,7 +1324,7 @@
                 ],
                 "summary": "Update a Activities of Entity by ID",
                 "description": "Updates an existing Activities of Entity",
-                "operationId": "0c51ec794f9ec447a95a87a7f5643cee",
+                "operationId": "ad3262dcf28ee311d1592b621d4b6c6a",
                 "parameters": [
                     {
                         "name": "id",
@@ -1381,7 +1381,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Incubators",
-                "operationId": "35eeb767c931c6e212130516fb03cbea",
+                "operationId": "32c8450913f45ee1e051ecda152daa28",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -1399,7 +1399,7 @@
                 ],
                 "summary": "Create a new Incubator",
                 "description": "Creates a new Incubator with given data",
-                "operationId": "e76e342bf8c24b42694a5735db3f8032",
+                "operationId": "95f27db88cd33fbe40f57c8db167769c",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1456,7 +1456,7 @@
                 ],
                 "summary": "Get a single Incubator by ID",
                 "description": "Returns Incubator details for the given ID",
-                "operationId": "dc443d7ad2b930b2f637e8b61bb71ee6",
+                "operationId": "fe80c8b083434e97804228f493604fc4",
                 "parameters": [
                     {
                         "name": "id",
@@ -1485,7 +1485,7 @@
                 ],
                 "summary": "Update a Incubator by ID",
                 "description": "Updates an existing Incubator",
-                "operationId": "fbb77f4c7f8a37931517836045a647e4",
+                "operationId": "89a12e662273c4a9cb6ad36e8ed0d643",
                 "parameters": [
                     {
                         "name": "id",
@@ -1554,7 +1554,7 @@
                 ],
                 "summary": "Delete a Incubator by ID",
                 "description": "Deletes the Incubator identified by the given ID",
-                "operationId": "25e6875b2b5a9ec23d7e51aeeb1ad21c",
+                "operationId": "8b32a166db3ee010fc30fbfb2e055cf5",
                 "parameters": [
                     {
                         "name": "id",
@@ -1587,7 +1587,7 @@
                     "Admin"
                 ],
                 "summary": "Get all Form Fields",
-                "operationId": "701f09c76886513ff0907278f860257e",
+                "operationId": "def09840614c36ea3a89251828a67cf6",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -1605,7 +1605,7 @@
                 ],
                 "summary": "Create a new Form Field",
                 "description": "Creates a new Form Field with given data",
-                "operationId": "56ed57e55b28697665626fe3f35ffbda",
+                "operationId": "a9814629a7003027104f6176d93b988d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1731,7 +1731,7 @@
                 ],
                 "summary": "Get a single Form Field by ID",
                 "description": "Returns Form Field details for the given ID",
-                "operationId": "b0e6dffe8c3594b8ba8ae17760d95149",
+                "operationId": "b8205f07051ebef168c8c300899cd9ea",
                 "parameters": [
                     {
                         "name": "id",
@@ -1760,7 +1760,7 @@
                 ],
                 "summary": "Update a Form Field by ID",
                 "description": "Updates an existing Form Field",
-                "operationId": "4b9f095732ea744d649a1a24024b30ec",
+                "operationId": "2c56b60418cfbe622d5de46131376fc1",
                 "parameters": [
                     {
                         "name": "id",
@@ -1898,7 +1898,7 @@
                 ],
                 "summary": "Delete a Form Field by ID",
                 "description": "Deletes the Form Field identified by the given ID",
-                "operationId": "11707d9bcd2478acac34e208071e5ce8",
+                "operationId": "2dee922fef1b0cd6ccd8524aae193151",
                 "parameters": [
                     {
                         "name": "id",
@@ -1931,7 +1931,7 @@
                     "Auth"
                 ],
                 "summary": "Login a user",
-                "operationId": "5f94c8808b91f1cd513b0310ddc03087",
+                "operationId": "480b1eb1ec2cd0e385122557d876bf50",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1973,7 +1973,7 @@
                 ],
                 "summary": "Verify OTP for login or validation",
                 "description": "Verifies the 6-digit OTP sent to the user's email with the pending token.",
-                "operationId": "99a87af12dac8f219804556b4afe7c34",
+                "operationId": "d4f33228d7ba79002d991c9edeb8fd24",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2023,7 +2023,7 @@
                 ],
                 "summary": "Register a new user",
                 "description": "Registers a new user after validating required data and agreement to terms.",
-                "operationId": "e915e6c29e507e977f5abe989dabe674",
+                "operationId": "a81d2628a75d61a749297719ff3157e0",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2083,7 +2083,7 @@
                     "Requests"
                 ],
                 "summary": "Get all Nationalities",
-                "operationId": "b0ae3df02e76dc79ce2a85a879030afe",
+                "operationId": "75a725c58fa00af8a2713cf39606cf04",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -2102,7 +2102,7 @@
                     "Requests"
                 ],
                 "summary": "Get all Categories",
-                "operationId": "e3c83773ecaf89ed8064a76a3dca54cb",
+                "operationId": "d866260717cc251f8e51fafe218a756c",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -2122,7 +2122,7 @@
                 ],
                 "summary": "Get Sectors, Incubatos and SubCategories with Category by Slug",
                 "description": "Returns Sectors, Incubatos and SubCategories details for the given Slug",
-                "operationId": "7b4f65a3b66f377180fc3bd0d25b176c",
+                "operationId": "27ed3f405ab4891a077e556839c7a367",
                 "parameters": [
                     {
                         "name": "catSlug",
@@ -2153,7 +2153,7 @@
                 ],
                 "summary": "Get Activities with Sector by Slug",
                 "description": "Returns Activities details for the given Slug",
-                "operationId": "05f52a3c5a7f57b1c49f544df508107f",
+                "operationId": "602e782ec44b018a37c3b71a81a7394f",
                 "parameters": [
                     {
                         "name": "secSlug",
@@ -2184,7 +2184,7 @@
                 ],
                 "summary": "Get Entities and SubActivities with Activity by Slug",
                 "description": "Returns Entities and SubActivities details for the given Slug",
-                "operationId": "5b764c3398959fc814c8fb6a4a3a1ab8",
+                "operationId": "c9364741fb3691aeba899ede82ab56b9",
                 "parameters": [
                     {
                         "name": "actSlug",
@@ -2215,7 +2215,7 @@
                 ],
                 "summary": "Get form fields based on classification filters",
                 "description": "Returns dynamic form fields for the given classification filters such as category, subCategory, sector, activity, subActivity, entity, and incubator.",
-                "operationId": "a79f54b5627cbb65c4b9eaa7cbb4ad27",
+                "operationId": "86642903c6575d5a3c0bec00d725195f",
                 "parameters": [
                     {
                         "name": "category",
@@ -2310,7 +2310,7 @@
                 ],
                 "summary": "Get Requests",
                 "description": "Returns Requests",
-                "operationId": "3c9cf973f465694c87df9e553a9eb2e1",
+                "operationId": "3509182d2a874e4796cd4b04ccef0cb8",
                 "parameters": [
                     {
                         "name": "search",
@@ -2350,7 +2350,7 @@
                 ],
                 "summary": "Create Fully Request",
                 "description": "Create a fully request with personal, employment, residency, travel, and family information.",
-                "operationId": "fb3aad3ce7695bc945f141a70183256c",
+                "operationId": "079925a0ee789d10c0572e0785ceb357",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2815,7 +2815,7 @@
                 ],
                 "summary": "Get a single Request by ID",
                 "description": "Returns Request details for the given ID",
-                "operationId": "033b27f8033a12f6b7447a85e70fd74b",
+                "operationId": "d0a91a7bab6e458bc4e0ea98338ed3c9",
                 "parameters": [
                     {
                         "name": "id",
@@ -2846,7 +2846,7 @@
                 ],
                 "summary": "Create Partial Request",
                 "description": "Create a partial request with personal, employment, residency, travel, and family information.",
-                "operationId": "e68ca277654ca16d65599a17ae093c8e",
+                "operationId": "8c86d7bb92bd6fb6e16e4cdbb59729d0",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3282,7 +3282,7 @@
                 ],
                 "summary": "Upload a document for user request",
                 "description": "Uploads a document with a specified key and optional ID.",
-                "operationId": "28c13e0c0b9369d424db267293bdc1c1",
+                "operationId": "c2553f4f49a659a49d5c48c517cef36f",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3335,7 +3335,7 @@
                 ],
                 "summary": "Check if user can submit request",
                 "description": "Checks if the user is eligible to submit a request based on the given entity slug.",
-                "operationId": "cc98805c51cabb4f045212987bc8b319",
+                "operationId": "33ba3e5492716a532cefab7eef00feda",
                 "parameters": [
                     {
                         "name": "entitySlug",
@@ -3372,7 +3372,7 @@
                     "User"
                 ],
                 "summary": "Get user resolver",
-                "operationId": "2a4c75cefa6b77c93acf0a39e9f54df4",
+                "operationId": "fbdede238512d63a859a3a727fda21d3",
                 "responses": {
                     "200": {
                         "description": "OK"
