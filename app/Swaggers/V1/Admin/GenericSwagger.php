@@ -1104,6 +1104,49 @@ use OpenApi\Annotations as OA;
  *         description="Form Field not found"
  *     )
  * )
+ *
+ *
+ *  // Reupload Document
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/admin/requests/reupload-documents/{id}",
+ *     tags={"Admin Requests"},
+ *     summary="Re-upload documents by request ID",
+ *     description="Re-upload documents identified by the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"reuploadDocument"},
+ *             @OA\Property(
+ *                 property="reuploadDocument",
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     required={"type", "commentsEn"},
+ *                     @OA\Property(property="type", type="string", example=""),
+ *                     @OA\Property(property="commentsEn", type="string", example=""),
+ *                     @OA\Property(property="commentsAr", type="string", example="")
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Documents re-uploaded request submitted successfully",
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
  */
 
 class GenericSwagger
