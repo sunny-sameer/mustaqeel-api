@@ -45,4 +45,24 @@ class ArtifactsRepository extends CoreRepository implements ArtifactsInterface
         }
         return $data;
     }
+
+    public function deleteDocuments($request, $type)
+    {
+        $documents = $request->documents;
+        $keys = [];
+        if(isset($request->id) && !empty($documents)){
+            foreach ($documents as $key => $value) {
+                array_push($keys,$key);
+            }
+        }
+
+        if(!empty($keys)){
+            $this->model->where('entityId',$request->id)
+            ->where('entityType',$type)
+            ->whereNotIn('type',$keys)
+            ->delete();
+        }
+
+        return 'Deleted';
+    }
 }

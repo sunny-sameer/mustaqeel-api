@@ -3,11 +3,35 @@
 namespace App\Http\Requests\Api\V1;
 
 use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
+use App\Repositories\V1\Admin\GenericInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RequestsPartialRequest extends FormRequest
 {
     use FailedValidationTrait;
+
+    protected array $data = [];
+    protected $genericInterface;
+
+    /**
+     * Create a new form request instance.
+     */
+    public function __construct(GenericInterface $genericInterface)
+    {
+        parent::__construct();
+
+        $this->data = [
+            'category' => $this->input('category'),
+            'subCategory' => $this->input('subCategory'),
+            'sector' => $this->input('sector'),
+            'activity' => $this->input('activity'),
+            'subActivity' => $this->input('subActivity'),
+            'entity' => $this->input('entity'),
+            'incubator' => $this->input('incubator'),
+        ];
+
+        $this->genericInterface = $genericInterface->getFormFields($this->data);
+    }
 
 
     /**
@@ -25,7 +49,7 @@ class RequestsPartialRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $validation = [
             'personalInfo' => 'nullable|array',
             'personalInfo.identificationData' => 'nullable|array',
             'personalInfo.applicantInfo' => 'nullable|array',
@@ -130,11 +154,17 @@ class RequestsPartialRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.dob' => 'nullable|date|before_or_equal:today',
             'ResidencyAndTravelAndFamily.familyMembers.*.profession' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
         ];
+
+        foreach ($this->genericInterface as $key => $value) {
+            $validation['documents.'.$value->slug] = 'nullable|integer|exists:documents,id';
+        }
+
+        return $validation;
     }
 
     public function messages(): array
     {
-        return [
+        $messages = [
             // === Parent Array Validations ===
             'personalInfo.array' => 'The personal info must be an array.',
 
@@ -412,6 +442,13 @@ class RequestsPartialRequest extends FormRequest
             'employmentContract.mimes' => 'The employment contract must be a PNG, JPG, JPEG, PDF, DOC, or DOCX file.',
             'employmentContract.max' => 'The employment contract may not be greater than 2 MB.',
         ];
+
+        foreach ($this->genericInterface as $key => $value) {
+            $messages['documents.'.$value->slug.'.integer'] = 'The '. $value->nameEn .' must be a integer.';
+            $messages['documents.'.$value->slug.'.exists'] = 'The '. $value->nameEn .' name is invalid.';
+        }
+
+        return $messages;
     }
 
     /**

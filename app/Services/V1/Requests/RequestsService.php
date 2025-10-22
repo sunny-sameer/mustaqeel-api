@@ -166,6 +166,12 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function deleteDocumentsIfExist()
+    {
+        $this->artifactsInterface->deleteDocuments($this->requests, Requests::class);
+        return $this;
+    }
+
     public function canSubmitResponse($entitySlug)
     {
         $activitiesIds = $this->genericInterface->getAllActivitiesWithEntity($entitySlug);

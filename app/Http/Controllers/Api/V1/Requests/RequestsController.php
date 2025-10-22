@@ -72,6 +72,7 @@ class RequestsController extends BaseController
                 ->setInputsPartial($request,$this->status)
                 ->userExists()
                 ->requestAlreadyExists()
+                ->deleteDocumentsIfExist()
                 ->createRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
@@ -93,6 +94,7 @@ class RequestsController extends BaseController
                 ->userExists()
                 ->createRequestReferenceNumber()
                 ->requestAlreadyExists()
+                ->deleteDocumentsIfExist()
                 ->createRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
