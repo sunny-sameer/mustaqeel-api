@@ -658,6 +658,33 @@ use OpenApi\Annotations as OA;
  *         description="User is not eligible to submit"
  *     )
  * )
+ *
+ *
+ * // Delete Request Document
+ *
+ *
+ * @OA\Delete(
+ *     path="/api/v1/user/requests/document/delete/{docId}",
+ *     tags={"Requests"},
+ *     summary="Delete a Document by ID",
+ *     description="Deletes the Document identified by the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID of the Document to delete",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Document deleted successfully (no content)"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Document not found"
+ *     )
+ * )
  */
 
 class RequestsSwagger

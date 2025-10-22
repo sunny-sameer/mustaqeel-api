@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('can-submit/{entitySlug}', [RequestsController::class, 'canSubmitApplication']);
 
             Route::put('{id}/update-status', [RequestsController::class, 'updateStatus']);
+            Route::delete('document/delete/{docId}', [RequestsController::class, 'deleteDocumentRequest']);
         });
 
         Route::prefix('classifications')->group(function () {

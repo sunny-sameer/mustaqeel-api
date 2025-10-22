@@ -164,6 +164,20 @@ class RequestsController extends BaseController
         return $this->sendSuccessResponse($request->all());
     }
 
+    public function deleteDocumentRequest($id)
+    {
+        try {
+            return $this->requests
+                ->userExists()
+                ->deleteDocumentById($id);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+        return $this->sendSuccessResponse($request->all());
+    }
+
     public function getAllNationalities()
     {
         return $this->sendSuccessResponse($this->requests->getAllNationalities());

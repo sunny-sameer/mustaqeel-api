@@ -65,4 +65,12 @@ class ArtifactsRepository extends CoreRepository implements ArtifactsInterface
 
         return 'Deleted';
     }
+
+    public function deleteDocumentById($id)
+    {
+        $document = $this->model->find($id);
+        $documentName = ucfirst(camelCaseToSpace($document->type));
+        $document->delete();
+        return $documentName;
+    }
 }

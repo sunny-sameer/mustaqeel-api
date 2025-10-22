@@ -113,6 +113,13 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function setDeleteDocumentRequestInputs(Request $request)
+    {
+        $this->requests = $request;
+        $this->requestId = $request->id;
+        return $this;
+    }
+
     public function userExists()
     {
         $this->user = User::with('profile')->find(auth()->id());
@@ -350,6 +357,28 @@ class RequestsService extends BaseService
 
             return $this->error(
                 message: 'Reupload document creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function deleteDocumentById($id)
+    {
+        DB::beginTransaction();
+        try {
+            $name = $this->artifactsInterface->deleteDocumentById($id);
+
+            DB::commit();
+
+            return $this->success(
+                message: $name.' has been deleted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Document deletion failed',
                 errors: $e->getMessage(),
                 statusCode: 500
             );
