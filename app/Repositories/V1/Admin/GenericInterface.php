@@ -78,4 +78,5 @@ interface GenericInterface extends CoreInterface
     public function getAllActivitiesWithEntity($entSlug);
 
     public function getFormFields($request);
+    public function getSingleFormField($type);
 }

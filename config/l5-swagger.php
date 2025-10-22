@@ -67,7 +67,7 @@ return [
             'middleware' => [
                 'api' => [
                     'api', // or 'web' if you are using web routes
-                    'App\Http\Middleware\Api\V1\ProtectSwagger',
+                    'App\Http\Middleware\Api\V1\ProtectSwaggerMiddleware',
                 ],
                 'asset' => [],
                 'docs' => [],

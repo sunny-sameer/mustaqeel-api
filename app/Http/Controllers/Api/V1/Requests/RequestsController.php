@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Requests;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
+use App\Exceptions\RequestNotExistException;
 use App\Exceptions\UserNotFoundException;
 
 
@@ -16,6 +17,7 @@ use App\Http\Requests\Api\V1\RequestsRequest;
 use App\Http\Requests\Api\V1\RequestsDocumentRequest;
 use App\Http\Requests\Api\V1\RequestsPartialRequest;
 use App\Http\Requests\Api\V1\RequestStatusUpdateRequest;
+use App\Http\Requests\Api\V1\ReuploadDocumentRequest;
 use App\Models\Stages;
 use App\Services\V1\Requests\RequestsService;
 
@@ -138,6 +140,26 @@ class RequestsController extends BaseController
     public function updateStatus(RequestStatusUpdateRequest $request, $id)
     {
         return $this->sendSuccessResponse();
+    }
+
+    public function reuploadDocumentRequest(ReuploadDocumentRequest $request, $id)
+    {
+        try {
+            return $this->requests
+                ->setReuploadInputsDocument($request,$id)
+                ->userExists()
+                ->requestNoFound()
+                ->reuploadDocumentRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+        return $this->sendSuccessResponse($request->all());
     }
 
     public function getAllNationalities()

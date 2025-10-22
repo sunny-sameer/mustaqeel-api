@@ -66,8 +66,6 @@ return new class extends Migration
 
             $table->date('startDate');
             $table->date('endDate')->nullable();
-            $table->longText('commentsEn')->nullable();
-            $table->longText('commentsAr')->nullable();
             $table->longText('meta')->nullable();
             $table->tinyInteger('status')->default(0);
 

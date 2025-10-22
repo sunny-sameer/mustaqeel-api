@@ -5,4 +5,5 @@ use App\Repositories\V1\Core\CoreInterface;
 
 interface ArtifactsInterface  extends CoreInterface {
     public function updateOrCreateDocuments($params = [], $request);
+    public function updateDocuments($request, $reqId, $type);
 }

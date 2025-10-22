@@ -54,7 +54,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         });
     });
 
-    Route::group(['middleware' => ['role:admin|super-admin']], function () {
+    Route::group(['middleware' => 'admin'], function () {
         Route::prefix('admin')->group(function () {
             // Categories
             Route::get('categories', [GenericController::class, 'categories']);
@@ -108,12 +108,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::put('incubators/{id}', [GenericController::class, 'updateIncubator']);
             Route::delete('incubators/{id}', [GenericController::class, 'deleteIncubator']);
 
-            // FORM FIELDS
+            // Form Fields
             Route::get('form-fields', [GenericController::class, 'formFields']);
             Route::get('form-fields/{id}', [GenericController::class, 'formField']);
             Route::post('form-fields', [GenericController::class, 'createFormField']);
             Route::put('form-fields/{id}', [GenericController::class, 'updateFormField']);
             Route::delete('form-fields/{id}', [GenericController::class, 'deleteFormField']);
+
+            // Request
+            Route::post('requests/reupload-documents/{id}', [RequestsController::class, 'reuploadDocumentRequest']);
         });
     });
 });

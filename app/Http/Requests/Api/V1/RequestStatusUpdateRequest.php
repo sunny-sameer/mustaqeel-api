@@ -10,6 +10,11 @@ class RequestStatusUpdateRequest extends FormRequest
 {
     use FailedValidationTrait;
 
+    protected $role;
+    public function __construct(User $user)
+    {
+        $this->role = $user->find(auth()->id())->roles->pluck('type')->first();
+    }
 
     /**
      * Determine if the user is authorized to make this request.
@@ -27,9 +32,9 @@ class RequestStatusUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:On Hold,Approved,Rejected',
+            'status' => $this->role == 'jusour' ? 'required|in:On Hold,Approved,Rejected' : 'required|in:Approved,Rejected',
             'commentsEn' => 'required_if:status,On Hold,Rejected|nullable|min:3|max:800|regex:/^[a-zA-Z0-9.,، ]+$/u',
-            'commentsEn' => 'nullable|min:3|max:800|regex:/^[\p{Arabic}0-9.,، ]+$/u',
+            'commentsAr' => 'nullable|min:3|max:800|regex:/^[\p{Arabic}0-9.,، ]+$/u',
         ];
     }
 
@@ -39,7 +44,18 @@ class RequestStatusUpdateRequest extends FormRequest
     */
     public function messages(): array
     {
-        return [];
+        return [
+            'status.required' => 'The status is required.',
+            'status.in' => $this->role == 'jusour' ? 'The status must be one of the following: On Hold, Approved and Rejected.' : 'The status must be either Approved or Rejected.',
+
+            'commentsEn.required_if' => 'The english comments is required.',
+            'commentsEn.min' => 'The english comments must be at least 3 characters.',
+            'commentsEn.max' => 'The english comments may not be greater than 800 characters.',
+            'commentsEn.regex' => 'The english comments may only contain English letters, commas, full stop, and spaces.',
+
+            'commentsAr.max' => 'The arabic comments may not be greater than 800 characters.',
+            'commentsAr.regex' => 'The arabic comments may only contain Arabic letters, commas, full stop, and spaces.',
+        ];
     }
 
     /**

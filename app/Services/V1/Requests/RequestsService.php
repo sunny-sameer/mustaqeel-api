@@ -26,13 +26,14 @@ use App\DTOs\V1\Requests\RequestStatusDTO;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
+use App\Exceptions\RequestNotExistException;
 use App\Exceptions\UserNotFoundException;
-
-
+use App\Http\Requests\Api\V1\ReuploadDocumentRequest;
 use App\Models\Requests;
 
 
 use App\Repositories\V1\Admin\GenericInterface;
+use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
 
 
@@ -49,6 +50,7 @@ class RequestsService extends BaseService
 
     protected $requestsInterface;
     protected $genericInterface;
+    protected $artifactsInterface;
 
     protected $artifactsService;
     protected $userService;
@@ -62,6 +64,7 @@ class RequestsService extends BaseService
     public function __construct(
         RequestsInterface $requestsInterface,
         GenericInterface $genericInterface,
+        ArtifactsInterface $artifactsInterface,
 
         ArtifactsService $artifactsService,
         UserService $userService
@@ -69,6 +72,7 @@ class RequestsService extends BaseService
     {
         $this->requestsInterface = $requestsInterface;
         $this->genericInterface = $genericInterface;
+        $this->artifactsInterface = $artifactsInterface;
 
         $this->artifactsService = $artifactsService;
         $this->userService = $userService;
@@ -98,6 +102,14 @@ class RequestsService extends BaseService
     {
         $this->requests = $request;
         $this->status = 'Draft';
+        return $this;
+    }
+
+    public function setReuploadInputsDocument(ReuploadDocumentRequest $request, $id)
+    {
+        $this->requests = $request;
+        $this->status = 'Reupload Documents Requested';
+        $this->requestId = $id;
         return $this;
     }
 
@@ -144,7 +156,7 @@ class RequestsService extends BaseService
     public function requestAlreadyExists()
     {
         if(isset($this->requests->id) && !empty($this->requests->id)){
-            $req = $this->requestsInterface->getRequest($this->requests->id);
+            $req = $this->requestsInterface->show($this->requests->id);
 
             if (isset($req->reqReferenceNumber) && !empty($req->reqReferenceNumber)) {
                 throw new RequestAlreadyExistException();
@@ -182,11 +194,11 @@ class RequestsService extends BaseService
             ->all();
 
 
-            $requestMeta = $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData,$request->id,Requests::class);
-            $requestAttributes = $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData,$request->id);
+            $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData,$request->id,Requests::class);
+            $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData,$request->id);
 
 
-            $status = $this->createOrUpdateStageStatus('Application',$request->id);
+            $this->createOrUpdateStageStatus('Application',$request->id, []);
 
 
             $response = $this->requestsInterface->getRequest($request->id);
@@ -209,7 +221,7 @@ class RequestsService extends BaseService
         }
     }
 
-    public function createOrUpdateStageStatus($stageName, $reqId)
+    public function createOrUpdateStageStatus($stageName, $reqId, $metaData)
     {
         $stage = $this->requestsInterface->getStage(['name'=>$stageName]);
         $data = ['reqId'=>$reqId,'stageSlug'=>$stage->slug];
@@ -217,10 +229,30 @@ class RequestsService extends BaseService
         $requestStage = $this->requestsInterface->createRequestStage($data,$requestStageData);
 
         $stageStatus = $this->requestsInterface->getStageStatus(['stageId'=>$stage->id,'name'=>$this->status]);
-        $data2 = ['reqStageId'=>$requestStage->id,'stageStatusSlug'=>$stageStatus->slug];
-        $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
-        $requestStatus = $this->requestsInterface->createRequestStageStatus($data2,$requestStatusData,$this->status);
 
+        $meta = [];
+        if(!empty($metaData)){
+            foreach ($metaData as $key => $value) {
+                $meta['comments'][$key][$value['type'].'En'] = $value['commentsEn'];
+                $meta['comments'][$key][$value['type'].'Ar'] = $value['commentsAr'];
+            }
+        }
+
+        $data2 = [
+            'reqStageId'=>$requestStage->id,
+            'stageStatusSlug'=>$stageStatus->slug,
+            'userId'=>auth()->id(),
+            'meta'=>$meta,
+        ];
+
+
+        if($stageName == 'Application'){
+            $request = $this->requestsInterface->show($reqId);
+            $data2['userId'] = $request->userId;
+        }
+
+        $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
+        $this->requestsInterface->createRequestStageStatus($data2,$requestStatusData,$this->status);
 
         $stageStatus = $this->requestsInterface->getRequestStatus($reqId);
         return $stageStatus;
@@ -235,7 +267,7 @@ class RequestsService extends BaseService
                 $this->requests->id
             );
 
-            $stageStatus = $this->createOrUpdateStageStatus('Application',$request->id);
+            $this->createOrUpdateStageStatus('Application',$request->id, []);
 
             $this->requests['entityId'] = $request->id;
             $this->requests['entityType'] = Requests::class;
@@ -276,6 +308,46 @@ class RequestsService extends BaseService
             data: ['request' => $request],
             message: 'Request fetched successfully'
         );
+    }
+
+    public function requestNoFound()
+    {
+        $request = $this->requestsInterface->show($this->requestId);
+
+        if(!$request){
+            throw new RequestNotExistException();
+        }
+
+        return $this;
+    }
+
+    public function reuploadDocumentRequest()
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->createOrUpdateStageStatus('Application',$this->requestId, $this->requests->reuploadDocument);
+            $this->createOrUpdateStageStatus('Jusour',$this->requestId, $this->requests->reuploadDocument);
+
+            $this->artifactsInterface->updateDocuments($this->requests,$this->requestId, Requests::class);
+
+            $request = $this->requestsInterface->getRequest($this->requestId);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['request'=>$request],
+                message: 'Reupload document request submitted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Reupload document creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
     }
 
     public function getAllNationalities()

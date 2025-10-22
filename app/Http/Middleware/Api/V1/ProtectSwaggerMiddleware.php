@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProtectSwagger
+class ProtectSwaggerMiddleware
 {
     public function handle(Request $request, Closure $next)
     {

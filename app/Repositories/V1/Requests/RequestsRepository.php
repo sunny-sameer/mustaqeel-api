@@ -43,7 +43,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     {
         $id = auth()->id();
         $user = User::find($id);
-        $role = $user->roles->pluck('name')->first();
+        $role = $user->roles->pluck('type')->first();
 
         $search = $request->search ?? NULL;
         $perPage = $request->perPage ?? 10;
@@ -181,7 +181,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     {
         $id = auth()->id();
         $user = User::find($id);
-        $role = $user->roles->pluck('name')->first();
+        $role = $user->roles->pluck('type')->first();
 
 
         $req = $this->model->with([
@@ -205,16 +205,19 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
         $req = $req->where('id',$reqId)->first();
 
-        $req->documents->map(function ($query){
-            $query->meta = json_decode($query->meta);
+        if($req)
+        {
+            $req->documents->map(function ($query){
+                $query->meta = json_decode($query->meta);
 
-            return $query;
-        });
+                return $query;
+            });
 
-        $req['status'] = $this->getRequestStatuses($reqId);
+            $req['status'] = $this->getRequestStatuses($reqId);
 
-        foreach ($this->getAllAttributes($reqId) as $key => $value) {
-            $req->{$key} = $value;
+            foreach ($this->getAllAttributes($reqId) as $key => $value) {
+                $req->{$key} = $value;
+            }
         }
 
         return $req;
@@ -273,8 +276,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         'stage'=>$value?->requestStage?->stage?->name ?? $stage->name,
                         'username'=>$value?->user?->name,
                         'role'=>$value?->user?->roles->pluck('name')->first(),
-                        'commentEn'=>$value?->commentsEn,
-                        'commentAr'=>$value?->commentsAr
+                        'meta'=>$value?->meta ? json_decode($value->meta) : [],
                     ];
                 }
             }
@@ -284,8 +286,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     'stage'=>$stage->name,
                     'username'=>null,
                     'role'=>null,
-                    'commentEn'=>null,
-                    'commentAr'=>null
+                    'meta'=>null,
                 ];
             }
         }

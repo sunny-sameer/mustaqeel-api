@@ -14,8 +14,7 @@ final readonly class RequestStatusDTO
         public string $stageStatusSlug,
         public Carbon $startDate,
         public ?Carbon $endDate = null,
-        public ?string $commentsEn = null,
-        public ?string $commentsAr = null,
+        public ?string $meta = null,
         public bool $status = true,
     ) {}
 
@@ -23,13 +22,12 @@ final readonly class RequestStatusDTO
     public static function fromArray(array $data): self
     {
         return new self(
-            userId: auth()->id(),
+            userId: $data['userId'],
             reqStageId: $data['reqStageId'],
             stageStatusSlug: $data['stageStatusSlug'],
             startDate: Carbon::now(),
             endDate: isset($data['endDate']) ? Carbon::parse($data['endDate']) : NULL,
-            commentsEn: isset($data['commentsEn']) ? $data['commentsEn'] : NULL,
-            commentsAr: isset($data['commentsAr']) ? $data['commentsAr'] : NULL,
+            meta: !empty($data['meta']) ? json_encode(array_filter($data['meta'])) : NULL,
             status: true,
         );
     }
@@ -47,8 +45,7 @@ final readonly class RequestStatusDTO
             'stageStatusSlug' => $this->stageStatusSlug,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
-            'commentsEn' => $this->commentsEn,
-            'commentsAr' => $this->commentsAr,
+            'meta' => $this->meta,
             'status' => $this->status,
         ];
     }
