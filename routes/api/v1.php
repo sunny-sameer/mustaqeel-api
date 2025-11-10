@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
             Route::put('{id}/update-status', [RequestsController::class, 'updateStatus']);
             Route::delete('document/delete/{docId}', [RequestsController::class, 'deleteDocumentRequest']);
+            
         });
 
         Route::prefix('classifications')->group(function () {
@@ -118,6 +119,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
             // Request
             Route::post('requests/reupload-documents/{id}', [RequestsController::class, 'reuploadDocumentRequest']);
+            Route::post('requests/qvc', [RequestsController::class, 'submitQVC']);
         });
     });
 });
