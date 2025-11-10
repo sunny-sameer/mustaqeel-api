@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\V1;
+namespace App\Http\Requests\API\V1;
 
 use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 use App\Repositories\V1\Admin\GenericInterface;

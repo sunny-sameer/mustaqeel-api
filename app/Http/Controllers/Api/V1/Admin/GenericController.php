@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\API\V1\Admin;
 
 
 use Illuminate\Http\Request;
@@ -23,8 +23,8 @@ use App\Http\Requests\API\V1\Admin\IncubatorUpdateRequest;
 use App\Http\Requests\API\V1\Admin\FormFieldCreateRequest;
 use App\Http\Requests\API\V1\Admin\FormFieldUpdateRequest;
 use App\Http\Requests\API\V1\Admin\AttachCategoryToSectorRequest;
-use App\Http\Requests\Api\V1\Admin\AttachEntityOfActivityRequest;
-use App\Http\Requests\Api\V1\Admin\AttachActivityOfEntityRequest;
+use App\Http\Requests\API\V1\Admin\AttachEntityOfActivityRequest;
+use App\Http\Requests\API\V1\Admin\AttachActivityOfEntityRequest;
 
 
 use App\Http\Controllers\Api\BaseController;

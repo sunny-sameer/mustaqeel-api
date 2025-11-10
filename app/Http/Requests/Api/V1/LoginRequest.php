@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API\V1;
 
 use App\Http\Requests\API\V1\BaseRequest;
-use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 
 
 use App\Models\User;

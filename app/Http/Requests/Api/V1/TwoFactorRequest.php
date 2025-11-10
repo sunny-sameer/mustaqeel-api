@@ -6,7 +6,7 @@ use App\Http\Requests\API\V1\BaseRequest;
 
 use App\Models\User;
 
-use App\Http\Requests\Api\V1\Traits\FailedValidationTrait;
+use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 
 
 class TwoFactorRequest extends BaseRequest

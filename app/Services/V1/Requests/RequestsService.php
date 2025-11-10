@@ -7,9 +7,9 @@ use App\Models\User;
 
 
 use Illuminate\Http\Request;
-use App\Http\Requests\Api\V1\RequestsRequest;
-use App\Http\Requests\Api\V1\RequestsDocumentRequest;
-use App\Http\Requests\Api\V1\RequestsPartialRequest;
+use App\Http\Requests\API\V1\RequestsRequest;
+use App\Http\Requests\API\V1\RequestsDocumentRequest;
+use App\Http\Requests\API\V1\RequestsPartialRequest;
 
 
 use App\Services\V1\BaseService;
@@ -28,7 +28,7 @@ use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\UserNotFoundException;
-use App\Http\Requests\Api\V1\ReuploadDocumentRequest;
+use App\Http\Requests\API\V1\ReuploadDocumentRequest;
 use App\Models\Requests;
 
 
