@@ -43,6 +43,18 @@ final readonly class RequestAttributesDTO
         return self::fromArray($request->validated(), $reqId);
     }
 
+    // ADD THIS NEW METHOD FOR QVC
+    public static function fromQVCData(array $qvcData, int $reqId): array
+    {
+        return [
+            new self(
+                reqId: $reqId,
+                meta: json_encode($qvcData),
+                type: 'qvc'
+            )
+        ];
+    }
+
     public function toArray(): array
     {
         return [

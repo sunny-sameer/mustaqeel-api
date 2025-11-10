@@ -19,4 +19,9 @@ interface RequestsInterface  extends CoreInterface {
     public function getRequestStatuses($reqId);
     public function getAllAttributes($reqId);
     public function canSubmitRequest($activitiesIds,$entitySlug);
+
+     // NEW METHODS
+    public function getRequestAttribute(string $requestId, string $type);
+    public function getRequestsPendingQVC();
+    public function enhanceRequestsWithQVCData($requests);
 }

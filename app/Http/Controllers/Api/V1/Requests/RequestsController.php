@@ -18,6 +18,7 @@ use App\Http\Requests\Api\V1\RequestsDocumentRequest;
 use App\Http\Requests\Api\V1\RequestsPartialRequest;
 use App\Http\Requests\Api\V1\RequestStatusUpdateRequest;
 use App\Http\Requests\Api\V1\ReuploadDocumentRequest;
+use App\Http\Requests\Api\V1\QVCRequest;
 use App\Models\Stages;
 use App\Services\V1\Requests\RequestsService;
 
@@ -26,7 +27,7 @@ class RequestsController extends BaseController
 {
     /**
      * See Swagger annotations in \App\Swaggers\V1\Requests\RequestsSwagger
-    */
+     */
 
 
     protected $status = 'Draft';
@@ -69,7 +70,7 @@ class RequestsController extends BaseController
     {
         try {
             return $this->requests
-                ->setInputsPartial($request,$this->status)
+                ->setInputsPartial($request, $this->status)
                 ->userExists()
                 ->requestAlreadyExists()
                 ->deleteDocumentsIfExist()
@@ -90,7 +91,7 @@ class RequestsController extends BaseController
         try {
             $this->status = 'Pending';
             return $this->requests
-                ->setInputs($request,$this->status)
+                ->setInputs($request, $this->status)
                 ->userExists()
                 ->createRequestReferenceNumber()
                 ->requestAlreadyExists()
@@ -148,7 +149,7 @@ class RequestsController extends BaseController
     {
         try {
             return $this->requests
-                ->setReuploadInputsDocument($request,$id)
+                ->setReuploadInputsDocument($request, $id)
                 ->userExists()
                 ->requestNoFound()
                 ->reuploadDocumentRequest();
@@ -223,5 +224,22 @@ class RequestsController extends BaseController
         if (empty($request->category) && !isset($request->category)) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
 
         return $this->requests->getFormFields($request->all());
+    }
+
+
+    /**
+     * Submit QVC for an application
+     */
+    public function submitQVC(QVCRequest $request)
+    {
+        try {
+            return $this->requests
+                ->userExists()
+                ->submitQVC($request);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
+        }
     }
 }

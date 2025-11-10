@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['POST', 'GET', 'PUT', 'OPTIONS', '*'],
 
-    'allowed_origins' => ['http://localhost:4200', 'http://192.168.201.3:86', 'http://127.0.0.1:4200'],
+    'allowed_origins' => ['http://localhost:4200', 'http://192.168.201.3:86', 'http://127.0.0.1:4200', 'http://127.0.0.1:8000'],
 
     'allowed_origins_patterns' => [],
 
