@@ -12,6 +12,7 @@ use App\Exceptions\UserNotFoundException;
 use App\Http\Controllers\Api\BaseController;
 
 
+use App\Http\Requests\API\V1\QVCRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\V1\RequestsRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;

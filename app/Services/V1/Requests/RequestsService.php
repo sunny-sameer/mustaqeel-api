@@ -29,6 +29,7 @@ use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\UserNotFoundException;
+use App\Http\Requests\API\V1\QVCRequest;
 use App\Http\Requests\API\V1\ReuploadDocumentRequest;
 use App\Models\Requests;
 
