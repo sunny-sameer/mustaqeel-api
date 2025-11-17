@@ -23,12 +23,10 @@ Route::prefix('auth')->group(function () {
 });
 
 
-
-
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::prefix('user')->group(function () {
-        Route::get('resolve', [UserController::class ,'userResolver']);
+        Route::get('resolve', [UserController::class, 'userResolver']);
+
 
         // Requests
         Route::prefix('requests')->group(function () {
@@ -41,18 +39,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
             Route::put('{id}/update-status', [RequestsController::class, 'updateStatus']);
             Route::delete('document/delete/{docId}', [RequestsController::class, 'deleteDocumentRequest']);
-            
+
+
+            Route::get('documents/{documentId}/preview', [RequestsController::class, 'previewDocument']);
         });
 
         Route::prefix('classifications')->group(function () {
-            Route::get('nationalities', [RequestsController::class,'getAllNationalities']);
+            Route::get('nationalities', [RequestsController::class, 'getAllNationalities']);
 
-            Route::get('categories', [RequestsController::class,'getAllCategories']);
-            Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class,'getAllSectorsSubCategoriesAndIncubators']);
-            Route::get('activities/{secSlug}', [RequestsController::class,'getAllActivities']);
-            Route::get('entities-sub-activities/{actSlug}', [RequestsController::class,'getAllEntitiesAndSubActivities']);
+            Route::get('categories', [RequestsController::class, 'getAllCategories']);
+            Route::get('sectors-sub-categories-incubators/{catSlug}', [RequestsController::class, 'getAllSectorsSubCategoriesAndIncubators']);
+            Route::get('activities/{secSlug}', [RequestsController::class, 'getAllActivities']);
+            Route::get('entities-sub-activities/{actSlug}', [RequestsController::class, 'getAllEntitiesAndSubActivities']);
 
-            Route::get('form-fields', [RequestsController::class,'getFormFields']);
+            Route::get('form-fields', [RequestsController::class, 'getFormFields']);
         });
     });
 

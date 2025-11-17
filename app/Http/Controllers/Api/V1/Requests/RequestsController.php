@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Requests;
 
-
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\UserNotFoundException;
-
+use App\Exceptions\DocumentNotFoundException;
+use App\Exceptions\DocumentAccessDeniedException;
 
 use App\Http\Controllers\Api\BaseController;
-
-
-use App\Http\Requests\API\V1\QVCRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\V1\RequestsRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
@@ -21,6 +18,13 @@ use App\Http\Requests\API\V1\RequestStatusUpdateRequest;
 use App\Http\Requests\API\V1\ReuploadDocumentRequest;
 use App\Models\Stages;
 use App\Services\V1\Requests\RequestsService;
+use App\Services\V1\Documents\DocumentService;
+
+use App\Http\Requests\API\V1\QVCRequest;
+
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class RequestsController extends BaseController
@@ -32,11 +36,14 @@ class RequestsController extends BaseController
 
     protected $status = 'Draft';
     protected $requests;
+    protected $documentService;
 
 
-    public function __construct(RequestsService $requests)
+
+    public function __construct(RequestsService $requests, DocumentService $documentService)
     {
         $this->requests = $requests;
+        $this->documentService = $documentService;
     }
 
     public function getAllRequests(Request $request)
@@ -240,6 +247,35 @@ class RequestsController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Preview document securely - Accessible to any authenticated user with proper permissions
+     * 
+     * @param string $documentId
+     * @param Request $request
+     * @return StreamedResponse|\Illuminate\Http\JsonResponse
+     */
+    public function previewDocument($documentId)
+    {
+        \Log::info('=== DOCUMENT PREVIEW START ===');
+
+        try {
+            \Log::info('Document ID:', ['id' => $documentId]);
+
+            return $this->documentService
+                ->validateDocumentAccess($documentId)
+                ->getDocumentPreview($documentId);
+        } catch (\Exception $e) {
+            \Log::error('Document preview error:', [
+                'error' => $e->getMessage(),
+                'document_id' => $documentId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
+        } finally {
+            \Log::info('=== DOCUMENT PREVIEW END ===');
         }
     }
 }

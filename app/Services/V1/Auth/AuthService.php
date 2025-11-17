@@ -24,7 +24,7 @@ use App\Exceptions\UserFoundException;
 use App\Exceptions\AuthenticationFailedException;
 use App\Exceptions\TooManyLoginAttemptsException;
 use App\Http\Requests\API\V1\LoginRequest;
-use App\Http\Requests\API\V1\SignupRequest;
+use App\Http\Requests\API\V1\SignUpRequest;
 
 
 use App\Services\V1\Auth\TwoFactorService;
@@ -154,7 +154,7 @@ class AuthService
         return collect($array);
     }
 
-    public function setInputsSignUp(SignupRequest $request): self
+    public function setInputsSignUp(SignUpRequest $request): self
     {
         $this->userEmail = $request->email;
         $this->userPassword = $request->password;

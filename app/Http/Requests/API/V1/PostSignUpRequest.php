@@ -7,7 +7,7 @@ use App\Http\Requests\API\V1\BaseRequest;
 use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 use Illuminate\Validation\Rules\Password;
 
-class PostSignupRequest
+class PostSignUpRequest
 {
     use FailedValidationTrait;
 

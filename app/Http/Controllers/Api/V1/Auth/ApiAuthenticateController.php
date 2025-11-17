@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\API\V1\LoginRequest;
-use App\Http\Requests\API\V1\SignupRequest;
+use App\Http\Requests\API\V1\SignUpRequest;
 
 
 use App\Services\V1\Auth\AuthService;
@@ -62,7 +62,7 @@ class ApiAuthenticateController extends BaseController
     }
 
 
-    public function userSignUp(SignupRequest $request): JsonResponse
+    public function userSignUp(SignUpRequest $request): JsonResponse
     {
         try {
             return $this->authService

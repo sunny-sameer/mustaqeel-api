@@ -31,37 +31,40 @@ class ArtifactsService extends BaseService
 
     public function createDocuments(Request $request)
     {
-        if($request->hasFile('document'))
-        {
+        if ($request->hasFile('document')) {
             $file = $request->file('document');
 
-            $filename = 'APP-DOC-'.time().'-'.$request->key.'.'.$file->extension();
-
+            $filename = 'APP-DOC-' . time() . '-' . $request->key . '.' . $file->extension();
             $path = 'requests/documents';
-
-
             $storagePath = "{$filename}.enc";
-            $encryptedContent = Crypt::encrypt(file_get_contents($file));
-            Storage::disk('public')->put($path.'/'.$storagePath, $encryptedContent);
+            $fullFilePath = $path . '/' . $storagePath; // Store this
 
-            $meta = [ 'extension'=>$file->extension() ];
+            $encryptedContent = Crypt::encrypt(file_get_contents($file));
+            Storage::disk('public')->put($fullFilePath, $encryptedContent);
+
+            // Store the full file path in meta
+            $meta = [
+                'extension' => $file->extension(),
+                'file_path' => $fullFilePath, // Store the full path
+                'disk' => 'public' // Store which disk was used
+            ];
 
             $data = [
-                'entityId'=> $request->entityId,
-                'documentName'=> $storagePath,
-                'type'=> $request->key,
-                'meta'=> json_encode(array_filter($meta)),
-                'entityType'=> $request->entityType,
-                'status'=> true,
+                'entityId' => $request->entityId,
+                'documentName' => $storagePath,
+                'type' => $request->key,
+                'meta' => json_encode(array_filter($meta)),
+                'entityType' => $request->entityType,
+                'status' => true,
             ];
 
             $params = [
-                'entityId'=> $request->entityId,
-                'type'=> $request->key,
-                'entityType'=> $request->entityType,
+                'entityId' => $request->entityId,
+                'type' => $request->key,
+                'entityType' => $request->entityType,
             ];
 
-            $document = $this->artifactsInterface->updateOrCreateDocuments($params,$data);
+            $document = $this->artifactsInterface->updateOrCreateDocuments($params, $data);
 
             return (object)['ok' => true, 'status' => 201, 'document' => $document];
         }
