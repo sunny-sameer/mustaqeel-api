@@ -164,10 +164,21 @@ class AuthService
 
     public function sendOtpToken(): self
     {
+        $signUpUserData = [
+            'name'          => $this->request->input('name'),
+            'nameArabic'    => $this->request->input('nameArabic', null),
+            'email'         => $this->request->input('email'),
+            'password'      => $this->request->input('password'),
+            'termsAccepted' => $this->request->input('termsAccepted'),
+        ];
 
-        $signUpUserData = $this->request->only('name', 'nameArabic', 'email', 'password', 'termsAccepted');
+        $this->twoFactorTokens = [$pendingToken, $expiresIn] =
+            $this->twoFactor->startSignup(
+                $signUpUserData,
+                $this->request->ip(),
+                $this->request->userAgent()
+            );
 
-        $this->twoFactorTokens = [$pendingToken, $expiresIn] = $this->twoFactor->startSignup($signUpUserData, $this->request->ip(), $this->request->userAgent());
         return $this;
     }
 
