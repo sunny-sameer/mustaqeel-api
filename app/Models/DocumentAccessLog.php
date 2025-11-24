@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentAccessLog extends Model
 {
     protected $fillable = [
-        'document_id',
-        'user_id', 
-        'ip_address',
-        'user_agent',
-        'accessed_at'
+        'documentId',
+        'userId', 
+        'ipAddress',
+        'userAgent',
+        'accessedAt'
     ];
 
     protected $casts = [
-        'accessed_at' => 'datetime'
+        'accessedAt' => 'datetime'
     ];
 
     public function document()

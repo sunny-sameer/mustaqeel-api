@@ -79,9 +79,9 @@ class DocumentService
         $user = auth()->user();
         if (!$this->userCanAccessDocument($user, $document)) {
             Log::warning('Document access denied', [
-                'user_id' => $user->id,
-                'document_id' => $documentId,
-                'user_role' => $user->getRoleNames()->first()
+                'userId' => $user->id,
+                'documentId' => $documentId,
+                'userRole' => $user->getRoleNames()->first()
             ]);
             throw new DocumentAccessDeniedException('Access denied to this document');
         }
@@ -115,13 +115,13 @@ class DocumentService
         // Check if document belongs to user's request/application
         if ($document->entityId) {
             $request = \App\Models\Requests::find($document->entityId);
-            if ($request && $request->user_id === $user->id) {
+            if ($request && $request->userId === $user->id) {
                 return true;
             }
         }
 
         // Alternative: Check if document has direct user relationship
-        if (isset($document->user_id) && $document->user_id === $user->id) {
+        if (isset($document->userId) && $document->userId === $user->id) {
             return true;
         }
 
@@ -134,8 +134,8 @@ class DocumentService
     private function getFilePathFromDocument($document)
     {
         \Log::info('Getting file path for document:', [
-            'document_id' => $document->id,
-            'document_name' => $document->documentName,
+            'documentId' => $document->id,
+            'documentName' => $document->documentName,
             'meta' => $document->meta
         ]);
 
@@ -145,9 +145,9 @@ class DocumentService
 
         // First check if path is stored in meta
         if ($document->meta && is_array($document->meta)) {
-            if (isset($document->meta['file_path'])) {
-                $filePath = $document->meta['file_path'];
-                \Log::info('Found file path in meta:', ['file_path' => $filePath]);
+            if (isset($document->meta['filePath'])) {
+                $filePath = $document->meta['filePath'];
+                \Log::info('Found file path in meta:', ['filePath' => $filePath]);
                 return $filePath;
             }
         }
@@ -157,15 +157,15 @@ class DocumentService
 
         \Log::info('Checking file path:', [
             'disk' => $storageDisk,
-            'file_path' => $filePath,
+            'filePath' => $filePath,
             'exists' => Storage::disk($storageDisk)->exists($filePath)
         ]);
 
         if (!Storage::disk($storageDisk)->exists($filePath)) {
             \Log::error('Document file not found:', [
                 'disk' => $storageDisk,
-                'file_path' => $filePath,
-                'available_files' => Storage::disk($storageDisk)->files($basePath)
+                'filePath' => $filePath,
+                'availableFiles' => Storage::disk(name: $storageDisk)->files($basePath)
             ]);
             throw new DocumentNotFoundException('Document file not found in storage. Path: ' . $filePath);
         }
@@ -188,22 +188,22 @@ class DocumentService
     {
         try {
             \Log::info('Starting encrypted file preview:', [
-                'file_path' => $filePath,
-                'document_id' => $document->id
+                'filePath' => $filePath,
+                'documentId' => $document->id
             ]);
 
             // Read and decrypt the file from public disk
             $encryptedContent = Storage::disk('public')->get($filePath);
 
             \Log::info('Encrypted content read:', [
-                'content_size' => strlen($encryptedContent),
-                'file_path' => $filePath
+                'contentSize' => strlen($encryptedContent),
+                'filePath' => $filePath
             ]);
 
             $decryptedContent = Crypt::decrypt($encryptedContent);
 
             \Log::info('File decrypted successfully:', [
-                'decrypted_size' => strlen($decryptedContent)
+                'decryptedSize' => strlen($decryptedContent)
             ]);
 
             // Get file size from decrypted content
@@ -216,7 +216,7 @@ class DocumentService
 
             // Determine MIME type from document meta
             $mimeType = $this->getMimeTypeFromDocument($document);
-            \Log::info('MIME type determined:', ['mime_type' => $mimeType]);
+            \Log::info('MIME type determined:', ['mimeType' => $mimeType]);
 
             $this->validateMimeType($mimeType, $document->id, $document->documentName);
 
@@ -233,15 +233,15 @@ class DocumentService
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
             \Log::error('Decryption failed:', [
                 'error' => $e->getMessage(),
-                'file_path' => $filePath,
-                'document_id' => $document->id
+                'filePath' => $filePath,
+                'documentId' => $document->id
             ]);
             throw new BadRequestException('Unable to decrypt document: ' . $e->getMessage());
         } catch (\Exception $e) {
             \Log::error('Encrypted file preview error:', [
                 'error' => $e->getMessage(),
-                'file_path' => $filePath,
-                'document_id' => $document->id,
+                'filePath' => $filePath,
+                'documentId' => $document->id,
                 'trace' => $e->getTraceAsString()
             ]);
             throw new BadRequestException('Unable to preview document: ' . $e->getMessage());
@@ -285,9 +285,9 @@ class DocumentService
     private function getMimeTypeFromDocument($document)
     {
         \Log::info('Getting MIME type for document:', [
-            'document_id' => $document->id,
+            'documentId' => $document->id,
             'meta' => $document->meta,
-            'document_name' => $document->documentName
+            'documentName' => $document->documentName
         ]);
 
         // Try to get from meta first
@@ -317,7 +317,7 @@ class DocumentService
                     $mimeType = $mimeMap[$extension];
                     \Log::info('MIME type determined from extension:', [
                         'extension' => $extension,
-                        'mime_type' => $mimeType
+                        'mimeType' => $mimeType
                     ]);
                     return $mimeType;
                 }
@@ -353,18 +353,18 @@ class DocumentService
     private function validateMimeType($mimeType, $documentId, $fileName)
     {
         \Log::info('Validating MIME type:', [
-            'mime_type' => $mimeType,
-            'document_id' => $documentId,
-            'file_name' => $fileName,
-            'allowed_types' => $this->allowedMimeTypes
+            'mimeType' => $mimeType,
+            'documentId' => $documentId,
+            'fileName' => $fileName,
+            'allowedTypes' => $this->allowedMimeTypes
         ]);
 
         if (!in_array($mimeType, $this->allowedMimeTypes)) {
             Log::warning('Unsupported file type attempted', [
-                'mime_type' => $mimeType,
-                'document_id' => $documentId,
-                'file_name' => $fileName,
-                'allowed_types' => $this->allowedMimeTypes
+                'mimeType' => $mimeType,
+                'documentId' => $documentId,
+                'fileName' => $fileName,
+                'allowedTypes' => $this->allowedMimeTypes
             ]);
             throw new BadRequestException('File type not supported for preview. Type: ' . $mimeType);
         }
@@ -429,12 +429,12 @@ class DocumentService
     private function logDocumentAccess($document)
     {
         Log::info('Document accessed', [
-            'document_id' => $document->id,
-            'document_name' => $document->documentName,
-            'user_id' => auth()->id(),
-            'user_role' => auth()->user()->getRoleNames()->first(),
-            'ip_address' => request()->ip(),
-            'accessed_at' => now()->toISOString()
+            'documentId' => $document->id,
+            'documentName' => $document->documentName,
+            'userId' => auth()->id(),
+            'userRole' => auth()->user()->getRoleNames()->first(),
+            'ipAddress' => request()->ip(),
+            'accessedAt' => now()->toISOString()
         ]);
     }
 }

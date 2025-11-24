@@ -270,7 +270,7 @@ class RequestsController extends BaseController
         } catch (\Exception $e) {
             \Log::error('Document preview error:', [
                 'error' => $e->getMessage(),
-                'document_id' => $documentId,
+                'documentId' => $documentId,
                 'trace' => $e->getTraceAsString()
             ]);
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);

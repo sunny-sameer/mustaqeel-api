@@ -25,12 +25,12 @@ class QVCRequest extends FormRequest
             'qvcChecks' => 'required|array|min:1',
             'qvcChecks.*.fieldName' => 'required|string|max:255',
             'qvcChecks.*.fieldPath' => 'required|string|max:500',
-            'qvcChecks.*.status' => 'required|in:correct,wrong,needs_correction',
+            'qvcChecks.*.status' => 'required|in:correct,wrong,needsCorrection',
             'qvcChecks.*.commentsEn' => 'nullable|string|max:1000',
             'qvcChecks.*.commentsAr' => 'nullable|string|max:1000',
             'qvcChecks.*.corrections' => 'nullable|array',
             'qvcChecks.*.corrections.*' => 'string|max:500',
-            'overallStatus' => 'required|in:approved,rejected,needs_correction',
+            'overallStatus' => 'required|in:approved,rejected,needsCorrection',
             'adminComments' => 'nullable|string|max:2000'
         ];
     }
@@ -39,8 +39,8 @@ class QVCRequest extends FormRequest
     {
         return [
             'qvcChecks.required' => 'At least one QVC check is required',
-            'qvcChecks.*.status.in' => 'Status must be one of: correct, wrong, needs_correction',
-            'overallStatus.in' => 'Overall status must be one of: approved, rejected, needs_correction'
+            'qvcChecks.*.status.in' => 'Status must be one of: correct, wrong, needsCorrection ',
+            'overallStatus.in' => 'Overall status must be one of: approved, rejected, needsCorrection '
         ];
     }
 }

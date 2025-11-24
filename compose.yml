@@ -6,6 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: mustaqeel-backend
+    volumes:
+      - .:/var/www/html          # live code sync
+      - /var/www/html/vendor     # prevent vendor overwrite
     depends_on:
       - mysql-db
     environment:

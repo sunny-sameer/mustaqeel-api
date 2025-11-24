@@ -479,13 +479,13 @@ class RequestsService extends BaseService
             ->all();
 
         return [
-            'qvc_checks' => $qvcChecksData,
-            'overall_status' => $overallStatus,
-            'admin_comments' => $adminComments,
-            'verified_by' => auth()->user()->name,
-            'verified_by_id' => auth()->id(),
-            'verified_at' => now()->toDateTimeString(),
-            'qvc_status' => 'completed',
+            'qvcChecks' => $qvcChecksData,
+            'overallStatus' => $overallStatus,
+            'adminComments' => $adminComments,
+            'verifiedBy' => auth()->user()->name,
+            'verifiedById' => auth()->id(),
+            'verifiedAt' => now()->toDateTimeString(),
+            'qvcStatus' => 'completed',
             'summary' => $this->generateQVCSummary($qvcChecksData)
         ];
     }
@@ -498,11 +498,11 @@ class RequestsService extends BaseService
         $statusCounts = array_count_values(array_column($qvcChecks, 'status'));
 
         return [
-            'total_checks' => count($qvcChecks),
-            'correct_count' => $statusCounts['correct'] ?? 0,
-            'wrong_count' => $statusCounts['wrong'] ?? 0,
-            'needs_correction_count' => $statusCounts['needs_correction'] ?? 0,
-            'completion_percentage' => 100
+            'totalChecks' => count($qvcChecks),
+            'correctCount' => $statusCounts['correct'] ?? 0,
+            'wrongCount' => $statusCounts['wrong'] ?? 0,
+            'needsCorrectionCount' => $statusCounts['needsCorrection'] ?? 0,
+            'completionPercentage' => 100
         ];
     }
 
@@ -514,7 +514,7 @@ class RequestsService extends BaseService
         $stageStatusMap = [
             'approved' => 'QVC Approved',
             'rejected' => 'QVC Rejected',
-            'needs_correction' => 'QVC Correction Needed'
+            'needsCorrection' => 'QVC Correction Needed'
         ];
 
         $status = $stageStatusMap[$overallStatus] ?? 'QVC Completed';
@@ -522,7 +522,7 @@ class RequestsService extends BaseService
         $metaData = [];
         if ($comments) {
             $metaData[] = [
-                'type' => 'qvc_review',
+                'type' => 'qvcReview',
                 'commentsEn' => $comments,
                 'commentsAr' => $comments
             ];
