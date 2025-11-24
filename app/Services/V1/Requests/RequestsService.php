@@ -4,12 +4,15 @@ namespace App\Services\V1\Requests;
 
 
 use App\Models\User;
+use App\Models\Requests;
 
 
 use Illuminate\Http\Request;
 use App\Http\Requests\API\V1\RequestsRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
 use App\Http\Requests\API\V1\RequestsPartialRequest;
+use App\Http\Requests\API\V1\ReuploadDocumentRequest;
+use App\Http\Requests\API\V1\QVCRequest;
 
 
 use App\Services\V1\BaseService;
@@ -29,9 +32,6 @@ use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\UserNotFoundException;
-use App\Http\Requests\API\V1\QVCRequest;
-use App\Http\Requests\API\V1\ReuploadDocumentRequest;
-use App\Models\Requests;
 
 
 use App\Repositories\V1\Admin\GenericInterface;
@@ -111,6 +111,12 @@ class RequestsService extends BaseService
         $this->requests = $request;
         $this->status = 'Reupload Documents Requested';
         $this->requestId = $id;
+        return $this;
+    }
+
+    public function setQVCRequestInputs(QVCRequest $request)
+    {
+        $this->requests = $request;
         return $this;
     }
 
@@ -419,21 +425,15 @@ class RequestsService extends BaseService
     /**
      * Submit QVC for an application
      */
-    public function submitQVC(QVCRequest $request)
+    public function submitQVC()
     {
         DB::beginTransaction();
 
         try {
-            $requestId = $request->input('requestId');
-            $qvcChecks = $request->input('qvcChecks');
-            $overallStatus = $request->input('overallStatus');
-            $adminComments = $request->input('adminComments');
-
-            // Validate request exists
-            $existingRequest = $this->requestsInterface->show($requestId);
-            if (!$existingRequest) {
-                throw new RequestNotExistException();
-            }
+            $requestId = $this->requests->requestId;
+            $qvcChecks = $this->requests->qvcChecks;
+            $overallStatus = $this->requests->overallStatus;
+            $adminComments = $this->requests->adminComments;
 
             // Prepare QVC data
             $qvcData = $this->prepareQVCData($qvcChecks, $overallStatus, $adminComments);

@@ -241,8 +241,10 @@ class RequestsController extends BaseController
     {
         try {
             return $this->requests
+                ->setQVCRequestInputs($request)
                 ->userExists()
-                ->submitQVC($request);
+                ->requestNoFound()
+                ->submitQVC();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
@@ -252,30 +254,19 @@ class RequestsController extends BaseController
 
     /**
      * Preview document securely - Accessible to any authenticated user with proper permissions
-     * 
+     *
      * @param string $documentId
      * @param Request $request
      * @return StreamedResponse|\Illuminate\Http\JsonResponse
      */
     public function previewDocument($documentId)
     {
-        \Log::info('=== DOCUMENT PREVIEW START ===');
-
         try {
-            \Log::info('Document ID:', ['id' => $documentId]);
-
             return $this->documentService
                 ->validateDocumentAccess($documentId)
                 ->getDocumentPreview($documentId);
         } catch (\Exception $e) {
-            \Log::error('Document preview error:', [
-                'error' => $e->getMessage(),
-                'document_id' => $documentId,
-                'trace' => $e->getTraceAsString()
-            ]);
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
-        } finally {
-            \Log::info('=== DOCUMENT PREVIEW END ===');
         }
     }
 }
