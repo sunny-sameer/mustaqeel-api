@@ -397,15 +397,15 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
             if ($qvcAttribute) {
                 $qvcData = json_decode($qvcAttribute->meta, true);
-                $request->qvc_status = $qvcData['overall_status'] ?? null;
-                $request->qvc_verified_at = $qvcData['verified_at'] ?? null;
-                $request->qvc_verified_by = $qvcData['verified_by'] ?? null;
-                $request->qvc_summary = $qvcData['summary'] ?? null;
+                $request->qvcStatus = $qvcData['overallStatus'] ?? null;
+                $request->qvcVerifiedAt = $qvcData['verifiedAt'] ?? null;
+                $request->qvcVerifiedBy = $qvcData['verifiedBy'] ?? null;
+                $request->qvcSummary = $qvcData['summary'] ?? null;
             } else {
-                $request->qvc_status = 'pending';
-                $request->qvc_verified_at = null;
-                $request->qvc_verified_by = null;
-                $request->qvc_summary = null;
+                $request->qvcStatus = 'pending';
+                $request->qvcVerifiedAt = null;
+                $request->qvcVerifiedBy = null;
+                $request->qvcSummary = null;
             }
 
             return $request;
