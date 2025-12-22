@@ -2,57 +2,59 @@
 
 namespace App\DTOs\V1\Requests;
 
-
+use App\Models\RequestMetaData;
+use App\Models\Requests;
 use Illuminate\Http\Request;
 
 
 final readonly class RequestMetasDTO
 {
     public function __construct(
-        public int $modelId,
-        public ?string $catSlug = null,
-        public ?string $subCatSlug = null,
-        public ?string $sectorSlug = null,
-        public ?string $activitySlug = null,
-        public ?string $subActivitySlug = null,
-        public ?string $entitySlug = null,
-        public ?string $incubatorSlug = null,
-        public string $modelType,
+        public int $reqId,
+        public string $key,
+        public string $value,
     ) {}
 
 
-    public static function fromArray(array $data, int $modelId, string $modelType): self
+    public static function fromArray(array $data, int $reqId): array
     {
-        return new self(
-            modelId: $modelId,
-            catSlug: $data['personalInfo']['identificationData']['category'] ?? NULL,
-            subCatSlug: $data['personalInfo']['identificationData']['subCategory'] ?? NULL,
-            sectorSlug: $data['personalInfo']['identificationData']['sector'] ?? NULL,
-            activitySlug: ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent') ? $data['personalInfo']['identificationData']['activity'] : NULL,
-            subActivitySlug: ($data['personalInfo']['identificationData']['category'] == 'tal' || $data['personalInfo']['identificationData']['category'] == 'ent') ? ($data['personalInfo']['identificationData']['subActivity'] ?? NULL) : NULL,
-            entitySlug: $data['personalInfo']['identificationData']['category'] == 'tal' ? $data['personalInfo']['identificationData']['entity'] : NULL,
-            incubatorSlug: $data['personalInfo']['identificationData']['category'] == 'ent' ? $data['personalInfo']['identificationData']['incubator'] : NULL,
-            modelType: $modelType,
-        );
+        $attributes = [];
+        $identificationData = ['category','subCategory','sector','activity','subActivity','entity','incubator'];
+
+        foreach ($identificationData as $key => $value) {
+            if(isset($data['personalInfo']['identificationData'][$value])){
+                $attributes[] = new self(
+                    reqId: $reqId,
+                    key: $value,
+                    value: $data['personalInfo']['identificationData'][$value]
+                );
+            }else{
+                $meta = RequestMetaData::where('reqId',$reqId)
+                ->where('key',$value)->first();
+                if(isset($meta->id)) {
+                    $attributes[] = new self(
+                        reqId: $reqId,
+                        key: $value,
+                        value: $meta->value
+                    );
+                }
+            }
+        }
+
+        return $attributes;
     }
 
-    public static function fromRequest($request, $modelId, $modelType): self
+    public static function fromRequest(Request $request, $reqId): array
     {
-        return self::fromArray($request, $modelId, $modelType);
+        return self::fromArray($request->validated(), $reqId);
     }
 
     public function toArray(): array
     {
         return [
-            'modelId' => $this->modelId,
-            'catSlug' => $this->catSlug,
-            'subCatSlug' => $this->subCatSlug,
-            'sectorSlug' => $this->sectorSlug,
-            'activitySlug' => $this->activitySlug,
-            'subActivitySlug' => $this->subActivitySlug,
-            'entitySlug' => $this->entitySlug,
-            'incubatorSlug' => $this->incubatorSlug,
-            'modelType' => $this->modelType,
+            'reqId' => $this->reqId,
+            'key' => $this->key,
+            'value' => $this->value,
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\DTOs\V1\Profile;
 
-
+use App\Models\Addresses;
 use Illuminate\Http\Request;
 
 
@@ -18,10 +18,11 @@ final readonly class AddressDTO
 
     public static function fromArray(array $data): self
     {
+        $address = Addresses::where('userId',auth()->id())->first();
         return new self(
             userId: auth()->id(),
-            zip: $data['personalInfo']['contactInfo']['poBox'] ?? NULL,
-            address: $data['personalInfo']['contactInfo']['permanentAddress'] ?? NULL,
+            zip: isset($data['personalInfo']['contactInfo']['poBox']) ? $data['personalInfo']['contactInfo']['poBox'] : ($address->zip ?? NULL),
+            address: isset($data['personalInfo']['contactInfo']['permanentAddress']) ? $data['personalInfo']['contactInfo']['permanentAddress'] : ($address->address ?? NULL),
             status: true,
         );
     }

@@ -12,8 +12,8 @@ final readonly class RequestStatusDTO
         public int $userId,
         public int $reqStageId,
         public string $stageStatusSlug,
-        public Carbon $startDate,
-        public ?Carbon $endDate = null,
+        public string $startDate,
+        public ?string $endDate = null,
         public ?string $meta = null,
         public bool $status = true,
     ) {}

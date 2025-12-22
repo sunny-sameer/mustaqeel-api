@@ -141,11 +141,24 @@ return new class extends Migration
             $table->string('nameAr');
             $table->string('slug');
             $table->string('type');
-            $table->string('onshoreOffShore');
-            $table->boolean('isRequired');
             $table->longText('meta')->nullable();
 
             $table->tinyInteger('status')->default(1);
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('form_field_metas', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('ffId')->constrained('form_fields')->onDelete('cascade');
+
+            $table->string('key',50);
+            $table->json('value');
+
+            $table->string('onshoreOffShore');
+            $table->boolean('isRequired');
 
             $table->timestamps();
             $table->softDeletes();
@@ -168,5 +181,6 @@ return new class extends Migration
         Schema::dropIfExists('categories');
         Schema::dropIfExists('nationalities');
         Schema::dropIfExists('form_fields');
+        Schema::dropIfExists('form_field_metas');
     }
 };

@@ -3,11 +3,25 @@
 namespace App\Http\Requests\API\V1;
 
 use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
+use App\Repositories\V1\Admin\GenericInterface;
+use App\Repositories\V1\Requests\RequestsInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RequestsDocumentRequest extends FormRequest
 {
     use FailedValidationTrait;
+    protected $requestsInterface;
+    protected $genericInterface;
+
+    /**
+     * Create a new form request instance.
+     */
+    public function __construct(GenericInterface $genericInterface, RequestsInterface $requestsInterface)
+    {
+        parent::__construct();
+        $this->requestsInterface = $requestsInterface;
+        $this->genericInterface = $genericInterface;
+    }
 
 
     /**
@@ -25,34 +39,54 @@ class RequestsDocumentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $validations = 'required|max:2048|mimes:png,jpeg,jpg,pdf,doc,docx';
-        if(request()->get('key') && (request()->get('key') == 'passportCopy' || request()->get('key') == 'personalPhoto')){
-            $validations = 'required|max:2048|mimes:png,jpeg,jpg';
+        $validation = [];
+
+        $request = $this->requestsInterface->getRequest($this->input('id'));
+
+        $catSlug = null;
+        if(isset($request->data->request->metas->catSlug)) {
+            $catSlug = $request->data->request->metas->catSlug;
         }
 
+        $ff = $this->genericInterface->getSingleFormField($this->input('key'),$catSlug);
+
+        if(isset($ff->id)){
+            if($ff->formMetas->isRequired){
+                $validation[] = 'required';
+            }else{
+                $validation[] = 'nullable';
+            }
+        }else{
+            return [
+                'id' => 'required|exists:requests,id',
+                'key' => 'required|exists:form_fields,slug',
+                'document' => 'required|max:2048|mimes:png,jpeg,jpg,pdf,doc,docx',
+            ];
+        }
+
+        $validations[] = 'max:2048';
+        $validation[] = 'mimes:'.$ff->extensions ?? 'png,jpeg,jpg,pdf,doc,docx';
+
         return [
-            'key' => 'required',
+            'id' => 'required|exists:requests,id',
+            'key' => 'required|exists:form_fields,slug',
             'document' => $validations,
         ];
     }
 
     public function messages(): array
     {
-        $messages['key.required'] = 'The key is required.';
-        $messages['document.required'] = 'The document is required.';
-        $messages['document.mimes'] = 'The document must be a PNG, JPG, or JPEG, PDF, DOC, DOCX file.';
-        $messages['document.max'] = 'The document may not be greater than 2 MB.';
-        if(request()->get('key')){
-            if(request()->get('key') == 'passportCopy' || request()->get('key') == 'personalPhoto'){
-                $messages['document.mimes'] = 'The '. camelCaseToSpace(request()->get('key')) .' must be a PNG, JPG, or JPEG file.';
-            }else{
-                $messages['document.mimes'] = 'The '. camelCaseToSpace(request()->get('key')) .' must be a PNG, JPG, or JPEG, PDF, DOC, DOCX file.';
-            }
-            $messages['document.required'] = 'The '. camelCaseToSpace(request()->get('key')) .' is required.';
-            $messages['document.max'] = 'The '. camelCaseToSpace(request()->get('key')) .' may not be greater than 2 MB.';
-        }
+        return [
+            'id.required' => 'The request id is required.',
+            'id.exists' => 'The request id is invalid.',
 
-        return $messages;
+            'key.required' => 'The key is required.',
+            'key.exists' => 'The key is invalid.',
+
+            'document.required' => 'The document is required.',
+            'document.max' => 'The document may not be greater than 2 MB.',
+            'document.mimes' => 'The document must be a PNG, JPG, or JPEG, PDF, DOC, DOCX file.',
+        ];
     }
 
     /**

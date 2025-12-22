@@ -15,7 +15,7 @@ class Requests extends Model
 
     public function metas()
     {
-        return $this->morphOne(RequestMetaData::class,'model','modelType','modelId');
+        return $this->hasMany(RequestMetaData::class, 'reqId');
     }
 
     public function attributes()
@@ -31,6 +31,12 @@ class Requests extends Model
     public function documents()
     {
         return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId');
+    }
+
+    public function qualityCheck()
+    {
+        return $this->hasOne(QualityCheck::class,'reqId','id')
+        ->orderBy('created_at','DESC');
     }
 
 

@@ -7,15 +7,10 @@ use App\Models\Traits\HasCamelSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FormFields extends Model
+class FormFieldMeta extends Model
 {
     use HasCamelSlug, SoftDeletes, DisableSnakeAttributes;
 
-    protected $table = 'form_fields';
+    protected $table = 'form_field_metas';
     protected $guarded = [];
-
-    public function formMetas()
-    {
-        return $this->hasOne(FormFieldMeta::class,'ffId');
-    }
 }

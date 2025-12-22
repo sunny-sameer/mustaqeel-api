@@ -449,92 +449,99 @@ class GenericRepository extends CoreRepository implements GenericInterface
         $entity = isset($request['entity']) ? $request['entity'] : '';
         $incubator = isset($request['incubator']) ? $request['incubator'] : '';
 
-        $formFields = FormFields::whereHas('formMetas', function ($q) use ($category,$subCategory,$sector,$activity,$subActivity,$entity,$incubator){
-            $q->where(function ($query) use ($category,$subCategory,$sector,$activity,$subActivity,$entity){
-                $query->where(function ($catQuery) use ($category,$subCategory){
-                    $catQuery->where(function ($cq) use ($category,$subCategory){
-                        $cq->where('catSlug',$category)
-                        ->where('subCatSlug',$subCategory);
-                    })->orWhere('catSlug',$category);
-                })
-                ->where('sectorSlug',$sector)
-                ->where(function ($actQuery) use ($activity,$subActivity){
-                    $actQuery->where(function ($aq) use ($activity,$subActivity){
-                        $aq->where('activitySlug',$activity)
-                        ->where('subActivitySlug',$subActivity);
-                    })->orWhere('activitySlug',$activity);
-                })
-                ->where('entitySlug',$entity)
-                ->where('incubatorSlug',NULL);
-            })->orWhere(function ($query) use ($category,$subCategory,$sector,$activity,$subActivity,$incubator){
-                $query->where(function ($catQuery) use ($category,$subCategory){
-                    $catQuery->where(function ($cq) use ($category,$subCategory){
-                        $cq->where('catSlug',$category)
-                        ->where('subCatSlug',$subCategory);
-                    })->orWhere('catSlug',$category);
-                })
-                ->where('sectorSlug',$sector)
-                ->where(function ($actQuery) use ($activity,$subActivity){
-                    $actQuery->where(function ($aq) use ($activity,$subActivity){
-                        $aq->where('activitySlug',$activity)
-                        ->where('subActivitySlug',$subActivity);
-                    })->orWhere('activitySlug',$activity);
-                })
-                ->where('entitySlug',NULL)
-                ->where('incubatorSlug',$incubator);
-            })->orWhere(function ($query) use ($category,$subCategory,$sector,$activity,$subActivity){
-                $query->where(function ($catQuery) use ($category,$subCategory){
-                    $catQuery->where(function ($cq) use ($category,$subCategory){
-                        $cq->where('catSlug',$category)
-                        ->where('subCatSlug',$subCategory);
-                    })->orWhere('catSlug',$category);
-                })
-                ->where('sectorSlug',$sector)
-                ->where(function ($actQuery) use ($activity,$subActivity){
-                    $actQuery->where(function ($aq) use ($activity,$subActivity){
-                        $aq->where('activitySlug',$activity)
-                        ->where('subActivitySlug',$subActivity);
-                    })->orWhere('activitySlug',$activity);
-                })
-                ->where('entitySlug',NULL)
-                ->where('incubatorSlug',NULL);
-            })->orWhere(function ($query) use ($category,$subCategory,$sector){
-                $query->where(function ($catQuery) use ($category,$subCategory){
-                    $catQuery->where(function ($cq) use ($category,$subCategory){
-                        $cq->where('catSlug',$category)
-                        ->where('subCatSlug',$subCategory);
-                    })->orWhere('catSlug',$category);
-                })
-                ->where('sectorSlug',$sector)
-                ->where('activitySlug',NULL)
-                ->where('subActivitySlug',NULL)
-                ->where('entitySlug',NULL)
-                ->where('incubatorSlug',NULL);
-            })->orWhere(function ($query) use ($category,$subCategory){
-                $query->where(function ($catQuery) use ($category,$subCategory){
-                    $catQuery->where(function ($cq) use ($category,$subCategory){
-                        $cq->where('catSlug',$category)
-                        ->where('subCatSlug',$subCategory);
-                    })->orWhere('catSlug',$category);
-                })
-                ->where('sectorSlug',NULL)
-                ->where('activitySlug',NULL)
-                ->where('subActivitySlug',NULL)
-                ->where('entitySlug',NULL)
-                ->where('incubatorSlug',NULL);
-            })->orWhere(function ($query) use ($category){
-                $query->where('catSlug',$category)
-                ->where('subCatSlug',NULL)
-                ->where('sectorSlug',NULL)
-                ->where('activitySlug',NULL)
-                ->where('subActivitySlug',NULL)
-                ->where('entitySlug',NULL)
-                ->where('incubatorSlug',NULL);
-            });
+        $formFields = FormFields::with(['formMetas' => function ($q) use ($category){
+            $q->where('key',$category);
+        }])->whereHas('formMetas', function ($q) use ($category,$subCategory,$sector,$activity,$subActivity,$entity){
+            $q->where('key',$category)
+            ->where(function ($q) use ($category,$subCategory){
+                $q->where(function ($q1) use ($category,$subCategory){
+                    $q1->where('value->categorySlug',$category)
+                    ->where('value->subCategorySlug',$subCategory);
+                })->orWhere('value->categorySlug',$category);
+            })
+            ->where('value->sectorSlug',$sector)
+            ->where('value->activitySlug',$activity)
+            ->where('value->subActivitySlug',$subActivity)
+            ->where('value->entitySlug',$entity)
+            ->where('value->incubatorSlug',NULL);
+        })->orWhereHas('formMetas', function ($q) use ($category,$subCategory,$sector,$activity,$subActivity,$incubator){
+            $q->where('key',$category)
+            ->where(function ($q) use ($category,$subCategory){
+                $q->where(function ($q1) use ($category,$subCategory){
+                    $q1->where('value->categorySlug',$category)
+                    ->where('value->subCategorySlug',$subCategory);
+                })->orWhere('value->categorySlug',$category);
+            })
+            ->where('value->sectorSlug',$sector)
+            ->where('value->activitySlug',$activity)
+            ->where('value->subActivitySlug',$subActivity)
+            ->where('value->entitySlug',NULL)
+            ->where('value->incubatorSlug',$incubator);
+        })->orWhereHas('formMetas', function ($q) use ($category,$subCategory,$sector,$activity,$subActivity){
+            $q->where('key',$category)
+            ->where(function ($q) use ($category,$subCategory){
+                $q->where(function ($q1) use ($category,$subCategory){
+                    $q1->where('value->categorySlug',$category)
+                    ->where('value->subCategorySlug',$subCategory);
+                })->orWhere('value->categorySlug',$category);
+            })
+            ->where('value->sectorSlug',$sector)
+            ->where('value->activitySlug',$activity)
+            ->where('value->subActivitySlug',$subActivity)
+            ->where('value->entitySlug',NULL)
+            ->where('value->incubatorSlug',NULL);
+        })->orWhereHas('formMetas', function ($q) use ($category,$subCategory,$sector,$activity){
+            $q->where('key',$category)
+            ->where(function ($q) use ($category,$subCategory){
+                $q->where(function ($q1) use ($category,$subCategory){
+                    $q1->where('value->categorySlug',$category)
+                    ->where('value->subCategorySlug',$subCategory);
+                })->orWhere('value->categorySlug',$category);
+            })
+            ->where('value->sectorSlug',$sector)
+            ->where('value->activitySlug',$activity)
+            ->where('value->subActivitySlug',NULL)
+            ->where('value->entitySlug',NULL)
+            ->where('value->incubatorSlug',NULL);
+        })->orWhereHas('formMetas', function ($q) use ($category,$subCategory,$sector){
+            $q->where('key',$category)
+            ->where(function ($q) use ($category,$subCategory){
+                $q->where(function ($q1) use ($category,$subCategory){
+                    $q1->where('value->categorySlug',$category)
+                    ->where('value->subCategorySlug',$subCategory);
+                })->orWhere('value->categorySlug',$category);
+            })
+            ->where('value->sectorSlug',$sector)
+            ->where('value->activitySlug',NULL)
+            ->where('value->subActivitySlug',NULL)
+            ->where('value->entitySlug',NULL)
+            ->where('value->incubatorSlug',NULL);
+        })->orWhereHas('formMetas', function ($q) use ($category,$subCategory){
+            $q->where('key',$category)
+            ->where(function ($q) use ($category,$subCategory){
+                $q->where(function ($q1) use ($category,$subCategory){
+                    $q1->where('value->categorySlug',$category)
+                    ->where('value->subCategorySlug',$subCategory);
+                })->orWhere('value->categorySlug',$category);
+            })
+            ->where('value->sectorSlug',NULL)
+            ->where('value->activitySlug',NULL)
+            ->where('value->subActivitySlug',NULL)
+            ->where('value->entitySlug',NULL)
+            ->where('value->incubatorSlug',NULL);
+        })->orWhereHas('formMetas', function ($q) use ($category){
+            $q->where('key',$category)
+            ->where('value->subCategorySlug',NULL)
+            ->where('value->sectorSlug',NULL)
+            ->where('value->activitySlug',NULL)
+            ->where('value->subActivitySlug',NULL)
+            ->where('value->entitySlug',NULL)
+            ->where('value->incubatorSlug',NULL);
         })->get();
 
         $formFields->map(function ($query){
             $query->meta = $query->meta ? json_decode($query->meta) : NULL;
+            $query->formMetas->value = $query->formMetas->value ? json_decode($query->formMetas->value): NULL;
 
             return $query;
         });
@@ -542,8 +549,25 @@ class GenericRepository extends CoreRepository implements GenericInterface
         return $formFields;
     }
 
-    public function getSingleFormField($type)
+    public function getSingleFormField($type,$category=null)
     {
-        return FormFields::where('slug',$type)->first();
+        $ff = FormFields::whereHas('formMetas')->where('slug',$type);
+        if(!empty($category)){
+            $ff = $ff->whereHas('formMetas', function ($q) use ($category){
+                $q->where('catSlug',$category);
+            });
+        }
+        $ff = $ff->first();
+
+        if(isset($ff->meta)) {
+            $ff->extensions = '';
+            $ff->meta = $ff->meta ? json_decode($ff->meta) : NULL;
+            if(isset($ff->meta->extensions)){
+                $ff->extensions = implode(',',$ff->meta->extensions);
+            }
+            $ff->formMetas->value = $ff->formMetas->value ? json_decode($ff->formMetas->value): NULL;
+        }
+
+        return $ff;
     }
 }

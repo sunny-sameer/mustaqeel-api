@@ -8,11 +8,12 @@ use App\Models\Requests;
 
 
 use Illuminate\Http\Request;
-use App\Http\Requests\API\V1\RequestsRequest;
+use App\Http\Requests\API\V1\RequestsStoreRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
 use App\Http\Requests\API\V1\RequestsPartialRequest;
+use App\Http\Requests\API\V1\RequestsUpdateRequest;
 use App\Http\Requests\API\V1\ReuploadDocumentRequest;
-use App\Http\Requests\API\V1\QVCRequest;
+use App\Http\Requests\API\V1\RequestsQualityCheck;
 
 
 use App\Services\V1\BaseService;
@@ -25,15 +26,16 @@ use App\DTOs\V1\Requests\RequestMetasDTO;
 use App\DTOs\V1\Requests\RequestAttributesDTO;
 use App\DTOs\V1\Requests\RequestStageDTO;
 use App\DTOs\V1\Requests\RequestStatusDTO;
-use App\DTOs\V1\Requests\RequestQVCDTO;
+use App\DTOs\V1\Requests\RequestQCDTO;
 
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\RequestNotExistException;
+use App\Exceptions\RequestQcAlreadyExistException;
+use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\UserNotFoundException;
-
-
+use App\Models\QualityCheck;
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
@@ -59,8 +61,10 @@ class RequestsService extends BaseService
 
     private ?object $user = null;
     private ?object $requests = null;
+    private ?object $requestsQc = null;
     private ?string $requestId = null;
-    private ?string $status = 'Pending';
+    private ?string $referenceNumber = null;
+    private ?string $status = 'Under Review';
 
 
     public function __construct(
@@ -85,7 +89,7 @@ class RequestsService extends BaseService
         return $this;
     }
 
-    public function setInputs(RequestsRequest $request, $status): self
+    public function setInputs(RequestsStoreRequest $request, $status): self
     {
         $this->requests = $request;
         $this->status = $status;
@@ -96,6 +100,13 @@ class RequestsService extends BaseService
     {
         $this->requests = $request;
         $this->status = $status;
+        return $this;
+    }
+
+    public function setInputsUpdateRequest(RequestsUpdateRequest $request, $id): self
+    {
+        $this->requests = $request;
+        $this->requestId = $id;
         return $this;
     }
 
@@ -114,16 +125,10 @@ class RequestsService extends BaseService
         return $this;
     }
 
-    public function setQVCRequestInputs(QVCRequest $request)
+    public function setQCRequestInputs(RequestsQualityCheck $request)
     {
         $this->requests = $request;
-        return $this;
-    }
-
-    public function setDeleteDocumentRequestInputs(Request $request)
-    {
-        $this->requests = $request;
-        $this->requestId = $request->id;
+        $this->requestId = $request->requestId;
         return $this;
     }
 
@@ -133,6 +138,54 @@ class RequestsService extends BaseService
 
         if (!$this->user) {
             throw new UserNotFoundException();
+        }
+
+        return $this;
+    }
+
+    public function requestAlreadyExists()
+    {
+        if (isset($this->requests->id) && !empty($this->requests->id)) {
+            $req = $this->requestsInterface->show($this->requests->id);
+
+            if (isset($req->reqReferenceNumber) && !empty($req->reqReferenceNumber)) {
+                $this->requestsQc = $this->requestsInterface->getQc($this->requestId,'Action Required');
+                if(!isset($this->requestsQc->id)){
+                    throw new RequestAlreadyExistException();
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    public function requestNotFound()
+    {
+        $request = $this->requestsInterface->show($this->requestId);
+
+        if (!$request) {
+            throw new RequestNotExistException();
+        }
+
+        $this->referenceNumber = $request->reqReferenceNumber;
+        return $this;
+    }
+
+    public function requestQcAlreadyExists()
+    {
+        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,'Action Required');
+        if(isset($this->requestsQc->id)){
+            throw new RequestQcAlreadyExistException();
+        }
+
+        return $this;
+    }
+
+    public function requestQcNotFound()
+    {
+        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,'Action Required');
+        if(!isset($this->requestsQc->id)){
+            throw new RequestQcNotExistException();
         }
 
         return $this;
@@ -160,20 +213,7 @@ class RequestsService extends BaseService
             }
         }
         $requestIdNumber = sprintf('%06d', $requestId + 1);
-        $this->requestId = str_replace(['{YEAR}', '{000000}'], [Carbon::now()->format('Y'), $requestIdNumber], self::Applicant_REQUEST_ID_PATTERN);
-
-        return $this;
-    }
-
-    public function requestAlreadyExists()
-    {
-        if (isset($this->requests->id) && !empty($this->requests->id)) {
-            $req = $this->requestsInterface->show($this->requests->id);
-
-            if (isset($req->reqReferenceNumber) && !empty($req->reqReferenceNumber)) {
-                throw new RequestAlreadyExistException();
-            }
-        }
+        $this->referenceNumber = str_replace(['{YEAR}', '{000000}'], [Carbon::now()->format('Y'), $requestIdNumber], self::Applicant_REQUEST_ID_PATTERN);
 
         return $this;
     }
@@ -201,29 +241,28 @@ class RequestsService extends BaseService
                 $profile = $this->userService->userProfileCreateOrUpdate($this->requests);
             }
 
-
-            $requestData = RequestDTO::fromRequest($this->requests, $this->requestId)->toArray();
+            $requestData = RequestDTO::fromRequest($this->requests, $this->referenceNumber)->toArray();
             $request = $this->requestsInterface->updateOrCreateRequest($requestData, $this->requests->id);
 
 
-            $requestMetaData = RequestMetasDTO::fromRequest($this->requests->all(), $request->id, Requests::class)->toArray();
+            $requestMetaData = collect(RequestMetasDTO::fromRequest($this->requests, $request->id))
+                ->map(fn($dto) => $dto->toArray())
+                ->all();
             $requestAttributesData = collect(RequestAttributesDTO::fromRequest($this->requests, $request->id))
                 ->map(fn($dto) => $dto->toArray())
                 ->all();
 
 
-            $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData, $request->id, Requests::class);
+            $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData, $request->id);
             $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData, $request->id);
 
 
             $this->createOrUpdateStageStatus('Application', $request->id, []);
 
-
-            $response = $this->requestsInterface->getRequest($request->id);
             DB::commit();
 
-
-            $message = $this->status == 'Draft' ? 'Request partially created successfully' : 'Request created successfully';
+            $response =  $this->requestsInterface->getRequest($request->id);
+            $message = $this->status = 'Draft' ? 'Request partially created successfully' : 'Request created successfully';
             return $this->success(
                 data: ['request' => $response],
                 message: $message
@@ -233,6 +272,54 @@ class RequestsService extends BaseService
 
             return $this->error(
                 message: 'Request creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function updateRequest()
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $role = $this->user->roles->pluck('name')->first();
+            if ($role == 'applicant') {
+                $profile = $this->userService->userProfileCreateOrUpdate($this->requests);
+            }
+
+            $requestData = RequestDTO::updateFromArray($this->requests->all(), $this->referenceNumber)->toArray();
+
+            $request = $this->requestsInterface->updateOrCreateRequest($requestData, $this->requestId);
+
+            // $requestMetaData = collect(RequestMetasDTO::fromRequest($this->requests, $request->id))
+            //     ->map(fn($dto) => $dto->toArray())
+            //     ->all();
+            $requestAttributesData = collect(RequestAttributesDTO::updateFromArray($this->requests->all(), $request->id))
+                ->map(fn($dto) => $dto->toArray())
+                ->all();
+
+
+            // $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData, $request->id);
+            $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData, $request->id);
+
+            $qcData = RequestQCDTO::updateFromRequest($this->requestsQc->toArray(),$this->requests->all())->toArray();
+
+            $this->requestsInterface->updateQc($qcData, $this->requestsQc->id);
+
+            DB::commit();
+
+            $response =  $this->requestsInterface->getRequest($request->id);
+            return $this->success(
+                data: ['request' => $response],
+                message: 'Request updated successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Request updation failed',
                 errors: $e->getMessage(),
                 statusCode: 500
             );
@@ -285,8 +372,6 @@ class RequestsService extends BaseService
                 $this->requests->id
             );
 
-            $this->createOrUpdateStageStatus('Application', $request->id, []);
-
             $this->requests['entityId'] = $request->id;
             $this->requests['entityType'] = Requests::class;
             $response = $this->artifactsService->createDocuments($this->requests);
@@ -326,17 +411,6 @@ class RequestsService extends BaseService
             data: ['request' => $request],
             message: 'Request fetched successfully'
         );
-    }
-
-    public function requestNoFound()
-    {
-        $request = $this->requestsInterface->show($this->requestId);
-
-        if (!$request) {
-            throw new RequestNotExistException();
-        }
-
-        return $this;
     }
 
     public function reuploadDocumentRequest()
@@ -390,6 +464,36 @@ class RequestsService extends BaseService
         }
     }
 
+    public function submitQC()
+    {
+        DB::beginTransaction();
+
+        try {
+            $qcData = RequestQCDTO::fromRequest($this->requests)->toArray();
+
+            $this->requestsInterface->createQc($qcData);
+
+            $this->createOrUpdateStageStatus('Jusour', $this->requestId, []);
+
+            $response = $this->requestsInterface->getRequest($this->requestId);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['request' => $response],
+                message: 'QC submitted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'QC submission failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
     public function getAllNationalities()
     {
         return $this->genericInterface->getAllNationalities();
@@ -418,145 +522,5 @@ class RequestsService extends BaseService
     public function getFormFields($request)
     {
         return $this->genericInterface->getFormFields($request);
-    }
-
-
-
-    /**
-     * Submit QVC for an application
-     */
-    public function submitQVC()
-    {
-        DB::beginTransaction();
-
-        try {
-            $requestId = $this->requests->requestId;
-            $qvcChecks = $this->requests->qvcChecks;
-            $overallStatus = $this->requests->overallStatus;
-            $adminComments = $this->requests->adminComments;
-
-            // Prepare QVC data
-            $qvcData = $this->prepareQVCData($qvcChecks, $overallStatus, $adminComments);
-
-            // Create QVC attribute using existing DTO pattern
-            $qvcAttributes = RequestAttributesDTO::fromQVCData($qvcData, $requestId);
-            $this->requestsInterface->updateOrCreateRequestAttributes(
-                collect($qvcAttributes)->map(fn($dto) => $dto->toArray())->all(),
-                $requestId
-            );
-
-            // Update request stage status
-            $this->updateRequestStatusAfterQVC($requestId, $overallStatus, $adminComments);
-
-            $response = $this->requestsInterface->getRequest($requestId);
-
-            DB::commit();
-
-            return $this->success(
-                data: ['request' => $response],
-                message: 'QVC submitted successfully'
-            );
-        } catch (RequestNotExistException $e) {
-            DB::rollBack();
-            return $this->error($e->getMessage(), $e->getMessage(), 404);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $this->error(
-                message: 'QVC submission failed',
-                errors: $e->getMessage(),
-                statusCode: 500
-            );
-        }
-    }
-
-    /**
-     * Prepare QVC data structure
-     */
-    private function prepareQVCData(array $qvcChecks, string $overallStatus, ?string $adminComments): array
-    {
-        $qvcChecksData = collect($qvcChecks)
-            ->map(fn($check) => RequestQVCDTO::fromRequest($check)->toArray())
-            ->all();
-
-        return [
-            'qvcChecks' => $qvcChecksData,
-            'overallStatus' => $overallStatus,
-            'adminComments' => $adminComments,
-            'verifiedBy' => auth()->user()->name,
-            'verifiedById' => auth()->id(),
-            'verifiedAt' => now()->toDateTimeString(),
-            'qvcStatus' => 'completed',
-            'summary' => $this->generateQVCSummary($qvcChecksData)
-        ];
-    }
-
-    /**
-     * Generate QVC summary statistics
-     */
-    private function generateQVCSummary(array $qvcChecks): array
-    {
-        $statusCounts = array_count_values(array_column($qvcChecks, 'status'));
-
-        return [
-            'totalChecks' => count($qvcChecks),
-            'correctCount' => $statusCounts['correct'] ?? 0,
-            'wrongCount' => $statusCounts['wrong'] ?? 0,
-            'needsCorrectionCount' => $statusCounts['needsCorrection'] ?? 0,
-            'completionPercentage' => 100
-        ];
-    }
-
-    /**
-     * Update request status after QVC
-     */
-    private function updateRequestStatusAfterQVC(string $requestId, string $overallStatus, ?string $comments): void
-    {
-        $stageStatusMap = [
-            'approved' => 'QVC Approved',
-            'rejected' => 'QVC Rejected',
-            'needsCorrection' => 'QVC Correction Needed'
-        ];
-
-        $status = $stageStatusMap[$overallStatus] ?? 'QVC Completed';
-
-        $metaData = [];
-        if ($comments) {
-            $metaData[] = [
-                'type' => 'qvcReview',
-                'commentsEn' => $comments,
-                'commentsAr' => $comments
-            ];
-        }
-
-        $this->createOrUpdateStageStatus('QVC', $requestId, $metaData);
-    }
-
-    /**
-     * Get QVC data for a specific request
-     */
-    public function getQVCData(string $requestId)
-    {
-        try {
-            $qvcAttribute = $this->requestsInterface->getRequestAttribute($requestId, 'qvc');
-
-            if (!$qvcAttribute) {
-                return $this->error(
-                    message: 'QVC data not found',
-                    errors: 'No QVC data available for this request',
-                    statusCode: 404
-                );
-            }
-
-            return $this->success(
-                data: ['qvc' => json_decode($qvcAttribute->meta, true)],
-                message: 'QVC data fetched successfully'
-            );
-        } catch (\Exception $e) {
-            return $this->error(
-                message: 'Failed to fetch QVC data',
-                errors: $e->getMessage(),
-                statusCode: 500
-            );
-        }
     }
 }

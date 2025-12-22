@@ -191,8 +191,8 @@ class GenericService
         $formFieldData = FormFieldsDTO::fromRequest($data->all())->toArray();
         $formField = $this->genericInterface->createFormField($formFieldData);
 
-        $formFieldMetaData = RequestMetasDTO::fromRequest($data->all(),$formField->id,FormFields::class)->toArray();
-        $formFieldMeta = $this->requestsInterface->updateOrCreateRequestMetaData($formFieldMetaData,$formField->id,FormFields::class);
+        // $formFieldMetaData = RequestMetasDTO::fromRequest($data->all(),$formField->id,FormFields::class)->toArray();
+        // $formFieldMeta = $this->requestsInterface->updateOrCreateRequestMetaData($formFieldMetaData,$formField->id,FormFields::class);
 
         return $this->genericInterface->findFormField($formField->id);
     }
@@ -201,8 +201,8 @@ class GenericService
         $formFieldData = FormFieldsDTO::fromRequest($data->all())->toArray();
         $formField = $this->genericInterface->updateFormField($id, $formFieldData);
 
-        $formFieldMetaData = RequestMetasDTO::fromRequest($data->all(),$formField->id,FormFields::class)->toArray();
-        $formFieldMeta = $this->requestsInterface->updateOrCreateRequestMetaData($formFieldMetaData,$formField->id,FormFields::class);
+        // $formFieldMetaData = RequestMetasDTO::fromRequest($data->all(),$formField->id,FormFields::class)->toArray();
+        // $formFieldMeta = $this->requestsInterface->updateOrCreateRequestMetaData($formFieldMetaData,$formField->id,FormFields::class);
 
         return $this->genericInterface->findFormField($formField->id);
     }

@@ -11,8 +11,8 @@ final readonly class RequestStageDTO
     public function __construct(
         public int $reqId,
         public string $stageSlug,
-        public Carbon $startDate,
-        public ?Carbon $endDate = null,
+        public string $startDate,
+        public ?string $endDate = null,
         public bool $status = true,
     ) {}
 

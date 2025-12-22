@@ -8,22 +8,9 @@ use App\Repositories\V1\Admin\GenericInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RequestsPartialRequest extends FormRequest
+class RequestsUpdateRequest extends FormRequest
 {
     use FailedValidationTrait;
-
-    protected array $data = [];
-    protected $genericInterface;
-
-    /**
-     * Create a new form request instance.
-     */
-    public function __construct(GenericInterface $genericInterface)
-    {
-        parent::__construct();
-        $this->genericInterface = $genericInterface;
-    }
-
 
     /**
      * Determine if the user is authorized to make this request.
@@ -41,8 +28,6 @@ class RequestsPartialRequest extends FormRequest
     public function rules(): array
     {
         $validation = [
-            'id' => 'nullable|exists:requests,id',
-
             'personalInfo' => 'nullable|array',
             'personalInfo.identificationData' => 'nullable|array',
             'personalInfo.applicantInfo' => 'nullable|array',
@@ -59,16 +44,6 @@ class RequestsPartialRequest extends FormRequest
             'ResidencyAndTravelAndFamily.otherNationalities' => 'nullable|array',
             'ResidencyAndTravelAndFamily.countriesVisitedLast10Years' => 'nullable|array',
             'ResidencyAndTravelAndFamily.familyMembers' => 'nullable|array',
-
-            'documents' => 'nullable|array',
-
-            'personalInfo.identificationData.category' => 'nullable|exists:categories,slug',
-            'personalInfo.identificationData.subCategory' => 'nullable|exists:sub_categories,slug',
-            'personalInfo.identificationData.sector' => 'nullable|exists:sectors,slug',
-            'personalInfo.identificationData.activity' => 'nullable|exists:activities,slug',
-            'personalInfo.identificationData.subActivity' => 'nullable|exists:sub_activities,slug',
-            'personalInfo.identificationData.entity' => 'nullable|exists:entities,slug',
-            'personalInfo.identificationData.incubator' => 'nullable|exists:incubators,slug',
 
             'personalInfo.applicantInfo.nameEn' => 'nullable|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/u',
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
@@ -149,32 +124,12 @@ class RequestsPartialRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.profession' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
         ];
 
-        $this->data = [
-            'category' => $this->input('personalInfo.identificationData.category'),
-            'subCategory' => $this->input('personalInfo.identificationData.subCategory'),
-            'sector' => $this->input('personalInfo.identificationData.sector'),
-            'activity' => $this->input('personalInfo.identificationData.activity'),
-            'subActivity' => $this->input('personalInfo.identificationData.subActivity'),
-            'entity' => $this->input('personalInfo.identificationData.entity'),
-            'incubator' => $this->input('personalInfo.identificationData.incubator'),
-        ];
-
-        $ff = $this->genericInterface->getFormFields($this->data);
-
-        foreach ($ff as $key => $value) {
-            $validation['documents.'.$value->slug] = ['nullable','string',Rule::exists('documents', 'documentName')
-                ->where('entityId', $this->input('id'))
-                ->where('entityType', Requests::class)
-            ];
-        }
-
         return $validation;
     }
 
     public function messages(): array
     {
         $messages = [
-            'id.exists' => 'The request id is invalid.',
             // === Parent Array Validations ===
             'personalInfo.array' => 'The personal info must be an array.',
 
@@ -203,17 +158,6 @@ class RequestsPartialRequest extends FormRequest
             'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.array' => 'The countries visited in the last 10 years must be an array.',
 
             'ResidencyAndTravelAndFamily.familyMembers.array' => 'The family member details must be an array.',
-
-            'documents.array' => 'The documents must be an array.',
-
-            // Identification Data
-            'personalInfo.identificationData.category.exists' => 'The selected category is invalid.',
-            'personalInfo.identificationData.subCategory.exists' => 'The selected sub category is invalid.',
-            'personalInfo.identificationData.sector.exists' => 'The selected sector is invalid.',
-            'personalInfo.identificationData.activity.exists' => 'The selected activity is invalid.',
-            'personalInfo.identificationData.subActivity.exists' => 'The selected sub activity is invalid.',
-            'personalInfo.identificationData.entity.exists' => 'The selected entity is invalid.',
-            'personalInfo.identificationData.incubator.exists' => 'The selected incubator is invalid.',
 
             // Applicant Info
             'personalInfo.applicantInfo.nameEn.min' => 'The english name must be at least 3 characters.',
@@ -454,23 +398,6 @@ class RequestsPartialRequest extends FormRequest
             'employmentContract.mimes' => 'The employment contract must be a PNG, JPG, JPEG, PDF, DOC, or DOCX file.',
             'employmentContract.max' => 'The employment contract may not be greater than 2 MB.',
         ];
-
-        $this->data = [
-            'category' => $this->input('personalInfo.identificationData.category'),
-            'subCategory' => $this->input('personalInfo.identificationData.subCategory'),
-            'sector' => $this->input('personalInfo.identificationData.sector'),
-            'activity' => $this->input('personalInfo.identificationData.activity'),
-            'subActivity' => $this->input('personalInfo.identificationData.subActivity'),
-            'entity' => $this->input('personalInfo.identificationData.entity'),
-            'incubator' => $this->input('personalInfo.identificationData.incubator'),
-        ];
-
-        $ff = $this->genericInterface->getFormFields($this->data);
-
-        foreach ($ff as $key => $value) {
-            $messages['documents.'.$value->slug.'.string'] = 'The '. $value->nameEn .' must be a string.';
-            $messages['documents.'.$value->slug.'.exists'] = 'The '. $value->nameEn .' name is invalid.';
-        }
 
         return $messages;
     }

@@ -16,30 +16,37 @@ class StageSeeder extends Seeder
     {
         $stages = [
             [
+                'id'=>1,
                 'name'=>'Application',
                 'nameAr'=>'مقدم الطلب',
             ],
             [
+                'id'=>2,
                 'name'=>'Jusour',
                 'nameAr'=>'جسور',
             ],
             [
+                'id'=>3,
                 'name'=>'Entity',
                 'nameAr'=>'الجهة',
             ],
             [
+                'id'=>4,
                 'name'=>'MOCI',
                 'nameAr'=>'وزارة التجارة والصناعة',
             ],
             [
+                'id'=>5,
                 'name'=>'VFS',
                 'nameAr'=>'خدمات تسهيل التأشيرة',
             ],
             [
+                'id'=>6,
                 'name'=>'MOL',
                 'nameAr'=>'وزارة العمل',
             ],
             [
+                'id'=>7,
                 'name'=>'Hayya',
                 'nameAr'=>'هيا',
             ],
@@ -57,8 +64,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>1,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>1,
@@ -92,8 +99,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>2,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>2,
@@ -122,8 +129,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>3,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>3,
@@ -147,8 +154,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>4,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>4,
@@ -172,8 +179,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>5,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>5,
@@ -187,8 +194,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>6,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>6,
@@ -202,8 +209,8 @@ class StageSeeder extends Seeder
             ],
             [
                 'stageId'=>7,
-                'name'=>'Pending',
-                'nameAr'=>'معلق'
+                'name'=>'Under Review',
+                'nameAr'=>'قيد المراجعة'
             ],
             [
                 'stageId'=>7,

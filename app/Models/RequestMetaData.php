@@ -13,40 +13,22 @@ class RequestMetaData extends Model
     protected $table = 'request_meta_data';
     protected $guarded = [];
 
-    public function category()
+    protected static $modelMap = [
+        'category'     => Categories::class,
+        'subCategory'  => SubCategories::class,
+        'sector'       => Sectors::class,
+        'activity'     => Activities::class,
+        'subActivity'  => SubActivities::class,
+        'entity'       => Entities::class,
+        'incubator'    => Incubator::class,
+    ];
+
+    public function related()
     {
-        return $this->belongsTo(Categories::class,'catSlug','slug');
+        $model = self::$modelMap[$this->key] ?? null;
+
+        return $model
+            ? $this->belongsTo($model, 'value', 'slug')->select('id','name','nameAr','slug')
+            : null;
     }
-
-    public function subCategory()
-    {
-        return $this->belongsTo(SubCategories::class,'subCatSlug','slug');
-    }
-
-    public function sector()
-    {
-        return $this->belongsTo(Sectors::class,'sectorSlug','slug');
-    }
-
-    public function activity()
-    {
-        return $this->belongsTo(Activities::class,'activitySlug','slug');
-    }
-
-    public function subActivity()
-    {
-        return $this->belongsTo(SubActivities::class,'subActivitySlug','slug');
-    }
-
-    public function entity()
-    {
-        return $this->belongsTo(Entities::class,'entitySlug','slug');
-    }
-
-    public function incubator()
-    {
-        return $this->belongsTo(Incubator::class,'incubatorSlug','slug');
-    }
-
-
 }

@@ -39,6 +39,13 @@ class ArtifactsService extends BaseService
             $storagePath = "{$filename}.enc";
             $fullFilePath = $path . '/' . $storagePath; // Store this
 
+            $document = $this->artifactsInterface->getDocument(['entityId' => $request->entityId,'type' => $request->key,'entityType' => $request->entityType]);
+            if(isset($document->id)){
+                if(Storage::disk('public')->get($path.'/'.$document->documentName)){
+                    Storage::disk('public')->delete($path.'/'.$document->documentName);
+                }
+            }
+
             $encryptedContent = Crypt::encrypt(file_get_contents($file));
             Storage::disk('public')->put($fullFilePath, $encryptedContent);
 

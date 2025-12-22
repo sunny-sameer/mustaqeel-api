@@ -2,7 +2,7 @@
 
 namespace App\DTOs\V1\Requests;
 
-
+use App\Models\RequestAttribute;
 use Illuminate\Http\Request;
 
 
@@ -22,7 +22,7 @@ final readonly class RequestAttributesDTO
     {
         $attributes = [];
 
-        $map = Arr::except($data,['personalInfo.identificationData','documents']);
+        $map = Arr::except($data,['personalInfo.identificationData','documents','id']);
 
 
         foreach ($map as $key => $value) {
@@ -43,16 +43,32 @@ final readonly class RequestAttributesDTO
         return self::fromArray($request->validated(), $reqId);
     }
 
-    // ADD THIS NEW METHOD FOR QVC
-    public static function fromQVCData(array $qvcData, int $reqId): array
+    public static function updateFromArray(array $data, int $reqId): array
     {
-        return [
-            new self(
-                reqId: $reqId,
-                meta: json_encode($qvcData),
-                type: 'qvc'
-            )
-        ];
+        $attributes = [];
+
+        foreach ($data as $key => $value) {
+            if (!empty($value)) {
+                $request = RequestAttribute::where(['reqId'=>$reqId,'type'=>$key])->first();
+                $requestMeta = json_decode($request->meta,true);
+                foreach ($value as $metaKey => $metaValue) {
+                    foreach ($metaValue as $k => $v) {
+                        if(is_string($v)){
+                            $requestMeta[$metaKey][$k] = $v;
+                        }else if(is_array($v)){
+                            $requestMeta[$metaKey] = $metaValue;
+                        }
+                    }
+                }
+                $attributes[] = new self(
+                    reqId: $reqId,
+                    meta: json_encode(array_filter($requestMeta)),
+                    type: $key,
+                );
+            }
+        }
+
+        return $attributes;
     }
 
     public function toArray(): array

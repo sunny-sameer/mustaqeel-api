@@ -17,16 +17,19 @@ class CategoriesSeeder extends Seeder
 
         $categories = [
             [
+                'id'=>1,
                 'en' => 'Entrepreneur',
                 'ar' => 'رواد الأعمال',
                 'subcats' => ''
             ],
             [
+                'id'=>2,
                 'en' => 'Talent',
                 'ar' => 'المواهب',
                 'subcats' => ''
             ],
             [
+                'id'=>3,
                 'en' => 'Investor',
                 'ar' => 'مستثمر',
                 'subcats' => [[
@@ -36,18 +39,25 @@ class CategoriesSeeder extends Seeder
                     'en' => 'tax based',
                     'ar' => 'على أساس الضرائب'
                 ]]
-            ]
+                ],
+            [
+                'id'=>4,
+                'en' => 'Executive',
+                'ar' => 'المدراء التنفيذيين',
+                'subcats' => ''
+            ],
         ];
 
 
 
         foreach ($categories as $category) {
+            $catId = $category['id'];
             $catNameEn = trim($category['en']);
             $catNameAr = trim($category['ar']);
 
             $status =  1;
 
-            $categoryVal = ['name' => $catNameEn, 'nameAr' => $catNameAr, 'status' => $status];
+            $categoryVal = ['id' => $catId, 'name' => $catNameEn, 'nameAr' => $catNameAr, 'status' => $status];
             $categoryRec = Categories::create($categoryVal);
 
             if ($category['subcats']) {

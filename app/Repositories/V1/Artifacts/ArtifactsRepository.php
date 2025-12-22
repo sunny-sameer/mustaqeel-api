@@ -18,6 +18,11 @@ class ArtifactsRepository extends CoreRepository implements ArtifactsInterface
         parent::__construct($model);
     }
 
+    public function getDocument($params = [])
+    {
+        return $this->model->where($params)->first();
+    }
+
     public function updateOrCreateDocuments($params = [], $request)
     {
         return $this->model->updateOrCreate($params,$request);

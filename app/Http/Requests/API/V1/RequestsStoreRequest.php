@@ -3,11 +3,12 @@
 namespace App\Http\Requests\API\V1;
 
 use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
+use App\Models\Requests;
 use App\Repositories\V1\Admin\GenericInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RequestsRequest extends FormRequest
+class RequestsStoreRequest extends FormRequest
 {
     use FailedValidationTrait;
 
@@ -20,18 +21,7 @@ class RequestsRequest extends FormRequest
     public function __construct(GenericInterface $genericInterface)
     {
         parent::__construct();
-
-        $this->data = [
-            'category' => $this->input('category'),
-            'subCategory' => $this->input('subCategory'),
-            'sector' => $this->input('sector'),
-            'activity' => $this->input('activity'),
-            'subActivity' => $this->input('subActivity'),
-            'entity' => $this->input('entity'),
-            'incubator' => $this->input('incubator'),
-        ];
-
-        $this->genericInterface = $genericInterface->getFormFields($this->data);
+        $this->genericInterface = $genericInterface;
     }
 
 
@@ -50,6 +40,19 @@ class RequestsRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $this->data = [
+            'category' => $this->input('personalInfo.identificationData.category'),
+            'subCategory' => $this->input('personalInfo.identificationData.subCategory'),
+            'sector' => $this->input('personalInfo.identificationData.sector'),
+            'activity' => $this->input('personalInfo.identificationData.activity'),
+            'subActivity' => $this->input('personalInfo.identificationData.subActivity'),
+            'entity' => $this->input('personalInfo.identificationData.entity'),
+            'incubator' => $this->input('personalInfo.identificationData.incubator'),
+        ];
+
+        $ff = $this->genericInterface->getFormFields($this->data);
+
         $validation = [
             'personalInfo' => 'required|array',
             'personalInfo.identificationData' => 'required|array',
@@ -177,13 +180,23 @@ class RequestsRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.profession' => 'required_if:personalInfo.applicantInfo.maritalStatus,Married|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
         ];
 
-        foreach ($this->genericInterface as $key => $value) {
-            $validation['documents.'.$value->slug] = 'nullable|integer|exists:documents,id';
-            if($value->onshoreOffShore == 'onshore' && $value->isRequired){
-                $validation['documents.'.$value->slug] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,true|nullable|integer|exists:documents,id';
-            } else if($value->onshoreOffShore == 'both' && $value->isRequired){
-                $validation['documents.'.$value->slug] = 'required|integer|exists:documents,id';
+        foreach ($ff as $key => $value) {
+            if($value->formMetas->onshoreOffShore == 'onshore' && $value->formMetas->isRequired){
+                $validation['documents.'.$value->slug][] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,true';
+                $validation['documents.'.$value->slug][] = 'nullable';
+            } else if($value->formMetas->onshoreOffShore == 'both' && $value->formMetas->isRequired){
+                $validation['documents.'.$value->slug][] = 'required';
+            } else if($value->formMetas->onshoreOffShore == 'offshore' && $value->formMetas->isRequired){
+                $validation['documents.'.$value->slug][] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,false';
+                $validation['documents.'.$value->slug][] = 'nullable';
+            }else{
+                $validation['documents.'.$value->slug][] = 'nullable';
             }
+            $validation['documents.'.$value->slug][] = 'string';
+            $validation['documents.'.$value->slug][] = Rule::exists('documents', 'documentName')
+            ->where('entityId', $this->input('id'))
+            ->where('entityType', Requests::class)
+            ->where('type', $value->slug);
         }
 
         return $validation;
@@ -500,14 +513,23 @@ class RequestsRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.profession.regex' => 'The family member profession may only contain Arabic, English letters, numbers, dots, commas and spaces.',
         ];
 
-        foreach ($this->genericInterface as $key => $value) {
-            $messages['documents.'.$value->slug.'.integer'] = 'The '. $value->nameEn .' must be a integer.';
+        $this->data = [
+            'category' => $this->input('personalInfo.identificationData.category'),
+            'subCategory' => $this->input('personalInfo.identificationData.subCategory'),
+            'sector' => $this->input('personalInfo.identificationData.sector'),
+            'activity' => $this->input('personalInfo.identificationData.activity'),
+            'subActivity' => $this->input('personalInfo.identificationData.subActivity'),
+            'entity' => $this->input('personalInfo.identificationData.entity'),
+            'incubator' => $this->input('personalInfo.identificationData.incubator'),
+        ];
+
+        $ff = $this->genericInterface->getFormFields($this->data);
+
+        foreach ($ff as $key => $value) {
+            $messages['documents.'.$value->slug.'.required'] = 'The '. $value->nameEn .' is required.';
+            $messages['documents.'.$value->slug.'.required_if'] = 'The '. $value->nameEn .' is required.';
+            $messages['documents.'.$value->slug.'.string'] = 'The '. $value->nameEn .' must be a string.';
             $messages['documents.'.$value->slug.'.exists'] = 'The '. $value->nameEn .' name is invalid.';
-            if($value->onshoreOffShore == 'onshore' && $value->isRequired){
-                 $messages['documents.'.$value->slug.'.required_if'] = 'The '. $value->nameEn .' is required.';
-            } else if($value->onshoreOffShore == 'both' && $value->isRequired){
-                 $messages['documents.'.$value->slug.'.required'] = 'The '. $value->nameEn .' is required.';
-            }
         }
 
         return $messages;

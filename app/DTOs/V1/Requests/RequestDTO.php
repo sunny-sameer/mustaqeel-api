@@ -2,7 +2,7 @@
 
 namespace App\DTOs\V1\Requests;
 
-
+use App\Models\Requests;
 use Illuminate\Http\Request;
 
 
@@ -21,7 +21,7 @@ final readonly class RequestDTO
         public ?string $passportNumber = null,
         public ?string $qid = null,
         public bool $status = true,
-        public Carbon $submittedAt
+        public string $submittedAt
     ) {}
 
 
@@ -44,6 +44,24 @@ final readonly class RequestDTO
     public static function fromRequest(Request $request, $reqReferenceNumber = null): self
     {
         return self::fromArray($request->validated(), $reqReferenceNumber);
+    }
+
+
+    public static function updateFromArray(array $data, ?string $reqReferenceNumber = null): self
+    {
+        $request = Requests::where('reqReferenceNumber',$reqReferenceNumber)->first();
+        return new self(
+            userId: $request->userId,
+            reqReferenceNumber: $request->reqReferenceNumber,
+            nameEn: isset($data['personalInfo']['applicantInfo']['nameEn']) ? $data['personalInfo']['applicantInfo']['nameEn'] : $request->nameEn,
+            nameAr: isset($data['personalInfo']['applicantInfo']['nameAr']) ? $data['personalInfo']['applicantInfo']['nameAr'] : $request->nameAr,
+            email: isset($data['personalInfo']['contactInfo']['email']) ? $data['personalInfo']['contactInfo']['email'] : $request->email,
+            mobileNumber: isset($data['personalInfo']['contactInfo']['mobile']) ? $data['personalInfo']['contactInfo']['mobile'] : $request->mobileNumber,
+            passportNumber: isset($data['personalInfo']['passportDetails']['number']) ? $data['personalInfo']['passportDetails']['number'] : $request->passportNumber,
+            qid: isset($data['personalInfo']['applicantInfo']['qidNumber']) ? $data['personalInfo']['applicantInfo']['qidNumber'] : $request->qid,
+            status: $request->status,
+            submittedAt: $request->submittedAt,
+        );
     }
 
     public function toArray(): array

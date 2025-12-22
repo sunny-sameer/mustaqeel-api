@@ -2,7 +2,7 @@
 
 namespace App\DTOs\V1\Profile;
 
-
+use App\Models\PassportDetails;
 use Illuminate\Http\Request;
 
 
@@ -15,10 +15,10 @@ final readonly class PassportDTO
         public int $userId,
         public ?string $passportNumber = null,
         public ?string $passportType = null,
-        public ?Carbon $passportIssuerDate = null,
+        public ?string $passportIssuerDate = null,
         public ?string $passportIssuingCountry = null,
         public ?string $passportIssueBy = null,
-        public ?Carbon $passportExpiryDate = null,
+        public ?string $passportExpiryDate = null,
         public ?string $passportPlaceOfIssue = null,
         public bool $status = true,
     ) {}
@@ -26,15 +26,16 @@ final readonly class PassportDTO
 
     public static function fromArray(array $data): self
     {
+        $pp = PassportDetails::where('userId',auth()->id())->first();
         return new self(
             userId: auth()->id(),
-            passportNumber: $data['personalInfo']['passportDetails']['number'] ?? NULL,
-            passportType: $data['personalInfo']['passportDetails']['type'] ?? NULL,
-            passportIssuerDate: $data['personalInfo']['passportDetails']['issueDate'] ? Carbon::parse($data['personalInfo']['passportDetails']['issueDate']) : NULL,
-            passportIssuingCountry: $data['personalInfo']['passportDetails']['issueCountry'] ?? NULL,
-            passportIssueBy: $data['personalInfo']['passportDetails']['issueBy'] ?? NULL,
-            passportExpiryDate: $data['personalInfo']['passportDetails']['expiryDate'] ? Carbon::parse($data['personalInfo']['passportDetails']['expiryDate']) : NULL,
-            passportPlaceOfIssue: $data['personalInfo']['passportDetails']['issuePlace'] ?? NULL,
+            passportNumber: isset($data['personalInfo']['passportDetails']['number']) ? $data['personalInfo']['passportDetails']['number'] : ($pp->passportNumber ?? NULL),
+            passportType: isset($data['personalInfo']['passportDetails']['type']) ? $data['personalInfo']['passportDetails']['type'] : ($pp->passportType ?? NULL),
+            passportIssuerDate: isset($data['personalInfo']['passportDetails']['issueDate']) ? Carbon::parse($data['personalInfo']['passportDetails']['issueDate']) : ($pp->passportIssuerDate ?? NULL),
+            passportIssuingCountry: isset($data['personalInfo']['passportDetails']['issueCountry']) ? $data['personalInfo']['passportDetails']['issueCountry'] : ($pp->passportIssuingCountry ?? NULL),
+            passportIssueBy: isset($data['personalInfo']['passportDetails']['issueBy']) ? $data['personalInfo']['passportDetails']['issueBy'] : ($pp->passportIssueBy ?? NULL),
+            passportExpiryDate: isset($data['personalInfo']['passportDetails']['expiryDate']) ? Carbon::parse($data['personalInfo']['passportDetails']['expiryDate']) : ($pp->passportExpiryDate ?? NULL),
+            passportPlaceOfIssue: isset($data['personalInfo']['passportDetails']['issuePlace']) ? $data['personalInfo']['passportDetails']['issuePlace'] : ($pp->passportPlaceOfIssue ?? NULL),
             status: true,
         );
     }

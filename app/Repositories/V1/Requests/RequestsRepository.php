@@ -2,6 +2,7 @@
 
 namespace App\Repositories\V1\Requests;
 
+use App\Models\QualityCheck;
 use App\Models\RequestAttribute;
 use App\Models\RequestMetaData;
 use App\Models\Requests;
@@ -25,9 +26,10 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     protected $requestStages;
     protected $stagesStatuses;
     protected $requestStatuses;
+    protected $qualityCheck;
 
 
-    public function __construct(Requests $model, RequestMetaData $requestMetaData, RequestAttribute $requestAttribute, Stages $stages, RequestStages $requestStages, StagesStatuses $stagesStatuses, RequestStatuses $requestStatuses)
+    public function __construct(Requests $model, RequestMetaData $requestMetaData, RequestAttribute $requestAttribute, Stages $stages, RequestStages $requestStages, StagesStatuses $stagesStatuses, RequestStatuses $requestStatuses, QualityCheck $qualityCheck)
     {
         parent::__construct($model);
 
@@ -37,6 +39,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $this->requestStages = $requestStages;
         $this->stagesStatuses = $stagesStatuses;
         $this->requestStatuses = $requestStatuses;
+        $this->qualityCheck = $qualityCheck;
     }
 
     public function getAllRequests($request)
@@ -49,35 +52,32 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $perPage = $request->perPage ?? 10;
 
         $req = $this->model->with([
-            'metas.category:name,nameAr,slug',
-            'metas.subCategory:name,nameAr,slug',
-            'metas.sector:name,nameAr,slug',
-            'metas.activity:name,nameAr,slug',
-            'metas.subActivity:name,nameAr,slug',
-            'metas.entity:name,nameAr,slug',
-            'metas.incubator:name,nameAr,slug',
+            'metas:reqId,key,value',
         ]);
 
         if (!empty($search)) {
             $req = $req->where(function ($query) use ($search) {
                 $query->where('nameEn', 'LIKE', '%' . $search . '%')
                     ->orWhere('nameAr', 'LIKE', '%' . $search . '%')
-                    ->orWhere('reqReferenceNumber', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('metas.category', function ($category) use ($search) {
-                        $category->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('metas.sector', function ($sector) use ($search) {
-                        $sector->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('metas.activity', function ($activity) use ($search) {
-                        $activity->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('metas.entity', function ($entity) use ($search) {
-                        $entity->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('metas.incubator', function ($incubator) use ($search) {
-                        $incubator->where('name', 'LIKE', '%' . $search . '%');
-                    });
+                    ->orWhere('reqReferenceNumber', 'LIKE', '%' . $search . '%');
+                    // ->orWhereHas('metas.category', function ($category) use ($search) {
+                    //     $category->where('name', 'LIKE', '%' . $search . '%');
+                    // })
+                    // ->orWhereHas('metas.sector', function ($sector) use ($search) {
+                    //     $sector->where('name', 'LIKE', '%' . $search . '%');
+                    // })
+                    // ->orWhereHas('metas.activity', function ($activity) use ($search) {
+                    //     $activity->where('name', 'LIKE', '%' . $search . '%');
+                    // })
+                    // ->orWhereHas('metas.entity', function ($entity) use ($search) {
+                    //     $entity->where('name', 'LIKE', '%' . $search . '%');
+                    // })
+                    // ->orWhereHas('metas.incubator', function ($incubator) use ($search) {
+                    //     $incubator->where('name', 'LIKE', '%' . $search . '%');
+                    // });
+                    // ->orWhereHas('metas.related', function ($related) use ($search) {
+                    //     $related->where('name', 'LIKE', '%' . $search . '%');
+                    // });
             });
         }
 
@@ -93,6 +93,11 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
         $req->map(function ($query) {
             $query->statuses = $this->getRequestStatus($query->id);
+
+            $query->metas->map(function ($query1) use ($query) {
+                $query->{$query1->key} = $query1->firstWhere('key', $query1->key)?->related;
+                return $query1;
+            });
 
             return $query;
         });
@@ -119,9 +124,13 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $this->model->create($request);
     }
 
-    public function updateOrCreateRequestMetaData($request, $requestId, $requestType)
+    public function updateOrCreateRequestMetaData($request, $requestId)
     {
-        return $this->requestMetaData->updateOrCreate(['modelId' => $requestId, 'modelType' => $requestType], $request);
+        $data = [];
+        foreach ($request as $key => $value) {
+            $data[] = $this->requestMetaData->updateOrCreate(['reqId' => $requestId, 'key' => $value['key']], $value);
+        }
+        return $data;
     }
 
     public function updateOrCreateRequestAttributes($request, $requestId)
@@ -177,22 +186,16 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     }
 
 
-    // update the getRequest method to ensure QVC data is included
-    public function getRequest($reqId)
+    public function getRequest($requestId)
     {
         $id = auth()->id();
         $user = User::find($id);
         $role = $user->roles->pluck('type')->first();
 
         $req = $this->model->with([
-            'metas.category:name,nameAr,slug',
-            'metas.subCategory:name,nameAr,slug',
-            'metas.sector:name,nameAr,slug',
-            'metas.activity:name,nameAr,slug',
-            'metas.subActivity:name,nameAr,slug',
-            'metas.entity:name,nameAr,slug',
-            'metas.incubator:name,nameAr,slug',
-            'documents'
+            'metas:reqId,key,value',
+            'documents',
+            'qualityCheck'
         ]);
 
         if ($role == 'applicant') {
@@ -202,7 +205,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             });
         }
 
-        $req = $req->where('id', $reqId)->first();
+        $req = $req->where('id', $requestId)->first();
 
         if ($req) {
             $req->documents->map(function ($query) {
@@ -210,29 +213,29 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 return $query;
             });
 
-            $req['status'] = $this->getRequestStatuses($reqId);
+            $req['status'] = $this->getRequestStatuses($requestId);
 
-            // Get all attributes including QVC
-            $attributes = $this->getAllAttributes($reqId);
+            // Get all attributes including QC
+            $attributes = $this->getAllAttributes($requestId);
             foreach ($attributes as $key => $value) {
                 $req->{$key} = $value;
             }
 
-            // Ensure QVC data is explicitly available even if not in attributes
-            if (!isset($req->qvc)) {
-                $qvcAttribute = $this->getRequestAttribute($reqId, 'qvc');
-                if ($qvcAttribute) {
-                    $req->qvc = json_decode($qvcAttribute->meta, true);
-                } else {
-                    $req->qvc = null;
-                }
+            if(isset($req->qualityCheck)){
+                $req->qualityCheck->meta = json_decode($req->qualityCheck->meta);
+                $req->qualityCheck->summary = json_decode($req->qualityCheck->summary);
             }
+
+            $req->metas->map(function ($query) use ($req) {
+                $req->{$query->key} = $query->firstWhere('key', $query->key)?->related;
+                return $query;
+            });
         }
 
         return $req;
     }
 
-    public function getRequestStatus($reqId)
+    public function getRequestStatus($requestId)
     {
         $id = auth()->id();
 
@@ -242,8 +245,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         foreach ($stages as $stage) {
             $requestStatus = $this->requestStatuses
                 ->with('stageStatus', 'user.roles', 'requestStage.stage')
-                ->whereHas('requestStage', function ($query) use ($reqId, $stage) {
-                    $query->where('reqId', $reqId);
+                ->whereHas('requestStage', function ($query) use ($requestId, $stage) {
+                    $query->where('reqId', $requestId);
                     $query->where('stageSlug', $stage->slug);
                 });
             if ($stage->name <> 'Application') {
@@ -253,7 +256,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
             $key = Str::lower($stage->name);
             $data[$key] = [
-                'status' => $requestStatus?->stageStatus?->name ?? 'Pending',
+                'status' => $requestStatus?->stageStatus?->name ?? 'Under Review',
                 'stage' => $requestStatus?->requestStage?->stage?->name ?? $stage->name,
                 'username' => $requestStatus?->user?->name ?? null,
                 'role' => $requestStatus?->user?->roles->pluck('name')->first() ?? null
@@ -263,7 +266,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $data;
     }
 
-    public function getRequestStatuses($reqId)
+    public function getRequestStatuses($requestId)
     {
         $stages = $this->stages->all();
 
@@ -271,8 +274,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         foreach ($stages as $stage) {
             $requestStatus = $this->requestStatuses
                 ->with('stageStatus', 'user.roles', 'requestStage.stage')
-                ->whereHas('requestStage', function ($query) use ($reqId, $stage) {
-                    $query->where('reqId', $reqId);
+                ->whereHas('requestStage', function ($query) use ($requestId, $stage) {
+                    $query->where('reqId', $requestId);
                     $query->where('stageSlug', $stage->slug);
                 })
                 ->orderBy('created_at', 'DESC')->get()->unique('userId');
@@ -281,7 +284,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             if (isset($requestStatus) && count($requestStatus) > 0) {
                 foreach ($requestStatus as $value) {
                     $data[$key][] = [
-                        'status' => $value?->stageStatus?->name ?? 'Pending',
+                        'status' => $value?->stageStatus?->name ?? 'Under Review',
                         'stage' => $value?->requestStage?->stage?->name ?? $stage->name,
                         'username' => $value?->user?->name,
                         'role' => $value?->user?->roles->pluck('name')->first(),
@@ -290,22 +293,22 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 }
             } else {
                 $data[$key][] = [
-                    'status' => 'Pending',
+                    'status' => 'Under Review',
                     'stage' => $stage->name,
                     'username' => null,
                     'role' => null,
-                    'meta' => null,
+                    'meta' => [],
                 ];
             }
         }
         return $data;
     }
 
-    // Update the getAllAttributes method for QVC
-    public function getAllAttributes($reqId)
+    // Update the getAllAttributes method for QC
+    public function getAllAttributes($requestId)
     {
         $requestAttribute = $this->requestAttribute
-            ->where('reqId', $reqId)
+            ->where('reqId', $requestId)
             ->get();
 
         $data = [];
@@ -317,9 +320,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 if (json_last_error() === JSON_ERROR_NONE) {
                     $data[$value->type] = $decodedMeta;
 
-                    // Explicit QVC key for easy access
-                    if ($value->type === 'qvc') {
-                        $data['qvc'] = $decodedMeta;
+                    // Explicit QC key for easy access
+                    if ($value->type === 'qc') {
+                        $data['qc'] = $decodedMeta;
                     }
                 } else {
                     // Fallback for non-JSON data
@@ -360,55 +363,21 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $isExist;
     }
 
-
-    /**
-     * Get request attribute by type
-     */
-    public function getRequestAttribute(string $requestId, string $type)
+    public function getQc($requestId,$status)
     {
-        return $this->requestAttribute->where('reqId', $requestId)
-            ->where('type', $type)
-            ->first();
+        return $this->qualityCheck->where('reqId',$requestId)
+        ->where('status',$status)->first();
     }
 
-    /**
-     * Get requests pending QVC review
-     */
-    public function getRequestsPendingQVC()
+    public function createQc($request)
     {
-        return $this->model->whereHas('stageStatus', function ($query) {
-            $query->whereIn('name', ['Pending', 'Submitted']);
-        })
-            ->whereDoesntHave('attributes', function ($query) {
-                $query->where('type', 'qvc');
-            })
-            ->with(['user', 'stageStatus'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return $this->qualityCheck->create($request);
     }
 
-    /**
-     * Enhance requests with QVC data for getAllRequests
-     */
-    public function enhanceRequestsWithQVCData($requests)
+    public function updateQc($request, $qcId)
     {
-        return $requests->map(function ($request) {
-            $qvcAttribute = $this->getRequestAttribute($request->id, 'qvc');
-
-            if ($qvcAttribute) {
-                $qvcData = json_decode($qvcAttribute->meta, true);
-                $request->qvcStatus = $qvcData['overallStatus'] ?? null;
-                $request->qvcVerifiedAt = $qvcData['verifiedAt'] ?? null;
-                $request->qvcVerifiedBy = $qvcData['verifiedBy'] ?? null;
-                $request->qvcSummary = $qvcData['summary'] ?? null;
-            } else {
-                $request->qvcStatus = 'pending';
-                $request->qvcVerifiedAt = null;
-                $request->qvcVerifiedBy = null;
-                $request->qvcSummary = null;
-            }
-
-            return $request;
-        });
+        $qc = $this->qualityCheck->find($qcId);
+        $qc->update($request);
+        return $qc;
     }
 }

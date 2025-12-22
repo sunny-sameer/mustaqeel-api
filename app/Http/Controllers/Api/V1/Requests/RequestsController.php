@@ -5,26 +5,27 @@ namespace App\Http\Controllers\Api\V1\Requests;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
 use App\Exceptions\RequestNotExistException;
+use App\Exceptions\RequestQcAlreadyExistException;
+use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\UserNotFoundException;
-use App\Exceptions\DocumentNotFoundException;
-use App\Exceptions\DocumentAccessDeniedException;
+
 
 use App\Http\Controllers\Api\BaseController;
+
+
 use Illuminate\Http\Request;
-use App\Http\Requests\API\V1\RequestsRequest;
+use App\Http\Requests\API\V1\RequestsStoreRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
 use App\Http\Requests\API\V1\RequestsPartialRequest;
+use App\Http\Requests\API\V1\RequestsUpdateRequest;
 use App\Http\Requests\API\V1\RequestStatusUpdateRequest;
 use App\Http\Requests\API\V1\ReuploadDocumentRequest;
-use App\Models\Stages;
+use App\Http\Requests\API\V1\RequestsQualityCheck;
 use App\Services\V1\Requests\RequestsService;
 use App\Services\V1\Documents\DocumentService;
 
-use App\Http\Requests\API\V1\QVCRequest;
 
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 
 class RequestsController extends BaseController
@@ -93,10 +94,10 @@ class RequestsController extends BaseController
         }
     }
 
-    public function createRequest(RequestsRequest $request)
+    public function createRequest(RequestsStoreRequest $request)
     {
         try {
-            $this->status = 'Pending';
+            $this->status = 'Under Review';
             return $this->requests
                 ->setInputs($request, $this->status)
                 ->userExists()
@@ -108,6 +109,28 @@ class RequestsController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (RequestAlreadyExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 409);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function updateRequest(RequestsUpdateRequest $request, $id)
+    {
+        try {
+            return $this->requests
+                ->setInputsUpdateRequest($request, $id)
+                ->userExists()
+                ->requestNotFound()
+                ->requestQcNotFound()
+                ->updateRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestQcNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
         } catch (\Exception $e) {
@@ -158,7 +181,7 @@ class RequestsController extends BaseController
             return $this->requests
                 ->setReuploadInputsDocument($request, $id)
                 ->userExists()
-                ->requestNoFound()
+                ->requestNotFound()
                 ->reuploadDocumentRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
@@ -169,7 +192,6 @@ class RequestsController extends BaseController
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
-        return $this->sendSuccessResponse($request->all());
     }
 
     public function deleteDocumentRequest($id)
@@ -183,7 +205,28 @@ class RequestsController extends BaseController
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
-        return $this->sendSuccessResponse($request->all());
+    }
+
+    public function submitQC(RequestsQualityCheck $request)
+    {
+        try {
+            return $this->requests
+                ->setQCRequestInputs($request)
+                ->userExists()
+                ->requestNotFound()
+                ->requestQcAlreadyExists()
+                ->submitQC();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestQcAlreadyExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     public function getAllNationalities()
@@ -231,25 +274,6 @@ class RequestsController extends BaseController
         if (empty($request->category) && !isset($request->category)) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
 
         return $this->requests->getFormFields($request->all());
-    }
-
-
-    /**
-     * Submit QVC for an application
-     */
-    public function submitQVC(QVCRequest $request)
-    {
-        try {
-            return $this->requests
-                ->setQVCRequestInputs($request)
-                ->userExists()
-                ->requestNoFound()
-                ->submitQVC();
-        } catch (UserNotFoundException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (\Exception $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
-        }
     }
 
     /**
