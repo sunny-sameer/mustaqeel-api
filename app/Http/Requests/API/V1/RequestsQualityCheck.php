@@ -21,7 +21,6 @@ class RequestsQualityCheck extends FormRequest
 
             'qcChecks' => 'required|array|min:1',
             'qcChecks.*.fieldName' => 'required|string|max:255',
-            'qcChecks.*.fieldOldValue' => 'required|string|max:400|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'qcChecks.*.fieldPath' => 'required|string|max:400',
             'qcChecks.*.status' => 'required|in:Correct,Wrong,NeedCorrection',
             'qcChecks.*.commentsEn' => 'nullable|string|max:400|regex:/^[a-zA-Z0-9.,، ]+$/u',
@@ -47,11 +46,6 @@ class RequestsQualityCheck extends FormRequest
             'qcChecks.*.fieldName.required' => 'The field name is required.',
             'qcChecks.*.fieldName.string' => 'The field name must be a string.',
             'qcChecks.*.fieldName.max' => 'The field name may not be greater than 255 characters.',
-
-            'qcChecks.*.fieldOldValue.required' => 'The field old value is required.',
-            'qcChecks.*.fieldOldValue.string' => 'The field old value must be a string.',
-            'qcChecks.*.fieldOldValue.max' => 'The field old value may not be greater than 400 characters.',
-            'qcChecks.*.fieldOldValue.regex' => 'The field old value may only contain letters, Arabic letters, numbers, commas, full stop, and spaces.',
 
             'qcChecks.*.fieldPath.required' => 'The field path is required.',
             'qcChecks.*.fieldPath.string' => 'The field path must be a string.',

@@ -55,9 +55,9 @@ final readonly class RequestQCDTO
         );
     }
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(array $request): self
     {
-        return self::fromArray($request->all());
+        return self::fromArray($request);
     }
 
     public static function updateFromRequest(array $qc, array $data)

@@ -469,13 +469,25 @@ class RequestsService extends BaseService
         DB::beginTransaction();
 
         try {
-            $qcData = RequestQCDTO::fromRequest($this->requests)->toArray();
+            $response = $this->requestsInterface->getRequest($this->requestId);
+
+            $request = $this->requests->all();
+
+            foreach ($request['qcChecks'] as $key => $value) {
+                $path = explode('.',$value['fieldPath']);
+                if(count($path) == 2){
+                    $request['qcChecks'][$key]['fieldOldValue'] = $response[$path[0]][$path[1]];
+                }else{
+                    $request['qcChecks'][$key]['fieldOldValue'] = $response[$path[0]][$path[1]][$path[2]];
+                }
+            }
+
+            $qcData = RequestQCDTO::fromRequest($request)->toArray();
 
             $this->requestsInterface->createQc($qcData);
 
             $this->createOrUpdateStageStatus('Jusour', $this->requestId, []);
 
-            $response = $this->requestsInterface->getRequest($this->requestId);
 
             DB::commit();
 
