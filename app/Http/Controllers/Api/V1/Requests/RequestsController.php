@@ -144,7 +144,7 @@ class RequestsController extends BaseController
             return $this->requests
                 ->setInputsDocument($request)
                 ->userExists()
-                ->requestAlreadyExists()
+                ->requestAlreadyExistsForDocuments()
                 ->createDocument();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);

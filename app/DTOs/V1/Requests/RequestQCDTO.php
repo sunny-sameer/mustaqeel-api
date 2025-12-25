@@ -72,14 +72,28 @@ final readonly class RequestQCDTO
 
         foreach ($meta as $key => $value) {
             if($value->status !== 'Correct'){
+                $array = $data;
+
                 $path = explode('.',$value->fieldPath);
-                if(count($path) == 2){
-                    $value->fieldNewValue = $data[$path[0]][$path[1]];
-                }else{
-                    $value->fieldNewValue = $data[$path[0]][$path[1]][$path[2]];
+
+                foreach ($path as $segment) {
+                    if (preg_match('/(.*?)\[(\d+)\]/', $segment, $matches)) {
+                        $arrayKey = $matches[1];
+                        $index = $matches[2];
+
+                        $array = $array[$arrayKey][$index] ?? null;
+                    } else {
+                        $array = $array[$segment] ?? null;
+                    }
                 }
+
+                $value->fieldNewValue = $array;
             }
         }
+
+        $count = collect($meta)->filter(function ($item) {
+            return empty($item->fieldNewValue);
+        })->count();
 
         return new self(
             reqBy: $qc['reqBy'],
@@ -92,7 +106,28 @@ final readonly class RequestQCDTO
             requestedAt: $qc['requestedAt'],
             submittedAt: Carbon::now(),
             verifiedAt: NULL,
-            status: 'Resubmitted'
+            status: $count > 0 ? 'Action Required' : 'Resubmitted'
+        );
+    }
+
+    public static function updateDocFromRequest(array $qc, array $meta)
+    {
+        $count = collect($meta)->filter(function ($item) {
+            return empty($item->fieldNewValue);
+        })->count();
+
+        return new self(
+            reqBy: $qc['reqBy'],
+            subBy: auth()->id(),
+            reqId: $qc['reqId'],
+            descriptionEn: $qc['descriptionEn'],
+            descriptionAr: $qc['descriptionAr'],
+            meta: json_encode(array_filter($meta)),
+            summary: $qc['summary'],
+            requestedAt: $qc['requestedAt'],
+            submittedAt: Carbon::now(),
+            verifiedAt: NULL,
+            status: $count > 0 ? 'Action Required' : 'Resubmitted'
         );
     }
 

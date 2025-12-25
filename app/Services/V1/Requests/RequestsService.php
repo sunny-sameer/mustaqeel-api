@@ -113,6 +113,7 @@ class RequestsService extends BaseService
     public function setInputsDocument(RequestsDocumentRequest $request)
     {
         $this->requests = $request;
+        $this->requestId = $request->id;
         $this->status = 'Draft';
         return $this;
     }
@@ -144,6 +145,19 @@ class RequestsService extends BaseService
     }
 
     public function requestAlreadyExists()
+    {
+        if (isset($this->requests->id) && !empty($this->requests->id)) {
+            $req = $this->requestsInterface->show($this->requests->id);
+
+            if (isset($req->reqReferenceNumber) && !empty($req->reqReferenceNumber)) {
+                throw new RequestAlreadyExistException();
+            }
+        }
+
+        return $this;
+    }
+
+    public function requestAlreadyExistsForDocuments()
     {
         if (isset($this->requests->id) && !empty($this->requests->id)) {
             $req = $this->requestsInterface->show($this->requests->id);
@@ -376,6 +390,22 @@ class RequestsService extends BaseService
             $this->requests['entityType'] = Requests::class;
             $response = $this->artifactsService->createDocuments($this->requests);
 
+
+            if(!empty($this->requestsQc))
+            {
+                $meta = json_decode($this->requestsQc->meta);
+                foreach ($meta as $key => $value) {
+                    if($value->fieldPath === 'documents.'.$this->requests->key){
+                        $value->fieldNewValue = $response->document->documentName;
+                    }
+                }
+
+            }
+
+            $qcData = RequestQCDTO::updateDocFromRequest($this->requestsQc->toArray(), $meta)->toArray();
+
+            $this->requestsInterface->updateQc($qcData, $this->requestsQc->id);
+
             if (!$response->ok) {
                 DB::rollBack();
 
@@ -475,11 +505,31 @@ class RequestsService extends BaseService
 
             foreach ($request['qcChecks'] as $key => $value) {
                 $path = explode('.',$value['fieldPath']);
-                if(count($path) == 2){
-                    $request['qcChecks'][$key]['fieldOldValue'] = $response[$path[0]][$path[1]];
-                }else{
-                    $request['qcChecks'][$key]['fieldOldValue'] = $response[$path[0]][$path[1]][$path[2]];
+
+                $current = $response;
+
+                foreach ($path as $segment) {
+                    if ($segment === 'documents' && isset($path[1])) {
+
+                        $docType = $path[1];
+
+                        $current = collect($current['documents'] ?? [])
+                            ->firstWhere('type', $docType)->documentName;
+
+                        break; // stop walking the path
+                    }
+
+                    if (preg_match('/(.*?)\[(\d+)\]/', $segment, $matches)) {
+                        $arrayKey = $matches[1];
+                        $index = $matches[2];
+
+                        $current = $current[$arrayKey][$index] ?? null;
+                    } else {
+                        $current = $current[$segment] ?? null;
+                    }
                 }
+
+                $request['qcChecks'][$key]['fieldOldValue'] = $current;
             }
 
             $qcData = RequestQCDTO::fromRequest($request)->toArray();
