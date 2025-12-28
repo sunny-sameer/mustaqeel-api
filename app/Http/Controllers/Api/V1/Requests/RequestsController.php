@@ -32,6 +32,7 @@ class RequestsController extends BaseController
 {
     /**
      * See Swagger annotations in \App\Swaggers\V1\Requests\RequestsSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Admin\AdminRequestsSwagger
      */
 
 

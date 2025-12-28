@@ -583,6 +583,164 @@ use OpenApi\Annotations as OA;
  * )
  *
  *
+ * // Update QC Request
+ *
+ *
+ * @OA\Put(
+ *     path="/api/v1/user/requests/{id}",
+ *     tags={"Requests"},
+ *     summary="Update QC Request",
+ *     description="Update a qc request with personal, employment, residency, travel, and family information.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="personalInfo",
+ *                 type="object",
+ *                 required={"applicantInfo","contactInfo","passportDetails"},
+ *                 @OA\Property(
+ *                     property="applicantInfo",
+ *                     type="object",
+ *                     @OA\Property(property="nameEn", type="string", example="Muhammad Talha Khalid"),
+ *                     @OA\Property(property="gender", type="string", example="Male"),
+ *                     @OA\Property(property="dob", type="string", example="1998-10-24"),
+ *                     @OA\Property(property="religion", type="string", example="Islam"),
+ *                     @OA\Property(property="maritalStatus", type="string", example="Married"),
+ *                     @OA\Property(property="placeOfBirth", type="string", example="Pakistan"),
+ *                     @OA\Property(property="currentCountry", type="string", example="Pakistan"),
+ *                     @OA\Property(property="nationality", type="string", example="Pakistan"),
+ *                     @OA\Property(property="shortBio", type="string", example="Hello world"),
+ *                     @OA\Property(property="langProficiencyAr", type="string", example="no proficiency"),
+ *                     @OA\Property(property="langProficiencyEn", type="string", example="intermediate"),
+ *                     @OA\Property(property="areYouQatarResident", type="boolean"),
+ *                     @OA\Property(property="qidNumber", type="string"),
+ *                     @OA\Property(property="qidType", type="string"),
+ *                     @OA\Property(property="workPermit", type="string"),
+ *                     @OA\Property(property="maintainWorkPermit", type="string")
+ *                 ),
+ *                 @OA\Property(
+ *                     property="contactInfo",
+ *                     type="object",
+ *                     @OA\Property(property="email", type="string", example="talha@yopmail.com"),
+ *                     @OA\Property(property="mobile", type="string", example="+97455040820"),
+ *                     @OA\Property(property="permanentAddress", type="string", example="Karachi, Pakistan"),
+ *                     @OA\Property(property="phone", type="string"),
+ *                     @OA\Property(property="poBox", type="string"),
+ *                     @OA\Property(property="qatarAddress", type="string")
+ *                 ),
+ *                 @OA\Property(
+ *                     property="passportDetails",
+ *                     type="object",
+ *                     @OA\Property(property="number", type="string", example="AD3434354"),
+ *                     @OA\Property(property="type", type="string", example="Ordinary"),
+ *                     @OA\Property(property="issueDate", type="string", example="2023-08-29"),
+ *                     @OA\Property(property="issueCountry", type="string", example="Pakistan"),
+ *                     @OA\Property(property="issueBy", type="string", example="Pakistan"),
+ *                     @OA\Property(property="expiryDate", type="string", example="2033-08-31"),
+ *                     @OA\Property(property="issuePlace", type="string", example="Pakistan")
+ *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="employmentAndEducation",
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="employmentDetails",
+ *                     type="object",
+ *                     @OA\Property(property="profession", type="string", example="Developer"),
+ *                     @OA\Property(property="nameOfSponsor", type="string", example="Jusour"),
+ *                     @OA\Property(property="addressOfSponsor", type="string", example="Doha"),
+ *                     @OA\Property(property="companyName", type="string"),
+ *                     @OA\Property(property="shareOfTheCapital", type="string"),
+ *                     @OA\Property(property="amountOfCapital", type="string")
+ *                 ),
+ *                 @OA\Property(
+ *                     property="previousJobs",
+ *                     type="array",
+ *                     @OA\Items(type="object",
+ *                         @OA\Property(property="entity", type="string"),
+ *                         @OA\Property(property="title", type="string"),
+ *                         @OA\Property(property="jobCountry", type="string"),
+ *                         @OA\Property(property="jobDuration", type="string"),
+ *                         @OA\Property(property="jobStatus", type="string")
+ *                     )
+ *                 ),
+ *                 @OA\Property(
+ *                     property="educations",
+ *                     type="array",
+ *                     @OA\Items(type="object",
+ *                         @OA\Property(property="qualification", type="string"),
+ *                         @OA\Property(property="otherQualification", type="string"),
+ *                         @OA\Property(property="university", type="string"),
+ *                         @OA\Property(property="eduPeriod", type="string"),
+ *                         @OA\Property(property="eduCountry", type="string"),
+ *                         @OA\Property(property="specialization", type="string"),
+ *                     )
+ *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="ResidencyAndTravelAndFamily",
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="residences",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="country", type="string", example=""),
+ *                         @OA\Property(property="type", type="string", example=""),
+ *                         @OA\Property(property="issueDate", type="string", example=""),
+ *                         @OA\Property(property="expiryDate", type="string", example="")
+ *                     )
+ *                 ),
+ *                 @OA\Property(
+ *                     property="otherNationalities",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="country", type="string", example=""),
+ *                         @OA\Property(property="passportNumber", type="string", example=""),
+ *                         @OA\Property(property="issueDate", type="string", example=""),
+ *                         @OA\Property(property="expiryDate", type="string", example=""),
+ *                         @OA\Property(property="placeOfIssue", type="string", example=""),
+ *                         @OA\Property(property="countryStatus", type="string", example="")
+ *                     )
+ *                 ),
+ *                 @OA\Property(
+ *                     property="countriesVisitedLast10Years",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="country", type="string", example=""),
+ *                         @OA\Property(property="period", type="string", example=""),
+ *                         @OA\Property(property="visitingReason", type="string", example=""),
+ *                         @OA\Property(property="otherReasonOfVisit", type="string", example="")
+ *                     )
+ *                 ),
+ *                 @OA\Property(
+ *                     property="familyMembers",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="name", type="string", example="Wife"),
+ *                         @OA\Property(property="relation", type="string", example="Wife"),
+ *                         @OA\Property(property="dob", type="string", example="2000-01-01"),
+ *                         @OA\Property(property="profession", type="string", example="Working")
+ *                     )
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="QC updated successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ *
  * // Create Request Document
  *
  *
