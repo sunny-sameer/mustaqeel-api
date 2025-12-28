@@ -91,8 +91,6 @@ final readonly class RequestQCDTO
 
                 $value->fieldNewValue = $array;
                 $value->updated = empty($value->fieldNewValue) ? false : true;
-            }else{
-                $value->updated = true;
             }
         }
 

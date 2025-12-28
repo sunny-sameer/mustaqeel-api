@@ -843,6 +843,35 @@ use OpenApi\Annotations as OA;
  *         description="Document not found"
  *     )
  * )
+ *
+ *
+ * // Get QC Request
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/user/requests/qc",
+ *     tags={"Requests"},
+ *     summary="Get a single QC Request",
+ *     description="Returns QC Request details",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="requestId",
+ *         in="query",
+ *         description="Search by request id",
+ *         required=true,
+ *         @OA\Schema(type="string", example="")
+ *     ),
+ *     @OA\Parameter(
+ *         name="status",
+ *         in="query",
+ *         required=false,
+ *         @OA\Schema(type="integer", example="Action Required")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="QC Request found"
+ *     )
+ * )
  */
 
 class RequestsSwagger

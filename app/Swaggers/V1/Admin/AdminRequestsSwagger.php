@@ -165,6 +165,35 @@ use OpenApi\Annotations as OA;
  *         description="Validation error"
  *     )
  * )
+ *
+ * // Approve QC Request
+ *
+ * * @OA\Post(
+ *     path="/api/v1/admin/requests/qc/approved",
+ *     tags={"Admin Requests"},
+ *     summary="Approve QC Request",
+ *     description="Approve QC request.",
+ *     security={{"bearerAuth": {}}},
+ *
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"requestId"},
+ *
+ *             @OA\Property(
+ *                 property="requestId",
+ *                 type="integer",
+ *                 example=7,
+ *                 description="Request ID must exist in requests table"
+ *             )
+ *         )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=200,
+ *         description="QC approved successfully"
+ *     )
+ * )
  */
 
 class AdminRequestsSwagger

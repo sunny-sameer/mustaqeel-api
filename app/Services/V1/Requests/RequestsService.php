@@ -35,7 +35,8 @@ use App\Exceptions\RequestNotExistException;
 use App\Exceptions\RequestQcAlreadyExistException;
 use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\UserNotFoundException;
-use App\Models\QualityCheck;
+
+
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
@@ -86,6 +87,13 @@ class RequestsService extends BaseService
     public function setRequestInputs(Request $request)
     {
         $this->requests = $request;
+        return $this;
+    }
+
+    public function setRequestIdInputs(Request $request)
+    {
+        $this->requests = $request;
+        $this->requestId = $request->id;
         return $this;
     }
 
@@ -185,9 +193,9 @@ class RequestsService extends BaseService
         return $this;
     }
 
-    public function requestQcAlreadyExists()
+    public function requestQcAlreadyExists($status)
     {
-        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,'Action Required');
+        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,$status);
         if(isset($this->requestsQc->id)){
             throw new RequestQcAlreadyExistException();
         }
@@ -195,9 +203,9 @@ class RequestsService extends BaseService
         return $this;
     }
 
-    public function requestQcNotFound()
+    public function requestQcNotFound($status)
     {
-        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,'Action Required');
+        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,$status);
         if(!isset($this->requestsQc->id)){
             throw new RequestQcNotExistException();
         }
@@ -397,6 +405,7 @@ class RequestsService extends BaseService
                 foreach ($meta as $key => $value) {
                     if($value->fieldPath === 'documents.'.$this->requests->key){
                         $value->fieldNewValue = $response->document->documentName;
+                        $value->updated = true;
                     }
                 }
 
@@ -494,6 +503,14 @@ class RequestsService extends BaseService
         }
     }
 
+    public function getQcRequest()
+    {
+        return $this->success(
+            data: ['qcRequest' => $this->requestsQc],
+            message: 'QC Request fetched successfully'
+        );
+    }
+
     public function submitQC()
     {
         DB::beginTransaction();
@@ -530,6 +547,12 @@ class RequestsService extends BaseService
                 }
 
                 $request['qcChecks'][$key]['fieldOldValue'] = $current;
+                $request['qcChecks'][$key]['updated'] = $value['status'] === 'Correct' ? true : false;
+            }
+
+            $previousQc = $this->requestsInterface->getQc($this->requestId,'Resubmitted');
+            if(isset($previousQc->id)){
+                $this->requestsInterface->updateQc(['status'=>'QC Rejected'],$previousQc->id);
             }
 
             $qcData = RequestQCDTO::fromRequest($request)->toArray();
@@ -544,6 +567,32 @@ class RequestsService extends BaseService
             return $this->success(
                 data: ['request' => $response],
                 message: 'QC submitted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'QC submission failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function approveQC()
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->requestsInterface->updateQc(['verifiedAt'=> Carbon::now(),'status'=> 'QC Approved'],$this->requestsQc->id);
+
+            $response = $this->requestsInterface->getRequest($this->requestId);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['request' => $response],
+                message: 'QC approved successfully'
             );
         } catch (BadRequestException $e) {
             DB::rollBack();

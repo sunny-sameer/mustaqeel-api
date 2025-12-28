@@ -124,7 +124,7 @@ class RequestsController extends BaseController
                 ->setInputsUpdateRequest($request, $id)
                 ->userExists()
                 ->requestNotFound()
-                ->requestQcNotFound()
+                ->requestQcNotFound('Action Required')
                 ->updateRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
@@ -200,9 +200,31 @@ class RequestsController extends BaseController
         try {
             return $this->requests
                 ->userExists()
+                ->requestNotFound()
                 ->deleteDocumentById($id);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function getQc(Request $request)
+    {
+        try {
+            $status = isset($request->status) ? $request->status : 'Action Required';
+            return $this->requests
+                ->setRequestIdInputs($request)
+                ->userExists()
+                ->requestNotFound()
+                ->requestQcNotFound($status)
+                ->getQcRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestQcNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
@@ -215,13 +237,35 @@ class RequestsController extends BaseController
                 ->setQCRequestInputs($request)
                 ->userExists()
                 ->requestNotFound()
-                ->requestQcAlreadyExists()
+                ->requestQcAlreadyExists('Action Required')
                 ->submitQC();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (RequestNotExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (RequestQcAlreadyExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function approveQC(Request $request)
+    {
+        try {
+            return $this->requests
+                ->setRequestInputs($request)
+                ->userExists()
+                ->requestNotFound()
+                ->requestQcNotFound('Resubmitted')
+                ->approveQC();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestQcNotExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
