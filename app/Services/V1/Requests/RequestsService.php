@@ -415,6 +415,8 @@ class RequestsService extends BaseService
 
             }
 
+            $request = $this->requestsInterface->getRequest($request->id);
+
             if (!$response->ok) {
                 DB::rollBack();
 
@@ -428,7 +430,7 @@ class RequestsService extends BaseService
             DB::commit();
 
             return $this->success(
-                data: ['document' => $response->document],
+                data: ['document' => $response->document,'request'=>$request],
                 message: 'Document created successfully'
             );
         } catch (BadRequestException $e) {
