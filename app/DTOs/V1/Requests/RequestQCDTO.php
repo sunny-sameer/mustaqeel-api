@@ -73,7 +73,7 @@ final readonly class RequestQCDTO
         $path = [];
 
         foreach ($meta as $key => $value) {
-            if($value->status !== 'Correct'){
+            if($value->status !== 'Correct' && !$value->updated){
                 $array = $data;
 
                 $path = explode('.',$value->fieldPath);
