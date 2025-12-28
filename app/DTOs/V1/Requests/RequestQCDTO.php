@@ -39,7 +39,7 @@ final readonly class RequestQCDTO
             'wrongCount' => $wrongCount,
             'needsCorrectionCount' => $needsCorrectionCount,
             'remainingCount' => $remainingCount,
-            'completionPercentage' => $completionPercentage
+            'completionPercentage' => round($completionPercentage)
         ];
 
         return new self(
@@ -103,6 +103,11 @@ final readonly class RequestQCDTO
         if(isset($qc['summary'])) {
             $summary = json_decode($qc['summary'],true);
             $summary['remainingCount'] = $count;
+
+            $totalChecks = $summary['totalChecks'];
+            $correctCount = $totalChecks - $count;
+            $completionPercentage = ($correctCount / $totalChecks) * 100;
+            $summary['completionPercentage'] = round($completionPercentage);
         }
 
         return new self(
@@ -131,6 +136,11 @@ final readonly class RequestQCDTO
         if(isset($qc['summary'])) {
             $summary = json_decode($qc['summary'],true);
             $summary['remainingCount'] = $count;
+
+            $totalChecks = $summary['totalChecks'];
+            $correctCount = $totalChecks - $count;
+            $completionPercentage = ($correctCount / $totalChecks) * 100;
+            $summary['completionPercentage'] = round($completionPercentage);
         }
 
         return new self(
