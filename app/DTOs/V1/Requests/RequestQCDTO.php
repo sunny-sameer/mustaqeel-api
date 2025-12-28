@@ -30,6 +30,7 @@ final readonly class RequestQCDTO
         $correctCount = isset($statusCounts['Correct']) ? $statusCounts['Correct'] : 0;
         $wrongCount = isset($statusCounts['Wrong']) ? $statusCounts['Wrong'] : 0;
         $needsCorrectionCount = isset($statusCounts['NeedCorrection']) ? $statusCounts['NeedCorrection'] : 0;
+        $remainingCount = $wrongCount + $needsCorrectionCount;
         $completionPercentage = ($correctCount / $totalChecks) * 100;
 
         $summary = [
@@ -37,6 +38,7 @@ final readonly class RequestQCDTO
             'correctCount' => $correctCount,
             'wrongCount' => $wrongCount,
             'needsCorrectionCount' => $needsCorrectionCount,
+            'remainingCount' => $remainingCount,
             'completionPercentage' => $completionPercentage
         ];
 
@@ -95,6 +97,13 @@ final readonly class RequestQCDTO
             return empty($item->fieldNewValue);
         })->count();
 
+        $summary = [];
+
+        if(isset($qc['summary'])) {
+            $summary = json_decode($qc['summary'],true);
+            $summary['remainingCount'] = $count;
+        }
+
         return new self(
             reqBy: $qc['reqBy'],
             subBy: auth()->id(),
@@ -102,7 +111,7 @@ final readonly class RequestQCDTO
             descriptionEn: $qc['descriptionEn'],
             descriptionAr: $qc['descriptionAr'],
             meta: json_encode(array_filter($meta)),
-            summary: $qc['summary'],
+            summary: json_encode(array_filter($summary)),
             requestedAt: $qc['requestedAt'],
             submittedAt: Carbon::now(),
             verifiedAt: NULL,
