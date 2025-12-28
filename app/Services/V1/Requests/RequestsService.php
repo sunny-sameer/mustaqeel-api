@@ -400,11 +400,11 @@ class RequestsService extends BaseService
                     }
                 }
 
+                $qcData = RequestQCDTO::updateDocFromRequest($this->requestsQc->toArray(), $meta)->toArray();
+
+                $this->requestsInterface->updateQc($qcData, $this->requestsQc->id);
+
             }
-
-            $qcData = RequestQCDTO::updateDocFromRequest($this->requestsQc->toArray(), $meta)->toArray();
-
-            $this->requestsInterface->updateQc($qcData, $this->requestsQc->id);
 
             if (!$response->ok) {
                 DB::rollBack();
