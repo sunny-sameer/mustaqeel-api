@@ -90,13 +90,14 @@ final readonly class RequestQCDTO
                 }
 
                 $value->fieldNewValue = $array;
+                $value->updated = empty($value->fieldNewValue) ? false : true;
+            }else{
+                $value->updated = true;
             }
         }
 
         $count = collect($meta)->filter(function ($item) {
-            if($item->status !== 'Correct'){
-                return empty($item->fieldNewValue);
-            }
+            return !$item->updated;
         })->count();
 
         $summary = [];
@@ -124,8 +125,15 @@ final readonly class RequestQCDTO
     public static function updateDocFromRequest(array $qc, array $meta)
     {
         $count = collect($meta)->filter(function ($item) {
-            return empty($item->fieldNewValue);
+            return !$item->updated;
         })->count();
+
+        $summary = [];
+
+        if(isset($qc['summary'])) {
+            $summary = json_decode($qc['summary'],true);
+            $summary['remainingCount'] = $count;
+        }
 
         return new self(
             reqBy: $qc['reqBy'],
@@ -134,7 +142,7 @@ final readonly class RequestQCDTO
             descriptionEn: $qc['descriptionEn'],
             descriptionAr: $qc['descriptionAr'],
             meta: json_encode(array_filter($meta)),
-            summary: $qc['summary'],
+            summary: json_encode(array_filter($summary)),
             requestedAt: $qc['requestedAt'],
             submittedAt: Carbon::now(),
             verifiedAt: NULL,
