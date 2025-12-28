@@ -94,7 +94,9 @@ final readonly class RequestQCDTO
         }
 
         $count = collect($meta)->filter(function ($item) {
-            return empty($item->fieldNewValue);
+            if($item->status !== 'Correct'){
+                return empty($item->fieldNewValue);
+            }
         })->count();
 
         $summary = [];
