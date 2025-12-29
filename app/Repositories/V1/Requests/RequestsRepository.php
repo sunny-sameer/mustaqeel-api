@@ -195,8 +195,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $req = $this->model->with([
             'metas:reqId,key,value',
             'documents',
-            'qualityCheck'
-        ]);
+            'qualityCheck',
+            'qualityChecks'
+        ])->withCount('qualityChecks');
 
         if ($role == 'applicant') {
             $req = $req->where(function ($query) use ($id, $user) {
@@ -225,6 +226,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $req->qualityCheck->meta = json_decode($req->qualityCheck->meta);
                 $req->qualityCheck->summary = json_decode($req->qualityCheck->summary);
             }
+
+            $req->qualityChecks->map(function ($query) {
+                $query->meta = json_decode($query->meta);
+                $query->summary = json_decode($query->summary);
+                return $query;
+            });
 
             $req->metas->map(function ($query) use ($req) {
                 $req->{$query->key} = $query->firstWhere('key', $query->key)?->related;

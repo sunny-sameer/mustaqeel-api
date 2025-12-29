@@ -256,7 +256,7 @@ class RequestsController extends BaseController
     {
         try {
             return $this->requests
-                ->setRequestInputs($request)
+                ->setRequestIdInputs($request)
                 ->userExists()
                 ->requestNotFound()
                 ->requestQcNotFound('Resubmitted')

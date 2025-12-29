@@ -93,7 +93,7 @@ class RequestsService extends BaseService
     public function setRequestIdInputs(Request $request)
     {
         $this->requests = $request;
-        $this->requestId = $request->id;
+        $this->requestId = $request->requestId;
         return $this;
     }
 

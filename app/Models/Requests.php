@@ -39,5 +39,11 @@ class Requests extends Model
         ->orderBy('created_at','DESC');
     }
 
+    public function qualityChecks()
+    {
+        return $this->hasMany(QualityCheck::class,'reqId','id')
+        ->orderBy('created_at','DESC');
+    }
+
 
 }
