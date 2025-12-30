@@ -375,11 +375,6 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $qc = $this->qualityCheck->where('reqId',$requestId)
         ->where('status',$status)->orderBy('created_at','DESC')->first();
 
-        if(isset($qc->id)){
-            $qc->meta = json_decode($qc->meta,true);
-            $qc->summary = json_decode($qc->summary,true);
-        }
-
         return $qc;
     }
 

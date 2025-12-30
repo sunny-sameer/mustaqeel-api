@@ -409,11 +409,11 @@ class RequestsService extends BaseService
 
             if(!empty($this->requestsQc))
             {
-                $meta = $this->requestsQc->meta;
+                $meta = json_decode($this->requestsQc->meta);
                 foreach ($meta as $key => $value) {
-                    if($value['fieldPath'] === 'documents.'.$this->requests->key){
-                        $value['fieldNewValue'] = $response->document->documentName;
-                        $value['updated'] = true;
+                    if($value->fieldPath === 'documents.'.$this->requests->key){
+                        $value->fieldNewValue = $response->document->documentName;
+                        $value->updated = true;
                     }
                 }
 
@@ -568,6 +568,11 @@ class RequestsService extends BaseService
 
     public function getQcRequest()
     {
+        if(isset($this->requestsQc->id)){
+            $this->requestsQc->meta = json_decode($this->requestsQc->meta);
+            $this->requestsQc->summary = json_decode($this->requestsQc->summary);
+        }
+
         return $this->success(
             data: ['qcRequest' => $this->requestsQc],
             message: 'QC Request fetched successfully'
