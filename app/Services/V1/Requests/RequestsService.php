@@ -409,7 +409,7 @@ class RequestsService extends BaseService
 
             if(!empty($this->requestsQc))
             {
-                $meta = json_decode($this->requestsQc->meta);
+                $meta = $this->requestsQc->meta;
                 foreach ($meta as $key => $value) {
                     if($value->fieldPath === 'documents.'.$this->requests->key){
                         $value->fieldNewValue = $response->document->documentName;

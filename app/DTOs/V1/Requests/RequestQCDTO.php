@@ -67,7 +67,7 @@ final readonly class RequestQCDTO
         $meta = [];
 
         if(isset($qc['meta'])) {
-            $meta = json_decode($qc['meta']);
+            $meta = $qc['meta'];
         }
 
         $path = [];
@@ -101,7 +101,7 @@ final readonly class RequestQCDTO
         $summary = [];
 
         if(isset($qc['summary'])) {
-            $summary = json_decode($qc['summary'],true);
+            $summary = $qc['summary'];
             $summary['remainingCount'] = $count;
 
             $totalChecks = $summary['totalChecks'];
@@ -134,7 +134,7 @@ final readonly class RequestQCDTO
         $summary = [];
 
         if(isset($qc['summary'])) {
-            $summary = json_decode($qc['summary'],true);
+            $summary = $qc['summary'];
             $summary['remainingCount'] = $count;
 
             $totalChecks = $summary['totalChecks'];
