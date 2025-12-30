@@ -29,15 +29,8 @@ final readonly class RequestMetasDTO
                     value: $data['personalInfo']['identificationData'][$value]
                 );
             }else{
-                $meta = RequestMetaData::where('reqId',$reqId)
-                ->where('key',$value)->first();
-                if(isset($meta->id)) {
-                    $attributes[] = new self(
-                        reqId: $reqId,
-                        key: $value,
-                        value: $meta->value
-                    );
-                }
+                RequestMetaData::where('reqId',$reqId)
+                ->where('key',$value)->delete();
             }
         }
 

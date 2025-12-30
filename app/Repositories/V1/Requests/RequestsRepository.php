@@ -95,7 +95,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $query->statuses = $this->getRequestStatus($query->id);
 
             $query->metas->map(function ($query1) use ($query) {
-                $query->{$query1->key} = $this->getRequestMetaData(['key'=> $query1->key,'reqId'=>$query->id]);
+                $query->{$query1->key} = $query1?->related;
                 return $query1;
             });
 
@@ -234,16 +234,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             });
 
             $req->metas->map(function ($query) use ($req) {
-                $req->{$query->key} = $this->getRequestMetaData(['key'=> $query->key,'reqId'=>$req->id]);
+                $req->{$query->key} = $query?->related;
                 return $query;
             });
         }
 
         return $req;
-    }
-
-    public function getRequestMetaData($params = []){
-        return $this->requestMetaData->where($params)->first();
     }
 
     public function getRequestStatus($requestId)
