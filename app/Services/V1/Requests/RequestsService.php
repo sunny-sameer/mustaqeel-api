@@ -35,8 +35,7 @@ use App\Exceptions\RequestNotExistException;
 use App\Exceptions\RequestQcAlreadyExistException;
 use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\UserNotFoundException;
-
-
+use App\Http\Requests\API\V1\RequestStatusUpdateRequest;
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
@@ -111,6 +110,14 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function setInputsUpdateRequestStatus(RequestStatusUpdateRequest $request, $id): self
+    {
+        $this->requests = $request;
+        $this->requestId = $id;
+        $this->status = $request->status;
+        return $this;
+    }
+
     public function setInputsUpdateRequest(RequestsUpdateRequest $request, $id): self
     {
         $this->requests = $request;
@@ -143,7 +150,7 @@ class RequestsService extends BaseService
 
     public function userExists()
     {
-        $this->user = User::with('profile')->find(auth()->id());
+        $this->user = User::with('profile','roles')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
@@ -270,6 +277,7 @@ class RequestsService extends BaseService
             $requestMetaData = collect(RequestMetasDTO::fromRequest($this->requests, $request->id))
                 ->map(fn($dto) => $dto->toArray())
                 ->all();
+
             $requestAttributesData = collect(RequestAttributesDTO::fromRequest($this->requests, $request->id))
                 ->map(fn($dto) => $dto->toArray())
                 ->all();
@@ -452,6 +460,59 @@ class RequestsService extends BaseService
             data: ['request' => $request],
             message: 'Request fetched successfully'
         );
+    }
+
+    public function updateRequestStatus()
+    {
+        DB::beginTransaction();
+
+        try {
+            $request = $this->requestsInterface->getRequest($this->requestId);
+
+            $type = $this->user->roles->pluck('type')->first();
+
+            if($type == 'entity'){
+                if(isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved'){
+                    throw new RequestNotExistException();
+                }
+            }
+
+            $metaData = [];
+
+            if(isset($this->requests->commentsEn)){
+                $metaData = [[
+                    'commentsEn'=>$this->requests->commentsEn,
+                    'commentsAr'=>$this->requests->commentsAr,
+                    'type'=>$this->status,
+                ]];
+            }
+
+            $stage = ucfirst($type);
+
+            $this->createOrUpdateStageStatus($stage,$this->requestId,$metaData);
+
+            if($this->status == 'Rejected') {
+                $this->createOrUpdateStageStatus('Application',$this->requestId,$metaData);
+            }
+
+            $request = $this->requestsInterface->getRequest($this->requestId);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['request' => $request],
+                message: 'Request status updated successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Reupload document creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+
     }
 
     public function reuploadDocumentRequest()

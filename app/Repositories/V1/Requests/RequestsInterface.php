@@ -15,6 +15,7 @@ interface RequestsInterface  extends CoreInterface {
     public function getStageStatus($params = []);
     public function createRequestStageStatus($params = [], $request, $status);
     public function getRequest($requestId);
+    public function getRequestMetaData($params = []);
     public function getRequestStatus($requestId);
     public function getRequestStatuses($requestId);
     public function getAllAttributes($requestId);

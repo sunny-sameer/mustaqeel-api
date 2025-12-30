@@ -173,7 +173,21 @@ class RequestsController extends BaseController
 
     public function updateStatus(RequestStatusUpdateRequest $request, $id)
     {
-        return $this->sendSuccessResponse();
+        try {
+            return $this->requests
+                ->setInputsUpdateRequestStatus($request, $id)
+                ->userExists()
+                ->requestNotFound()
+                ->updateRequestStatus();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     public function reuploadDocumentRequest(ReuploadDocumentRequest $request, $id)
@@ -186,10 +200,10 @@ class RequestsController extends BaseController
                 ->reuploadDocumentRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (BadRequestException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
         } catch (RequestNotExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }

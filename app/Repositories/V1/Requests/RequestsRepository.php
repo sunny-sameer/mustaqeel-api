@@ -95,7 +95,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $query->statuses = $this->getRequestStatus($query->id);
 
             $query->metas->map(function ($query1) use ($query) {
-                $query->{$query1->key} = $query1->firstWhere('key', $query1->key)?->related;
+                $query->{$query1->key} = $this->getRequestMetaData(['key'=> $query1->key,'reqId'=>$query->id]);
                 return $query1;
             });
 
@@ -234,12 +234,16 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             });
 
             $req->metas->map(function ($query) use ($req) {
-                $req->{$query->key} = $query->firstWhere('key', $query->key)?->related;
+                $req->{$query->key} = $this->getRequestMetaData(['key'=> $query->key,'reqId'=>$req->id]);
                 return $query;
             });
         }
 
         return $req;
+    }
+
+    public function getRequestMetaData($params = []){
+        return $this->requestMetaData->where($params)->first();
     }
 
     public function getRequestStatus($requestId)
@@ -372,8 +376,15 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
     public function getQc($requestId,$status)
     {
-        return $this->qualityCheck->where('reqId',$requestId)
-        ->where('status',$status)->first();
+        $qc = $this->qualityCheck->where('reqId',$requestId)
+        ->where('status',$status)->orderBy('created_at','DESC')->first();
+
+        if(isset($qc->id)){
+            $qc->meta = json_decode($qc->meta);
+            $qc->summary = json_decode($qc->summary);
+        }
+
+        return $qc;
     }
 
     public function createQc($request)
