@@ -411,9 +411,9 @@ class RequestsService extends BaseService
             {
                 $meta = $this->requestsQc->meta;
                 foreach ($meta as $key => $value) {
-                    if($value->fieldPath === 'documents.'.$this->requests->key){
-                        $value->fieldNewValue = $response->document->documentName;
-                        $value->updated = true;
+                    if($value['fieldPath'] === 'documents.'.$this->requests->key){
+                        $value['fieldNewValue'] = $response->document->documentName;
+                        $value['updated'] = true;
                     }
                 }
 

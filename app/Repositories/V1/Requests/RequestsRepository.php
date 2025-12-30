@@ -376,8 +376,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         ->where('status',$status)->orderBy('created_at','DESC')->first();
 
         if(isset($qc->id)){
-            $qc->meta = json_decode($qc->meta);
-            $qc->summary = json_decode($qc->summary);
+            $qc->meta = json_decode($qc->meta,true);
+            $qc->summary = json_decode($qc->summary,true);
         }
 
         return $qc;
