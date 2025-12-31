@@ -14,6 +14,7 @@ use App\Http\Requests\API\V1\RequestsPartialRequest;
 use App\Http\Requests\API\V1\RequestsUpdateRequest;
 use App\Http\Requests\API\V1\ReuploadDocumentRequest;
 use App\Http\Requests\API\V1\RequestsQualityCheck;
+use App\Http\Requests\API\V1\RequestStatusUpdateRequest;
 
 
 use App\Services\V1\BaseService;
@@ -31,11 +32,13 @@ use App\DTOs\V1\Requests\RequestQCDTO;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
+use App\Exceptions\RequestInvalidException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\RequestQcAlreadyExistException;
 use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\UserNotFoundException;
-use App\Http\Requests\API\V1\RequestStatusUpdateRequest;
+
+
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
@@ -215,6 +218,26 @@ class RequestsService extends BaseService
         $this->requestsQc = $this->requestsInterface->getQc($this->requestId,$status);
         if(!isset($this->requestsQc->id)){
             throw new RequestQcNotExistException();
+        }
+
+        return $this;
+    }
+
+    public function requestInvalid()
+    {
+        $request = $this->requestsInterface->getRequest($this->requestId);
+
+        $type = $this->user->roles->pluck('type')->first();
+
+        if($type == 'entity'){
+            if(isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved'){
+            }else{
+                throw new RequestNotExistException();
+            }
+        }else if($type == 'jusour'){
+            if(isset($request->status->jusour[0]->status) && ($request->status->jusour[0]->status == 'Approved' || $request->status->jusour[0]->status == 'Rejected')){
+                throw new RequestInvalidException();
+            }
         }
 
         return $this;
@@ -473,6 +496,11 @@ class RequestsService extends BaseService
 
             if($type == 'entity'){
                 if(isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved'){
+                }else{
+                    throw new RequestNotExistException();
+                }
+            }else if($type == 'jusour'){
+                if(isset($request->status->jusour[0]->status) && ($request->status->jusour[0]->status == 'Approved' || $request->status->jusour[0]->status == 'Rejected')){
                     throw new RequestNotExistException();
                 }
             }

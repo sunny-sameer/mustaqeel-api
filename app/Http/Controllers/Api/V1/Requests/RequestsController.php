@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Requests;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RequestAlreadyExistException;
+use App\Exceptions\RequestInvalidException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\RequestQcAlreadyExistException;
 use App\Exceptions\RequestQcNotExistException;
@@ -21,6 +22,8 @@ use App\Http\Requests\API\V1\RequestsUpdateRequest;
 use App\Http\Requests\API\V1\RequestStatusUpdateRequest;
 use App\Http\Requests\API\V1\ReuploadDocumentRequest;
 use App\Http\Requests\API\V1\RequestsQualityCheck;
+
+
 use App\Services\V1\Requests\RequestsService;
 use App\Services\V1\Documents\DocumentService;
 
@@ -178,10 +181,13 @@ class RequestsController extends BaseController
                 ->setInputsUpdateRequestStatus($request, $id)
                 ->userExists()
                 ->requestNotFound()
+                ->requestInvalid()
                 ->updateRequestStatus();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        }  catch (RequestInvalidException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
