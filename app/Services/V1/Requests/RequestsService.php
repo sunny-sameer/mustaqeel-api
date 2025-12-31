@@ -494,24 +494,13 @@ class RequestsService extends BaseService
 
             $type = $this->user->roles->pluck('type')->first();
 
-            if($type == 'entity'){
-                if(isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved'){
-                }else{
-                    throw new RequestNotExistException();
-                }
-            }else if($type == 'jusour'){
-                if(isset($request->status->jusour[0]->status) && ($request->status->jusour[0]->status == 'Approved' || $request->status->jusour[0]->status == 'Rejected')){
-                    throw new RequestNotExistException();
-                }
-            }
-
             $metaData = [];
 
             if(isset($this->requests->commentsEn)){
                 $metaData = [[
                     'commentsEn'=>$this->requests->commentsEn,
                     'commentsAr'=>$this->requests->commentsAr,
-                    'type'=>$this->status,
+                    'type'=>str_replace(' ','',lowerFirstWord($this->status)),
                 ]];
             }
 

@@ -10,3 +10,14 @@ if(!function_exists('camelCaseToSpace')){
         return $label;
     }
 }
+
+if(!function_exists('lowerFirstWord')){
+    function lowerFirstWord($sentence)
+    {
+        $words = explode(' ', $sentence);
+
+        $words[0] = strtolower($words[0]);
+
+        return implode(' ', $words);
+    }
+}
