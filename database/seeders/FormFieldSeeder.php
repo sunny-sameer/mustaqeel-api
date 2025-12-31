@@ -525,11 +525,40 @@ class FormFieldSeeder extends Seeder
                     ],
                 ]
             ],
+            [
+                'formFields'=>[
+                    'id'=> 21,
+                    'nameEn'=> 'Asset-Based Audit Report',
+                    'nameAr'=> 'تقرير التدقيق القائم على الأصول',
+                    'type'=> 'file',
+                    'meta'=> json_encode(array_filter(["extensions"=>["xlsx","xlsb","xls","xltx","xlsm","csv"]])),
+                    'status'=> 1
+                ],
+                'metas'=>[
+                    [
+                        'key' => 'inv',
+                        'value' => json_encode(array_filter(['categorySlug'=>'inv','subCategorySlug'=>'ab'])),
+                        'onshoreOffShore'=> 'both',
+                        'isRequired'=> true,
+                    ],
+                ]
+            ],
         ];
 
         foreach ($formFields as $key => $value) {
-            $ff = FormFields::create($value['formFields']);
-            $ff->formMetas()->createMany($value['metas']);
+            // $ff = FormFields::create($value['formFields']);
+            // $ff->formMetas()->createMany($value['metas']);
+            $ff = FormFields::withTrashed()->updateOrCreate(['id' => $value['formFields']['id']],$value['formFields']);
+            if ($ff->trashed()) {
+                $ff->restore();
+            }
+            foreach ($value['metas'] as $meta) {
+                $m = $ff->formMetas()->withTrashed()->updateOrCreate(['key' => $meta['key']],$meta);
+
+                if ($m->trashed()) {
+                    $m->restore();
+                }
+            }
         }
     }
 }

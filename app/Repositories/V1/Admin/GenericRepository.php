@@ -12,6 +12,7 @@ use App\Models\Sectors as Sector;
 use App\Models\Activities as Activity;
 use App\Models\SubActivities as SubActivity;
 use App\Models\Entities as Entity;
+use App\Models\FormFieldMeta;
 use App\Models\FormFields;
 use App\Models\Incubator;
 use App\Models\Nationality;
@@ -264,19 +265,13 @@ class GenericRepository extends CoreRepository implements GenericInterface
     {
         $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         $ff = FormFields::with([
-            'formMetas.category:name,nameAr,slug',
-            'formMetas.subCategory:name,nameAr,slug',
-            'formMetas.sector:name,nameAr,slug',
-            'formMetas.activity:name,nameAr,slug',
-            'formMetas.subActivity:name,nameAr,slug',
-            'formMetas.entity:name,nameAr,slug',
-            'formMetas.incubator:name,nameAr,slug',
+            'formMetas',
         ])->paginate($paginate);
 
 
         $ff->map(function ($query){
             $query->meta = $query->meta ? json_decode($query->meta) : NULL;
-
+            $query->formMetas->value = $query->formMetas->value ? json_decode($query->formMetas->value) : NULL ;
             return $query;
         });
 
@@ -285,17 +280,12 @@ class GenericRepository extends CoreRepository implements GenericInterface
     public function findFormField($id)
     {
         $ff = FormFields::with([
-            'formMetas.category:name,nameAr,slug',
-            'formMetas.subCategory:name,nameAr,slug',
-            'formMetas.sector:name,nameAr,slug',
-            'formMetas.activity:name,nameAr,slug',
-            'formMetas.subActivity:name,nameAr,slug',
-            'formMetas.entity:name,nameAr,slug',
-            'formMetas.incubator:name,nameAr,slug',
+            'formMetas',
         ])->findOrFail($id);
 
 
         $ff->meta = $ff->meta ? json_decode($ff->meta) : NULL;
+        $ff->formMetas->value = $ff->formMetas->value ? json_decode($ff->formMetas->value) : NULL ;
 
         return $ff;
     }
@@ -317,6 +307,27 @@ class GenericRepository extends CoreRepository implements GenericInterface
         $ff = FormFields::findOrFail($id);
         $ff->formMetas()->delete();
         return $ff->delete();
+    }
+
+    public function updateOrCreateFormFieldMetaData($data, $formFieldId)
+    {
+        $ff = FormFields::findOrFail($formFieldId);
+        $ff->formMetas()->delete();
+
+        $meta = [];
+        foreach ($data as $key => $value) {
+            $ffm = FormFieldMeta::withTrashed()->where(['ffId' => $formFieldId, 'key' => $value['key']])->first();
+            if(isset($ffm->id)){
+                if ($ffm->trashed()) {
+                    $ffm->restore();
+                }
+                $ffm->update($value);
+            }else{
+                $ffm = FormFieldMeta::create($value);
+            }
+            $meta[] = $ffm;
+        }
+        return $meta;
     }
 
     // ===== PIVOTS (category_sector / activity_entity) =====
@@ -554,7 +565,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
         $ff = FormFields::whereHas('formMetas')->where('slug',$type);
         if(!empty($category)){
             $ff = $ff->whereHas('formMetas', function ($q) use ($category){
-                $q->where('catSlug',$category);
+                $q->where('key',$category);
             });
         }
         $ff = $ff->first();

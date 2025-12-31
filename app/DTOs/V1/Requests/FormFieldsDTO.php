@@ -4,7 +4,6 @@ namespace App\DTOs\V1\Requests;
 
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 final readonly class FormFieldsDTO
 {
@@ -12,8 +11,6 @@ final readonly class FormFieldsDTO
         public string $nameEn,
         public string $nameAr,
         public string $type,
-        public string $onshoreOffShore,
-        public bool $isRequired = false,
         public ?string $meta = null,
         public bool $status = true,
     ) {}
@@ -21,15 +18,11 @@ final readonly class FormFieldsDTO
 
     public static function fromArray(array $data): self
     {
-        $map = Arr::only($data, ['metaFields']);
-
         return new self(
             nameEn: $data['formFields']['nameEn'],
             nameAr: $data['formFields']['nameAr'],
             type: $data['formFields']['type'],
-            onshoreOffShore: $data['formFields']['onshoreOffShore'],
-            isRequired: $data['formFields']['isRequired'],
-            meta: json_encode(array_filter($map['metaFields'])),
+            meta: json_encode(array_filter($data['metaFields'])),
             status: $data['formFields']['status'] ?? true,
         );
     }
@@ -45,8 +38,6 @@ final readonly class FormFieldsDTO
             'nameEn' => $this->nameEn,
             'nameAr' => $this->nameAr,
             'type' => $this->type,
-            'onshoreOffShore' => $this->onshoreOffShore,
-            'isRequired' => $this->isRequired,
             'meta' => $this->meta,
             'status' => $this->status,
         ];

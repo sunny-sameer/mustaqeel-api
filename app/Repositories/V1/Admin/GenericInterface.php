@@ -63,6 +63,8 @@ interface GenericInterface extends CoreInterface
     public function updateFormField($id, $data);
     public function deleteFormField($id);
 
+    public function updateOrCreateFormFieldMetaData($data, $formFieldId);
+
     // ===== PIVOTS =====
     public function attachCategoriesToSector($sectorId, $categoryIds);
     public function attachEntitiesToActivity($activityId, $entityIds);

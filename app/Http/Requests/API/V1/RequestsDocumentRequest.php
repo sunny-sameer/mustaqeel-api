@@ -44,8 +44,8 @@ class RequestsDocumentRequest extends FormRequest
         $request = $this->requestsInterface->getRequest($this->input('id'));
 
         $catSlug = null;
-        if(isset($request->data->request->metas->catSlug)) {
-            $catSlug = $request->data->request->metas->catSlug;
+        if(isset($request->category->slug)) {
+            $catSlug = $request->category->slug;
         }
 
         $ff = $this->genericInterface->getSingleFormField($this->input('key'),$catSlug);

@@ -973,29 +973,53 @@ use OpenApi\Annotations as OA;
  *         required=true,
  *         @OA\JsonContent(
  *             type="object",
+ *
  *             @OA\Property(
  *                 property="identificationData",
- *                 type="object",
- *                 required={"category"},
- *                 @OA\Property(property="category", type="string", example="tal"),
- *                 @OA\Property(property="subCategory", type="string", nullable=true, example=""),
- *                 @OA\Property(property="sector", type="string", nullable=true, example=""),
- *                 @OA\Property(property="activity", type="string", nullable=true, example=""),
- *                 @OA\Property(property="subActivity", type="string", nullable=true, example=""),
- *                 @OA\Property(property="entity", type="string", nullable=true, example=""),
- *                 @OA\Property(property="incubator", type="string", nullable=true, example="")
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     required={"key","value","onshoreOffShore","isRequired"},
+ *
+ *                     @OA\Property(property="key", type="string", example="tal"),
+ *
+ *                     @OA\Property(
+ *                         property="value",
+ *                         type="object",
+ *                         required={"categorySlug"},
+ *                         @OA\Property(property="categorySlug", type="string", example="tal"),
+ *                         @OA\Property(property="subCategorySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="sectorSlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="activitySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="subActivitySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="entitySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="incubatorSlug", type="string", nullable=true, example="")
+ *                     ),
+ *
+ *                     @OA\Property(
+ *                         property="onshoreOffShore",
+ *                         type="string",
+ *                         example="both"
+ *                     ),
+ *
+ *                     @OA\Property(
+ *                         property="isRequired",
+ *                         type="boolean",
+ *                         example=true
+ *                     )
+ *                 )
  *             ),
+ *
  *             @OA\Property(
  *                 property="formFields",
  *                 type="object",
- *                 required={"nameEn", "nameAr", "type", "onshoreOffShore", "isRequired", "status"},
+ *                 required={"nameEn","nameAr","type","status"},
  *                 @OA\Property(property="nameEn", type="string", example="Personal Photo"),
  *                 @OA\Property(property="nameAr", type="string", example="صورة شخصية"),
  *                 @OA\Property(property="type", type="string", example="file"),
- *                 @OA\Property(property="onshoreOffShore", type="string", example="onshore"),
- *                 @OA\Property(property="isRequired", type="boolean", example=true),
  *                 @OA\Property(property="status", type="boolean", example=true)
  *             ),
+ *
  *             @OA\Property(
  *                 property="metaFields",
  *                 type="object",
@@ -1007,6 +1031,7 @@ use OpenApi\Annotations as OA;
  *             )
  *         )
  *     ),
+ *
  *     @OA\Response(
  *         response=201,
  *         description="Form Field created successfully"
@@ -1023,40 +1048,57 @@ use OpenApi\Annotations as OA;
  *     summary="Update a Form Field by ID",
  *     description="Updates an existing Form Field",
  *     security={{ "bearerAuth": {} }},
+ *
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
- *         description="ID of the Form Field to update",
  *         required=true,
+ *         description="ID of the Form Field to update",
  *         @OA\Schema(type="integer")
  *     ),
+ *
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
  *             type="object",
+ *
  *             @OA\Property(
  *                 property="identificationData",
- *                 type="object",
- *                 required={"category"},
- *                 @OA\Property(property="category", type="string", example="tal"),
- *                 @OA\Property(property="subCategory", type="string", nullable=true, example=""),
- *                 @OA\Property(property="sector", type="string", nullable=true, example=""),
- *                 @OA\Property(property="activity", type="string", nullable=true, example=""),
- *                 @OA\Property(property="subActivity", type="string", nullable=true, example=""),
- *                 @OA\Property(property="entity", type="string", nullable=true, example=""),
- *                 @OA\Property(property="incubator", type="string", nullable=true, example="")
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     required={"key","value","onshoreOffShore","isRequired"},
+ *
+ *                     @OA\Property(property="key", type="string", example="tal"),
+ *
+ *                     @OA\Property(
+ *                         property="value",
+ *                         type="object",
+ *                         required={"categorySlug"},
+ *                         @OA\Property(property="categorySlug", type="string", example="tal"),
+ *                         @OA\Property(property="subCategorySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="sectorSlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="activitySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="subActivitySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="entitySlug", type="string", nullable=true, example=""),
+ *                         @OA\Property(property="incubatorSlug", type="string", nullable=true, example="")
+ *                     ),
+ *
+ *                     @OA\Property(property="onshoreOffShore", type="string", example="both"),
+ *                     @OA\Property(property="isRequired", type="boolean", example=true)
+ *                 )
  *             ),
+ *
  *             @OA\Property(
  *                 property="formFields",
  *                 type="object",
- *                 required={"nameEn", "nameAr", "type", "onshoreOffShore", "isRequired", "status"},
+ *                 required={"nameEn","nameAr","type","status"},
  *                 @OA\Property(property="nameEn", type="string", example="Personal Photo"),
  *                 @OA\Property(property="nameAr", type="string", example="صورة شخصية"),
  *                 @OA\Property(property="type", type="string", example="file"),
- *                 @OA\Property(property="onshoreOffShore", type="string", example="onshore"),
- *                 @OA\Property(property="isRequired", type="boolean", example=true),
  *                 @OA\Property(property="status", type="boolean", example=true)
  *             ),
+ *
  *             @OA\Property(
  *                 property="metaFields",
  *                 type="object",
@@ -1068,6 +1110,7 @@ use OpenApi\Annotations as OA;
  *             )
  *         )
  *     ),
+ *
  *     @OA\Response(
  *         response=200,
  *         description="Form Field updated successfully"

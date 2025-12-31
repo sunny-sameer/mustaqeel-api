@@ -224,16 +224,10 @@ class GenericController extends BaseController
     }
     public function createFormField(FormFieldCreateRequest $request)
     {
-        $request->merge([
-            'personalInfo.identificationData'=>$request->identificationData
-        ]);
         return response()->json($this->service->createFormField($request), 201);
     }
     public function updateFormField(FormFieldUpdateRequest $request, $id)
     {
-        $request->merge([
-            'personalInfo.identificationData'=>$request->identificationData
-        ]);
         return response()->json($this->service->updateFormField($id, $request));
     }
     public function deleteFormField($id)
