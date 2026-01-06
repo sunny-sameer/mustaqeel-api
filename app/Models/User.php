@@ -121,7 +121,7 @@ class User extends Authenticatable
 
         return DB::table('user_role_levels')
             ->where('userId', $this->id)
-            ->where('roleId', $roleId);
+            ->where('roleId', $roleId)->first();
     }
 
 }
