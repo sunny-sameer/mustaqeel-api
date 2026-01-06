@@ -21,6 +21,16 @@ class UserAdminSeeder extends Seeder
             'password' => Hash::make('Jusour@2025')
         ]);
         $superAdmin->assignRole('super-admin');
+        $superAdmin->assignLevel('admin',1);
+
+        // Creating Admin User
+        $admin = User::create([
+            'name' => 'junior admin',
+            'email' => 'admin-junior@yopmail.com',
+            'password' => Hash::make('Jusour@2025')
+        ]);
+        $admin->assignRole('admin');
+        $admin->assignLevel('admin',1);
 
         // Creating Admin User
         $admin = User::create([
@@ -29,13 +39,41 @@ class UserAdminSeeder extends Seeder
             'password' => Hash::make('Jusour@2025')
         ]);
         $admin->assignRole('admin');
+        $admin->assignLevel('admin',2);
 
-        // Creating Admin User
-        $admin = User::create([
+        // Creating Applicant User
+        $applicant = User::create([
             'name' => 'Applicant',
             'email' => 'caspertalks@yopmail.com',
             'password' => Hash::make('Jusour@2025')
         ]);
-        $admin->assignRole('applicant');
+        $applicant->assignRole('applicant');
+
+        // Creating Entity User
+        $entity = User::create([
+            'name' => 'Entity Officer',
+            'email' => 'entity-officer@yopmail.com',
+            'password' => Hash::make('Jusour@2025')
+        ]);
+        $entity->assignRole('entity');
+        $entity->assignLevel('officer',1);
+
+        // Creating Entity User
+        $entity = User::create([
+            'name' => 'Entity Supervisor',
+            'email' => 'entity-supervisor@yopmail.com',
+            'password' => Hash::make('Jusour@2025')
+        ]);
+        $entity->assignRole('entity');
+        $entity->assignLevel('supervisor',2);
+
+        // Creating Entity User
+        $entity = User::create([
+            'name' => 'Entity',
+            'email' => 'entity-manager@yopmail.com',
+            'password' => Hash::make('Jusour@2025')
+        ]);
+        $entity->assignRole('entity');
+        $entity->assignLevel('manager',3);
     }
 }

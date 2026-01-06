@@ -19,6 +19,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 use App\Models\Traits\Rules\UserRules;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class User extends Authenticatable
@@ -104,5 +105,31 @@ class User extends Authenticatable
         return $this->hasOne(QatarInfo::class,'userId','id');
     }
 
+    public function assignLevel(string $name, int $level)
+    {
+        $roleId = $this->roles()->pluck('id')->first();
+
+        DB::table('user_role_levels')->updateOrInsert(
+            ['userId' => $this->id, 'roleId' => $roleId],
+            ['name' => $name, 'level' => $level]
+        );
+
+        return $this->getLevel();
+    }
+
+    public function getLevel()
+    {
+        $userRoleLevel =$this->level()->first();
+        return $userRoleLevel ? $userRoleLevel->level : null;
+    }
+
+    public function level()
+    {
+        $roleId = $this->roles()->pluck('id')->first();
+
+        return DB::table('user_role_levels')
+            ->where('userId', $this->id)
+            ->where('roleId', $roleId);
+    }
 
 }

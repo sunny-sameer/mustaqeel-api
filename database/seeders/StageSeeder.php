@@ -19,41 +19,48 @@ class StageSeeder extends Seeder
                 'id'=>1,
                 'name'=>'Application',
                 'nameAr'=>'مقدم الطلب',
+                'order'=>7
             ],
             [
                 'id'=>2,
                 'name'=>'Jusour',
                 'nameAr'=>'جسور',
+                'order'=>1
             ],
             [
                 'id'=>3,
                 'name'=>'Entity',
                 'nameAr'=>'الجهة',
+                'order'=>2
             ],
             [
                 'id'=>4,
                 'name'=>'MOCI',
                 'nameAr'=>'وزارة التجارة والصناعة',
+                'order'=>3
             ],
             [
                 'id'=>5,
                 'name'=>'VFS',
                 'nameAr'=>'خدمات تسهيل التأشيرة',
+                'order'=>4
             ],
             [
                 'id'=>6,
                 'name'=>'MOL',
                 'nameAr'=>'وزارة العمل',
+                'order'=>5
             ],
             [
                 'id'=>7,
                 'name'=>'Hayya',
                 'nameAr'=>'هيا',
+                'order'=>6
             ],
         ];
 
         foreach ($stages as $key => $stage) {
-            Stages::firstOrCreate($stage);
+            Stages::updateOrCreate(['id'=>$stage['id']],$stage);
         }
 
         $stageStatuses = [
@@ -98,6 +105,11 @@ class StageSeeder extends Seeder
                 'nameAr'=>'تم تقديم إعادة تحميل مستند'
             ],
             [
+                'stageId'=>1,
+                'name'=>'Cancelled',
+                'nameAr'=>'تم الإلغاء'
+            ],
+            [
                 'stageId'=>2,
                 'name'=>'Under Review',
                 'nameAr'=>'قيد المراجعة'
@@ -126,6 +138,11 @@ class StageSeeder extends Seeder
                 'stageId'=>2,
                 'name'=>'Reupload Documents Submitted',
                 'nameAr'=>'تم تقديم إعادة تحميل مستند'
+            ],
+            [
+                'stageId'=>2,
+                'name'=>'Cancelled',
+                'nameAr'=>'تم الإلغاء'
             ],
             [
                 'stageId'=>3,
@@ -225,7 +242,7 @@ class StageSeeder extends Seeder
         ];
 
         foreach ($stageStatuses as $key => $stageStatus) {
-            StagesStatuses::firstOrCreate($stageStatus);
+            StagesStatuses::updateOrCreate(['stageId'=>$stageStatus['stageId'],'name'=>$stageStatus['name']],$stageStatus);
         }
     }
 }

@@ -101,4 +101,11 @@ class UsersRepository extends CoreRepository implements UsersInterface
     {
         return $this->qatarInfo->updateOrCreate(['userId'=>$id],$request);
     }
+
+    public function getUsersByRole($role)
+    {
+        return $this->model->with('getLevel')->whereHas('roles',function ($query) use ($role){
+            $query->where('type',$role);
+        })->get();
+    }
 }

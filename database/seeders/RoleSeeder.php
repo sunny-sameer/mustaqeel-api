@@ -17,38 +17,37 @@ class RoleSeeder extends Seeder
             [
                 'name'=>'super-admin',
                 'type'=>'jusour',
+                'approval_levels'=>1
             ],
             [
                 'name'=>'admin',
                 'type'=>'jusour',
+                'approval_levels'=>2
             ],
             [
                 'name'=>'applicant',
                 'type'=>'applicant',
+                'approval_levels'=>0
             ],
             [
                 'name'=>'investor',
                 'type'=>'applicant',
+                'approval_levels'=>0
             ],
             [
-                'name'=>'entity-manager',
+                'name'=>'entity',
                 'type'=>'entity',
-            ],
-            [
-                'name'=>'entity-supervisor',
-                'type'=>'entity',
-            ],
-            [
-                'name'=>'entity-officer',
-                'type'=>'entity',
+                'approval_levels'=>3
             ],
             [
                 'name'=>'incubator',
                 'type'=>'entity',
+                'approval_levels'=>1
             ],
             [
                 'name'=>'moci',
                 'type'=>'entity',
+                'approval_levels'=>1
             ]
         ];
 

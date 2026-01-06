@@ -42,6 +42,7 @@ use App\Exceptions\UserNotFoundException;
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
+use App\Repositories\V1\Users\UsersInterface;
 
 
 use Carbon\Carbon;
@@ -58,6 +59,7 @@ class RequestsService extends BaseService
     protected $requestsInterface;
     protected $genericInterface;
     protected $artifactsInterface;
+    protected $usersInterface;
 
     protected $artifactsService;
     protected $userService;
@@ -74,6 +76,7 @@ class RequestsService extends BaseService
         RequestsInterface $requestsInterface,
         GenericInterface $genericInterface,
         ArtifactsInterface $artifactsInterface,
+        UsersInterface $usersInterface,
 
         ArtifactsService $artifactsService,
         UserService $userService
@@ -81,6 +84,7 @@ class RequestsService extends BaseService
         $this->requestsInterface = $requestsInterface;
         $this->genericInterface = $genericInterface;
         $this->artifactsInterface = $artifactsInterface;
+        $this->usersInterface = $usersInterface;
 
         $this->artifactsService = $artifactsService;
         $this->userService = $userService;
@@ -310,7 +314,7 @@ class RequestsService extends BaseService
             $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData, $request->id);
 
 
-            $this->createOrUpdateStageStatus('Application', $request->id, []);
+            $this->createOrUpdateStageStatus('Application', $request->id);
 
             DB::commit();
 
@@ -379,7 +383,7 @@ class RequestsService extends BaseService
         }
     }
 
-    public function createOrUpdateStageStatus($stageName, $reqId, $metaData)
+    public function createOrUpdateStageStatus($stageName, $reqId, $metaData = [], $userId = null)
     {
         $stage = $this->requestsInterface->getStage(['name' => $stageName]);
         $data = ['reqId' => $reqId, 'stageSlug' => $stage->slug];
@@ -399,7 +403,7 @@ class RequestsService extends BaseService
         $data2 = [
             'reqStageId' => $requestStage->id,
             'stageStatusSlug' => $stageStatus->slug,
-            'userId' => auth()->id(),
+            'userId' => $userId ?? auth()->id(),
             'meta' => $meta,
         ];
 
@@ -506,10 +510,15 @@ class RequestsService extends BaseService
 
             $stage = ucfirst($type);
 
-            $this->createOrUpdateStageStatus($stage,$this->requestId,$metaData);
+            $users = $this->usersInterface->getUsersByRole($stage);
+            foreach ($users as $key => $value) {
+                if(auth()->user()->getLevel() >= $value->getLevel){
+                    $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
+                }
+            }
 
-            if($this->status == 'Rejected') {
-                $this->createOrUpdateStageStatus('Application',$this->requestId,$metaData);
+            if($this->status == 'Rejected' && auth()->user()->roles->pluck('approval_levels')->first() == auth()->user()->getLevel()) {
+                $this->createOrUpdateStageStatus('Application',$this->requestId, $metaData);
             }
 
             $request = $this->requestsInterface->getRequest($this->requestId);
@@ -644,7 +653,7 @@ class RequestsService extends BaseService
 
             $this->requestsInterface->createQc($qcData);
 
-            $this->createOrUpdateStageStatus('Jusour', $this->requestId, []);
+            $this->createOrUpdateStageStatus('Jusour', $this->requestId);
 
 
             DB::commit();

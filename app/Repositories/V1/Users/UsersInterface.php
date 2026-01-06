@@ -20,4 +20,5 @@ interface UsersInterface extends CoreInterface
     public function createUpdateComms($request, $id);
     public function createUpdateAddress($request, $id);
     public function createUpdateQatarInfo($request, $id);
+    public function getUsersByRole($role);
 }

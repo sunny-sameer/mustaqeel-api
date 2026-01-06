@@ -40,6 +40,7 @@ return new class extends Migration
             $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
             $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
             $table->string('type'); // For MyISAM use string('type', 25);
+            $table->integer('approval_levels')->default(0); // For MyISAM use string('approval_levels', 11);
             $table->timestamps();
             if ($teams || config('permission.testing')) {
                 $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name']);
@@ -115,6 +116,14 @@ return new class extends Migration
         app('cache')
             ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
             ->forget(config('permission.cache.key'));
+
+
+        Schema::create('user_role_levels', function (Blueprint $table) {
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
+            $table->foreignId('roleId')->constrained('roles')->onDelete('cascade');
+            $table->string('name');
+            $table->integer('level');
+        });
     }
 
     /**
@@ -133,5 +142,6 @@ return new class extends Migration
         Schema::drop($tableNames['model_has_permissions']);
         Schema::drop($tableNames['roles']);
         Schema::drop($tableNames['permissions']);
+        Schema::dropIfExists('user_role_levels');
     }
 };

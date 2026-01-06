@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('nameAr', 50)->nullable();
             $table->string('slug', 50);
             $table->text('description')->nullable();
+            $table->integer('order');
             $table->tinyInteger('status')->default(1);
 
             $table->timestamps();

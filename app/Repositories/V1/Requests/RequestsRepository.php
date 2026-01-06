@@ -86,6 +86,14 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->where('userId', $id)
                     ->orWhere('email', $user->email);
             });
+        } else if($role == 'entity') {
+            $req->whereHas('requestStage.stage',function($q){
+                $q->where('name','Jusour');
+            })->whereHas('requestStage.lastRequestStatus.stageStatus',function($q){
+                $q->where('name','Approved');
+            })->whereHas('requestStage.lastRequestStatus.user.roles',function($q){
+                $q->whereColumn('roles.approval_levels', 'requestStage.lastRequestStatus.user.level.level');
+            });
         }
 
         $req = $req->orderBy('created_at', 'DESC')->paginate($perPage);
@@ -204,6 +212,14 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->where('userId', $id)
                     ->orWhere('email', $user->email);
             });
+        } else if($role == 'entity') {
+            $req->whereHas('requestStage.stage',function($q){
+                $q->where('name','Jusour');
+            })->whereHas('requestStage.lastRequestStatus.stageStatus',function($q){
+                $q->where('name','Approved');
+            })->whereHas('requestStage.lastRequestStatus.user.roles',function($q){
+                $q->whereColumn('roles.approval_levels', 'requestStage.lastRequestStatus.user.level.level');
+            });
         }
 
         $req = $req->where('id', $requestId)->first();
@@ -246,7 +262,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     {
         $id = auth()->id();
 
-        $stages = $this->stages->all();
+        $stages = $this->stages->orderBy('order','ASC')->get();
 
         $data = [];
         foreach ($stages as $stage) {
@@ -256,7 +272,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     $query->where('reqId', $requestId);
                     $query->where('stageSlug', $stage->slug);
                 });
-            if ($stage->name <> 'Application') {
+            if ($stage->name <> 'Application' && $requestStatus?->user?->roles->pluck('name')->first() == auth()->user()?->roles->pluck('name')->first()) {
                 $requestStatus = $requestStatus->where('userId', $id);
             }
             $requestStatus = $requestStatus->orderBy('created_at', 'DESC')->first();
@@ -266,7 +282,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 'status' => $requestStatus?->stageStatus?->name ?? 'Under Review',
                 'stage' => $requestStatus?->requestStage?->stage?->name ?? $stage->name,
                 'username' => $requestStatus?->user?->name ?? null,
-                'role' => $requestStatus?->user?->roles->pluck('name')->first() ?? null
+                'role' => $requestStatus?->user?->roles->pluck('name')->first() ?? null,
+                'totalLevels' => $requestStatus?->user?->roles->pluck('approval_levels')->first() ?? null,
+                'userLevel' => $requestStatus?->user?->getLevel()
             ];
         }
 
@@ -275,7 +293,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
     public function getRequestStatuses($requestId)
     {
-        $stages = $this->stages->all();
+        $stages = $this->stages->orderBy('order','ASC')->get();
 
         $data = [];
         foreach ($stages as $stage) {
@@ -295,6 +313,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         'stage' => $value?->requestStage?->stage?->name ?? $stage->name,
                         'username' => $value?->user?->name,
                         'role' => $value?->user?->roles->pluck('name')->first(),
+                        'totalLevels' => $value?->user?->roles->pluck('approval_levels')->first(),
+                        'userLevel' => $value?->user?->getLevel(),
                         'meta' => $value?->meta ? json_decode($value->meta) : [],
                     ];
                 }
@@ -304,6 +324,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     'stage' => $stage->name,
                     'username' => null,
                     'role' => null,
+                    'totalLevels' => null,
+                    'userLevel' => null,
                     'meta' => [],
                 ];
             }
