@@ -119,10 +119,15 @@ return new class extends Migration
 
 
         Schema::create('user_role_levels', function (Blueprint $table) {
+            $table->id();
+
             $table->foreignId('userId')->constrained('users')->onDelete('cascade');
             $table->foreignId('roleId')->constrained('roles')->onDelete('cascade');
             $table->string('name');
             $table->integer('level');
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
