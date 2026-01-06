@@ -113,14 +113,6 @@ class User extends Authenticatable
             ['userId' => $this->id, 'roleId' => $roleId],
             ['name' => $name, 'level' => $level]
         );
-
-        return $this->getLevel();
-    }
-
-    public function getLevel()
-    {
-        $userRoleLevel =$this->level()->first();
-        return $userRoleLevel ? $userRoleLevel->level : null;
     }
 
     public function level()
