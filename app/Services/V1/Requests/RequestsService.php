@@ -157,7 +157,7 @@ class RequestsService extends BaseService
 
     public function userExists()
     {
-        $this->user = User::with('profile','roles','level')->find(auth()->id());
+        $this->user = User::with('profile','level')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
