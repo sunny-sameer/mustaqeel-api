@@ -104,7 +104,7 @@ class UsersRepository extends CoreRepository implements UsersInterface
 
     public function getUsersByRole($role)
     {
-        return $this->model->with('getLevel')->whereHas('roles',function ($query) use ($role){
+        return $this->model->with('level')->whereHas('roles',function ($query) use ($role){
             $query->where('type',$role);
         })->get();
     }

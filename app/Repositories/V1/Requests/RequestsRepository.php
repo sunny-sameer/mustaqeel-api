@@ -284,7 +284,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 'username' => $requestStatus?->user?->name ?? null,
                 'role' => $requestStatus?->user?->roles->pluck('name')->first() ?? null,
                 'totalLevels' => $requestStatus?->user?->roles->pluck('approval_levels')->first() ?? null,
-                'userLevel' => $requestStatus?->user?->getLevel()
+                'userLevel' => $requestStatus?->user?->level?->level
             ];
         }
 
@@ -314,7 +314,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         'username' => $value?->user?->name,
                         'role' => $value?->user?->roles->pluck('name')->first(),
                         'totalLevels' => $value?->user?->roles->pluck('approval_levels')->first(),
-                        'userLevel' => $value?->user?->getLevel(),
+                        'userLevel' => $value?->user?->level?->level,
                         'meta' => $value?->meta ? json_decode($value->meta) : [],
                     ];
                 }
