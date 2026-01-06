@@ -157,7 +157,7 @@ class RequestsService extends BaseService
 
     public function userExists()
     {
-        $this->user = User::with('profile','roles')->find(auth()->id());
+        $this->user = User::with('profile','roles','getLevel')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
@@ -234,12 +234,17 @@ class RequestsService extends BaseService
         $type = $this->user->roles->pluck('type')->first();
 
         if($type == 'entity'){
-            if(isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved'){
+            if((isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved') &&
+                ($this->user->getLevel == $this->user->roles->pluck('approval_levels')->first())
+            ){
             }else{
                 throw new RequestNotExistException();
             }
         }else if($type == 'jusour'){
-            if(isset($request->status->jusour[0]->status) && ($request->status->jusour[0]->status == 'Approved' || $request->status->jusour[0]->status == 'Rejected')){
+            if((isset($request->status->jusour[0]->status) &&
+                ($request->status->jusour[0]->status == 'Approved' || $request->status->jusour[0]->status == 'Rejected')) &&
+                ($this->user->getLevel == $this->user->roles->pluck('approval_levels')->first())
+            ){
                 throw new RequestInvalidException();
             }
         }
@@ -512,12 +517,12 @@ class RequestsService extends BaseService
 
             $users = $this->usersInterface->getUsersByRole($stage);
             foreach ($users as $key => $value) {
-                if(auth()->user()->getLevel() >= $value->getLevel){
+                if($this->user->getLevel >= $value->getLevel){
                     $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
                 }
             }
 
-            if($this->status == 'Rejected' && auth()->user()->roles->pluck('approval_levels')->first() == auth()->user()->getLevel()) {
+            if($this->status == 'Rejected' && $this->user->roles->pluck('approval_levels')->first() == $this->user->getLevel) {
                 $this->createOrUpdateStageStatus('Application',$this->requestId, $metaData);
             }
 
