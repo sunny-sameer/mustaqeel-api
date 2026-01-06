@@ -107,7 +107,7 @@ class User extends Authenticatable
 
     public function assignLevel(string $name, int $level)
     {
-        $roleId = $this->roles()->pluck('id')->first();
+        $roleId = $this->roles->pluck('id')->first();
 
         DB::table('user_role_levels')->updateOrInsert(
             ['userId' => $this->id, 'roleId' => $roleId],
@@ -125,7 +125,7 @@ class User extends Authenticatable
 
     public function level()
     {
-        $roleId = $this->roles()->pluck('id')->first();
+        $roleId = $this->roles->pluck('id')->first();
 
         return DB::table('user_role_levels')
             ->where('userId', $this->id)
