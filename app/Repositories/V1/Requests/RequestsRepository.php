@@ -272,7 +272,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     $query->where('reqId', $requestId);
                     $query->where('stageSlug', $stage->slug);
                 });
-            if ($stage->name <> 'Application' && $requestStatus?->user?->roles->pluck('name')->first() == auth()->user()?->roles->pluck('name')->first()) {
+            if ($stage->name <> 'Application' && (isset($requestStatus?->user) && $requestStatus?->user?->roles->pluck('name')->first() == auth()->user()?->roles->pluck('name')->first())) {
                 $requestStatus = $requestStatus->where('userId', $id);
             }
             $requestStatus = $requestStatus->orderBy('created_at', 'DESC')->first();
