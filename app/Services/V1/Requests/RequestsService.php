@@ -413,14 +413,13 @@ class RequestsService extends BaseService
             'meta' => $meta,
         ];
 
+        if($this->status == 'Approved' || $this->status == 'Rejected'){
+            $data2['endDate'] = Carbon::now()->format('Y-m-d');
+        }
 
         if ($stageName == 'Application') {
             $request = $this->requestsInterface->show($reqId);
             $data2['userId'] = $request->userId;
-        }
-
-        if($this->status == 'Approved' || $this->status == 'Rejected'){
-            $data2['endDate'] = Carbon::now()->format('Y-m-d');
         }
 
         $user = $this->usersInterface->getUserById($data2['userId']);
