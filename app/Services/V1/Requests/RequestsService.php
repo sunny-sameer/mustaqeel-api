@@ -515,11 +515,9 @@ class RequestsService extends BaseService
 
             $stage = ucfirst($type);
 
-            $users = $this->usersInterface->getUsersByRole($stage);
+            $users = $this->usersInterface->getUsersByRoleAndLevel($type,$this->user?->level?->level);
             foreach ($users as $key => $value) {
-                if($this->user->level?->level >= $value->level?->level){
-                    $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
-                }
+                $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
             }
 
             if($this->status == 'Rejected' && $this->user->roles->pluck('approval_levels')->first() == $this->user->level?->level) {
