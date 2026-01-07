@@ -85,8 +85,8 @@ class RequestsStoreRequest extends FormRequest
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
 
             'employmentAndEducation.employmentDetails.companyName' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
-            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/u',
-            'employmentAndEducation.employmentDetails.amountOfCapital' => 'required_if:personalInfo.identificationData.category,inv|nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/u',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|decimal:0,2|regex:/^[0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.amountOfCapital' => 'required_if:personalInfo.identificationData.category,inv|nullable|decimal:0,2|regex:/^[0-9.]+$/u',
             'employmentAndEducation.employmentDetails.profession' => [
                 Rule::requiredIf(function () {
                     return request('personalInfo.applicantInfo.areYouQatarResident') === true
@@ -317,33 +317,32 @@ class RequestsStoreRequest extends FormRequest
             'personalInfo.applicantInfo.maintainWorkPermit.in' => 'The maintain work permit must be either `In case where my special work permit is rejected, I want to proceed with my Mustaqel residency and leave my current employer.` or `In case where my special work permit is rejected, I want to maintain my current work-based residency permit and abort my Mustaqel application.`.',
 
             // Employment Details
-            'personalInfo.employmentDetails.companyName.required_if' => 'The company name is required.',
-            'personalInfo.employmentDetails.companyName.min' => 'The company name must be at least 3 characters.',
-            'personalInfo.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
-            'personalInfo.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.companyName.required_if' => 'The company name is required.',
+            'employmentAndEducation.employmentDetails.companyName.min' => 'The company name must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
+            'employmentAndEducation.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
 
-            'personalInfo.employmentDetails.shareOfTheCapital.min' => 'The share of the capital must be at least 1 character.',
-            'personalInfo.employmentDetails.shareOfTheCapital.max' => 'The share of the capital may not exceed 20 characters.',
-            'personalInfo.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers and commas.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.decimal' => 'The amount of capital must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers.',
 
-            'personalInfo.employmentDetails.amountOfCapital.required_if' => 'The amount of capital is required.',
-            'personalInfo.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
-            'personalInfo.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers and periods.',
+            'employmentAndEducation.employmentDetails.amountOfCapital.required_if' => 'The amount of capital is required.',
+            'employmentAndEducation.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers.',
 
-            'personalInfo.employmentDetails.profession.required' => 'The profession is required.',
-            'personalInfo.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',
-            'personalInfo.employmentDetails.profession.max' => 'The profession may not exceed 50 characters.',
-            'personalInfo.employmentDetails.profession.regex' => 'The profession may only contain Arabic, English letters, numbers, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.profession.required' => 'The profession is required.',
+            'employmentAndEducation.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.profession.max' => 'The profession may not exceed 50 characters.',
+            'employmentAndEducation.employmentDetails.profession.regex' => 'The profession may only contain Arabic, English letters, numbers, commas, and full stop.',
 
-            'personalInfo.employmentDetails.nameOfSponsor.required' => 'The sponsor name is required.',
-            'personalInfo.employmentDetails.nameOfSponsor.min' => 'The sponsor name must be at least 3 characters.',
-            'personalInfo.employmentDetails.nameOfSponsor.max' => 'The sponsor name may not exceed 100 characters.',
-            'personalInfo.employmentDetails.nameOfSponsor.regex' => 'The sponsor name may only contain Arabic, English letters, numbers, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.required' => 'The sponsor name is required.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.min' => 'The sponsor name must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.max' => 'The sponsor name may not exceed 100 characters.',
+            'employmentAndEducation.employmentDetails.nameOfSponsor.regex' => 'The sponsor name may only contain Arabic, English letters, numbers, commas, and full stop.',
 
-            'personalInfo.employmentDetails.addressOfSponsor.required' => 'The sponsor address is required.',
-            'personalInfo.employmentDetails.addressOfSponsor.min' => 'The sponsor address must be at least 3 characters.',
-            'personalInfo.employmentDetails.addressOfSponsor.max' => 'The sponsor address may not exceed 255 characters.',
-            'personalInfo.employmentDetails.addressOfSponsor.regex' => 'The sponsor address may only contain Arabic, English letters, numbers, commas, and full stop.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.required' => 'The sponsor address is required.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.min' => 'The sponsor address must be at least 3 characters.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.max' => 'The sponsor address may not exceed 255 characters.',
+            'employmentAndEducation.employmentDetails.addressOfSponsor.regex' => 'The sponsor address may only contain Arabic, English letters, numbers, commas, and full stop.',
 
             // Passport Details
             'personalInfo.passportDetails.number.required' => 'The passport number is required.',

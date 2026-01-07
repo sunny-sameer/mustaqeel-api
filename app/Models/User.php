@@ -117,9 +117,7 @@ class User extends Authenticatable
 
     public function level()
     {
-        $roleId = $this->roles->pluck('id')->first();
-        return $this->hasOne(UserRoleLevel::class,'userId','id')
-        ->where('roleId', $roleId);
+        return $this->hasOne(UserRoleLevel::class,'userId','id');
     }
 
 }

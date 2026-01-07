@@ -258,9 +258,28 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $req;
     }
 
+    public function getUserRequestStatus($requestId,$user)
+    {
+        $id = $user->id;
+        $type = $user->roles->pluck('type')->first();
+
+        $stage = $this->stages->where('name',ucfirst($type))->first();
+
+        $requestStatus = $this->requestStatuses
+        ->with('stageStatus', 'user.roles', 'requestStage.stage')
+        ->whereHas('requestStage', function ($query) use ($requestId, $stage) {
+            $query->where('reqId', $requestId);
+            $query->where('stageSlug', $stage->slug);
+        })->where('userId', $id)
+        ->orderBy('id', 'DESC')->first();
+
+        return $requestStatus;
+    }
+
     public function getRequestStatus($requestId)
     {
         $id = auth()->id();
+        $type = auth()->user()->roles->pluck('type')->first();
 
         $stages = $this->stages->orderBy('order','ASC')->get();
 
@@ -272,10 +291,10 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     $query->where('reqId', $requestId);
                     $query->where('stageSlug', $stage->slug);
                 });
-            if ($stage->name <> 'Application' && (isset($requestStatus?->user) && $requestStatus?->user?->roles->pluck('name')->first() == auth()->user()?->roles->pluck('name')->first())) {
+            if ($stage->name == ucfirst($type)) {
                 $requestStatus = $requestStatus->where('userId', $id);
             }
-            $requestStatus = $requestStatus->orderBy('created_at', 'DESC')->first();
+            $requestStatus = $requestStatus->orderBy('id', 'DESC')->first();
 
             $key = Str::lower($stage->name);
             $data[$key] = [
@@ -303,7 +322,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     $query->where('reqId', $requestId);
                     $query->where('stageSlug', $stage->slug);
                 })
-                ->orderBy('created_at', 'DESC')->get()->unique('userId');
+                ->orderByRaw('userId = ? DESC', [auth()->id()])
+                ->orderBy('id', 'DESC')->get()->unique('userId');
 
             $key = Str::lower($stage->name);
             if (isset($requestStatus) && count($requestStatus) > 0) {

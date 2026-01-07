@@ -47,7 +47,7 @@ class UsersRepository extends CoreRepository implements UsersInterface
 
     public function getUserById($id)
     {
-        return $this->model->where('id', $id)->with(['business:userId,id,cnameEn,cnameAr,nameEn,nameAr'])->get();
+        return $this->model->with('roles','level')->where('id', $id)->first();
     }
 
     public function getUserByEmailForAuth($email)
@@ -102,12 +102,12 @@ class UsersRepository extends CoreRepository implements UsersInterface
         return $this->qatarInfo->updateOrCreate(['userId'=>$id],$request);
     }
 
-    public function getUsersByRoleAndLevel($role,$level)
+    public function getUsersByRoleAndLevel($role,$levelColumn,$levelOperator,$levelValue)
     {
         return $this->model->whereHas('roles',function ($query) use ($role){
             $query->where('type',$role);
-        })->whereHas('level',function ($query) use ($level){
-            $query->where('level','<=',(int) $level);
+        })->whereHas('level',function ($query) use ($levelColumn,$levelOperator,$levelValue){
+            $query->where($levelColumn,$levelOperator,(int) $levelValue);
         })->get();
     }
 }

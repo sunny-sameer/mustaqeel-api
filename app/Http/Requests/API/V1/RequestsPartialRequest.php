@@ -74,8 +74,8 @@ class RequestsPartialRequest extends FormRequest
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
 
             'employmentAndEducation.employmentDetails.companyName' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
-            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|string|min:1|max:20|regex:/^[0-9.,، ]+$/u',
-            'employmentAndEducation.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/u',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|decimal:0,2|regex:/^[0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|regex:/^[0-9.]+$/u',
 
             'employmentAndEducation.employmentDetails.profession' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'personalInfo.applicantInfo.gender' => 'nullable|in:Female,Male',
@@ -260,12 +260,11 @@ class RequestsPartialRequest extends FormRequest
             'employmentAndEducation.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
             'employmentAndEducation.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
 
-            'employmentAndEducation.employmentDetails.shareOfTheCapital.min' => 'The share of the capital must be at least 1 character.',
-            'employmentAndEducation.employmentDetails.shareOfTheCapital.max' => 'The share of the capital may not exceed 20 characters.',
-            'employmentAndEducation.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers and commas.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.decimal' => 'The amount of capital must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers.',
 
             'employmentAndEducation.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
-            'employmentAndEducation.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers and periods.',
+            'employmentAndEducation.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers.',
 
             'employmentAndEducation.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',
             'employmentAndEducation.employmentDetails.profession.max' => 'The profession may not exceed 50 characters.',

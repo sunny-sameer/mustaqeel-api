@@ -402,6 +402,7 @@ class RequestsService extends BaseService
             foreach ($metaData as $key => $value) {
                 $meta['comments'][$key][$value['type'] . 'En'] = $value['commentsEn'];
                 $meta['comments'][$key][$value['type'] . 'Ar'] = $value['commentsAr'];
+                $meta['comments'][$key][$value['type'] . 'By'] = $this->user?->name;
             }
         }
 
@@ -418,8 +419,16 @@ class RequestsService extends BaseService
             $data2['userId'] = $request->userId;
         }
 
-        $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
-        $this->requestsInterface->createRequestStageStatus($data2, $requestStatusData, $this->status);
+        if($this->status == 'Approved' || $this->status == 'Rejected'){
+            $data2['endDate'] = Carbon::now()->format('Y-m-d');
+        }
+
+        $user = $this->usersInterface->getUserById($data2['userId']);
+        $getUserRequestStatusExistence = $this->requestsInterface->getUserRequestStatus($reqId,$user);
+        if(empty($getUserRequestStatusExistence->endDate)){
+            $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
+            $this->requestsInterface->createRequestStageStatus($data2, $requestStatusData, $this->status);
+        }
 
         $stageStatus = $this->requestsInterface->getRequestStatus($reqId);
         return $stageStatus;
@@ -515,13 +524,23 @@ class RequestsService extends BaseService
 
             $stage = ucfirst($type);
 
-            $users = $this->usersInterface->getUsersByRoleAndLevel($type,$this->user?->level?->level);
-            foreach ($users as $key => $value) {
-                $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
-            }
-
             if($this->status == 'Rejected' && $this->user->roles->pluck('approval_levels')->first() == $this->user->level?->level) {
                 $this->createOrUpdateStageStatus('Application',$this->requestId, $metaData);
+            }
+
+            if($this->status == 'Rejected' || $this->status == 'Approved'){
+                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','<=',$this->user?->level?->level);
+                foreach ($users as $key => $value) {
+                    $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
+                }
+
+                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','>',$this->user?->level?->level);
+                $this->status = 'Under Review';
+                foreach ($users as $key => $value) {
+                    $this->createOrUpdateStageStatus($stage,$this->requestId, [], $value->id);
+                }
+            }else{
+                $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData);
             }
 
             $request = $this->requestsInterface->getRequest($this->requestId);
