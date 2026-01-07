@@ -425,7 +425,7 @@ class RequestsService extends BaseService
 
         $user = $this->usersInterface->getUserById($data2['userId']);
         $getUserRequestStatusExistence = $this->requestsInterface->getUserRequestStatus($reqId,$user);
-        if(empty($getUserRequestStatusExistence->endDate)){
+        if(!isset($getUserRequestStatusExistence->id) || (isset($getUserRequestStatusExistence->id) && empty($getUserRequestStatusExistence->endDate))){
             $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
             $this->requestsInterface->createRequestStageStatus($data2, $requestStatusData, $this->status);
         }
