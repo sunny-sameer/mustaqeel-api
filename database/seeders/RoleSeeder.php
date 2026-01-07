@@ -15,11 +15,6 @@ class RoleSeeder extends Seeder
     {
         $roles = [
             [
-                'name'=>'super-admin',
-                'type'=>'jusour',
-                'approval_levels'=>1
-            ],
-            [
                 'name'=>'admin',
                 'type'=>'jusour',
                 'approval_levels'=>2

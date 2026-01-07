@@ -20,17 +20,17 @@ class UserAdminSeeder extends Seeder
             'email' => 'superadmin@yopmail.com',
             'password' => Hash::make('Jusour@2025')
         ]);
-        $superAdmin->assignRole('super-admin');
-        $superAdmin->assignLevel('admin',1);
+        $superAdmin->assignRole('admin');
+        $superAdmin->assignLevel('super-admin',2);
 
         // Creating Admin User
         $admin = User::create([
-            'name' => 'junior admin',
+            'name' => 'Junior Admin',
             'email' => 'junioradmin@yopmail.com',
             'password' => Hash::make('Jusour@2025')
         ]);
         $admin->assignRole('admin');
-        $admin->assignLevel('admin',1);
+        $admin->assignLevel('junior-admin',1);
 
         // Creating Admin User
         $admin = User::create([
