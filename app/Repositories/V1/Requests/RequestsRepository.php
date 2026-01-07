@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 
 
 use App\Repositories\V1\Core\CoreRepository;
+use Spatie\Permission\Models\Role;
 
 class RequestsRepository extends CoreRepository implements RequestsInterface
 {
@@ -87,12 +88,17 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     ->orWhere('email', $user->email);
             });
         } else if($role == 'entity') {
-            $req->whereHas('requestStage.stage',function($q){
-                $q->where('name','Jusour');
-            })->whereHas('requestStage.lastRequestStatus.stageStatus',function($q){
-                $q->where('name','Approved');
-            })->whereHas('requestStage.lastRequestStatus.user.roles',function($q){
-                $q->whereColumn('roles.approval_levels', 'requestStage.lastRequestStatus.user.level.level');
+            $adminRole = Role::where('type','jusour')->first();
+            $req = $req->whereHas('requestStage.lastRequestStatus', function ($q) use ($adminRole) {
+                $q->whereHas('stageStatus', function ($q) {
+                    $q->where('name', 'Approved')
+                    ->whereHas('stage', function ($q) {
+                        $q->where('name', 'Jusour');
+                    });
+                });
+                $q->whereHas('user.level', function ($q) use ($adminRole) {
+                    $q->where('level', $adminRole->approval_levels);
+                });
             });
         }
 
@@ -213,12 +219,17 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     ->orWhere('email', $user->email);
             });
         } else if($role == 'entity') {
-            $req->whereHas('requestStage.stage',function($q){
-                $q->where('name','Jusour');
-            })->whereHas('requestStage.lastRequestStatus.stageStatus',function($q){
-                $q->where('name','Approved');
-            })->whereHas('requestStage.lastRequestStatus.user.roles',function($q){
-                $q->whereColumn('roles.approval_levels', 'requestStage.lastRequestStatus.user.level.level');
+            $adminRole = Role::where('type','jusour')->first();
+            $req = $req->whereHas('requestStage.lastRequestStatus', function ($q) use ($adminRole) {
+                $q->whereHas('stageStatus', function ($q) {
+                    $q->where('name', 'Approved')
+                    ->whereHas('stage', function ($q) {
+                        $q->where('name', 'Jusour');
+                    });
+                });
+                $q->whereHas('user.level', function ($q) use ($adminRole) {
+                    $q->where('level', $adminRole->approval_levels);
+                });
             });
         }
 
