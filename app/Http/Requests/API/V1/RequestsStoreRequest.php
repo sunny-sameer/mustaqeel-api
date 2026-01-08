@@ -75,7 +75,7 @@ class RequestsStoreRequest extends FormRequest
 
             'personalInfo.identificationData.category' => 'required|exists:categories,slug',
             'personalInfo.identificationData.subCategory' => 'nullable|exists:sub_categories,slug',
-            'personalInfo.identificationData.sector' => 'required|exists:sectors,slug',
+            'personalInfo.identificationData.sector' => 'required_if:personalInfo.identificationData.category,tal,ent,inv|nullable|exists:sectors,slug',
             'personalInfo.identificationData.activity' => 'required_if:personalInfo.identificationData.category,tal,ent|nullable|exists:activities,slug',
             'personalInfo.identificationData.subActivity' => 'nullable|exists:sub_activities,slug',
             'personalInfo.identificationData.entity' => 'required_if:personalInfo.identificationData.category,tal|nullable|exists:entities,slug',
@@ -259,7 +259,7 @@ class RequestsStoreRequest extends FormRequest
             'personalInfo.identificationData.category.required' => 'The category is required.',
             'personalInfo.identificationData.category.exists' => 'The selected category is invalid.',
             'personalInfo.identificationData.subCategory.exists' => 'The selected sub category is invalid.',
-            'personalInfo.identificationData.sector.required' => 'The sector is required.',
+            'personalInfo.identificationData.sector.required_if' => 'The sector is required.',
             'personalInfo.identificationData.sector.exists' => 'The selected sector is invalid.',
             'personalInfo.identificationData.activity.required_if' => 'The activity is required.',
             'personalInfo.identificationData.activity.exists' => 'The selected activity is invalid.',
