@@ -52,7 +52,15 @@ class RequestsUpdateRequest extends FormRequest
             'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|decimal:0,9|min:1|max:20|regex:/^[0-9.,، ]+$/u',
             'employmentAndEducation.employmentDetails.amountOfCapital' => 'nullable|decimal:0,2|min:1|max:20|regex:/^[0-9.]+$/u',
 
+            'employmentAndEducation.employmentDetails.currentJobTitle' => 'nullable|in:Chairman,CEO,COO,CFO,CTO,Executive Director,Other',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle' => 'nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.dateOfJoining' => 'nullable|date',
+            'employmentAndEducation.employmentDetails.companyClassification' => 'nullable|in:Publicly Listed Joint-Stock Company,Bank/Financial Institution,Insurance Company,Consulting Firm,Other',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification' => 'nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.monthlySalary' => 'nullable|decimal:0,2|regex:/^[0-9.]+$/u',
+
             'employmentAndEducation.employmentDetails.profession' => 'nullable|string|min:3|max:50|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+
             'personalInfo.applicantInfo.gender' => 'nullable|in:Female,Male',
             'personalInfo.applicantInfo.dob' => ['nullable', 'date', 'before_or_equal:' . now()->subYears(18)->toDateString()],
             'personalInfo.applicantInfo.religion' => 'nullable|in:Islam,Hinduism,Christian,Other',
@@ -204,11 +212,28 @@ class RequestsUpdateRequest extends FormRequest
             'employmentAndEducation.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
             'employmentAndEducation.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
 
-            'employmentAndEducation.employmentDetails.shareOfTheCapital.decimal' => 'The amount of capital must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.decimal' => 'The share of the capital must be a valid decimal number.',
             'employmentAndEducation.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers.',
 
             'employmentAndEducation.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
             'employmentAndEducation.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers.',
+
+            'employmentAndEducation.employmentDetails.currentJobTitle.in' => 'The current job title must be one of the following: Chairman, CEO, COO, CFO, CTO, Executive Director, Other.',
+
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.min' => 'The other current job title must be at least 6 characters.',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.max' => 'The other current job title may not exceed 255 characters.',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.regex' => 'The other current job title may only contain Arabic, English letters, numbers, commas, and full stop.',
+
+            'employmentAndEducation.employmentDetails.dateOfJoining.date' => 'The  date of joining must be a valid date.',
+
+            'employmentAndEducation.employmentDetails.companyClassification.in' => 'The company classification must be one of the following: Publicly Listed Joint-Stock Company, Bank/Financial Institution, Insurance Company, Consulting Firm, Other.',
+
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.min' => 'The other company classification must be at least 6 characters.',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.max' => 'The other company classification may not exceed 255 characters.',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.regex' => 'The other company classification may only contain Arabic, English letters, numbers, commas, and full stop.',
+
+            'employmentAndEducation.employmentDetails.monthlySalary.decimal' => 'The monthly salary must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.monthlySalary.regex' => 'The monthly salary may only contain numbers.',
 
             'employmentAndEducation.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',
             'employmentAndEducation.employmentDetails.profession.max' => 'The profession may not exceed 50 characters.',

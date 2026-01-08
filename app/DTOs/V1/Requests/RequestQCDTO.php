@@ -53,7 +53,7 @@ final readonly class RequestQCDTO
             requestedAt: Carbon::now(),
             submittedAt: NULL,
             verifiedAt: NULL,
-            status: 'Action Required'
+            status: $completionPercentage < 100 ? 'Action Required' : 'QC Approved'
         );
     }
 

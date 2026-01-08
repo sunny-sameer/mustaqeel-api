@@ -84,13 +84,21 @@ class RequestsStoreRequest extends FormRequest
             'personalInfo.applicantInfo.nameEn' => 'required|string|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/u',
             'personalInfo.applicantInfo.nameAr' => 'nullable|string|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
 
-            'employmentAndEducation.employmentDetails.companyName' => 'required_if:personalInfo.identificationData.category,inv|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.companyName' => 'required_if:personalInfo.identificationData.category,inv,exe|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z.,، ]+$/u',
             'employmentAndEducation.employmentDetails.shareOfTheCapital' => 'nullable|decimal:0,2|regex:/^[0-9.,، ]+$/u',
             'employmentAndEducation.employmentDetails.amountOfCapital' => 'required_if:personalInfo.identificationData.category,inv|nullable|decimal:0,2|regex:/^[0-9.]+$/u',
+
+            'employmentAndEducation.employmentDetails.currentJobTitle' => 'required_if:personalInfo.identificationData.category,exe|nullable|in:Chairman,CEO,COO,CFO,CTO,Executive Director,Other',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle' => 'required_if:employmentAndEducation.employmentDetails.currentJobTitle,Other|nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.dateOfJoining' => 'required_if:personalInfo.identificationData.category,exe|nullable|date',
+            'employmentAndEducation.employmentDetails.companyClassification' => 'required_if:employmentAndEducation.employmentDetails.companyClassification,Other|nullable|in:Publicly Listed Joint-Stock Company,Bank/Financial Institution,Insurance Company,Consulting Firm,Other',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification' => 'required_if:personalInfo.identificationData.category,exe|nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.monthlySalary' => 'required_if:personalInfo.identificationData.category,exe|nullable|decimal:0,2|regex:/^[0-9.]+$/u',
+
             'employmentAndEducation.employmentDetails.profession' => [
                 Rule::requiredIf(function () {
                     return request('personalInfo.applicantInfo.areYouQatarResident') === true
-                        && in_array(strtolower(request('personalInfo.identificationData.category')), ['tal', 'ent']);
+                        && in_array(strtolower(request('personalInfo.identificationData.category')), ['tal', 'ent', 'exe']);
                 }),
                 'nullable','string','min:3','max:50','regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u'
             ],
@@ -126,14 +134,14 @@ class RequestsStoreRequest extends FormRequest
             'employmentAndEducation.employmentDetails.nameOfSponsor' => [
                 Rule::requiredIf(function () {
                     return request('personalInfo.applicantInfo.areYouQatarResident') === true
-                        && in_array(strtolower(request('personalInfo.identificationData.category')), ['tal', 'ent']);
+                        && in_array(strtolower(request('personalInfo.identificationData.category')), ['tal', 'ent', 'exe']);
                 }),
                 'nullable','string','min:3','max:100','regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u'
             ],
             'employmentAndEducation.employmentDetails.addressOfSponsor' => [
                 Rule::requiredIf(function () {
                     return request('personalInfo.applicantInfo.areYouQatarResident') === true
-                        && in_array(strtolower(request('personalInfo.identificationData.category')), ['tal', 'ent']);
+                        && in_array(strtolower(request('personalInfo.identificationData.category')), ['tal', 'ent', 'exe']);
                 }),
                 'nullable','string','min:3','max:255','regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u'
             ],
@@ -322,12 +330,35 @@ class RequestsStoreRequest extends FormRequest
             'employmentAndEducation.employmentDetails.companyName.max' => 'The company name may not be greater than 100 characters.',
             'employmentAndEducation.employmentDetails.companyName.regex' => 'The company name may only contain Arabic, English letters, commas, and full stop.',
 
-            'employmentAndEducation.employmentDetails.shareOfTheCapital.decimal' => 'The amount of capital must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.shareOfTheCapital.decimal' => 'The share of the capital must be a valid decimal number.',
             'employmentAndEducation.employmentDetails.shareOfTheCapital.regex' => 'The share of the capital may only contain numbers.',
 
             'employmentAndEducation.employmentDetails.amountOfCapital.required_if' => 'The amount of capital is required.',
             'employmentAndEducation.employmentDetails.amountOfCapital.decimal' => 'The amount of capital must be a valid decimal number.',
             'employmentAndEducation.employmentDetails.amountOfCapital.regex' => 'The amount of capital may only contain numbers.',
+
+            'employmentAndEducation.employmentDetails.currentJobTitle.required_if' => 'The current job title is required.',
+            'employmentAndEducation.employmentDetails.currentJobTitle.in' => 'The current job title must be one of the following: Chairman, CEO, COO, CFO, CTO, Executive Director, Other.',
+
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.required_if' => 'The other current job title is required.',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.min' => 'The other current job title must be at least 6 characters.',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.max' => 'The other current job title may not exceed 255 characters.',
+            'employmentAndEducation.employmentDetails.otherCurrentJobTitle.regex' => 'The other current job title may only contain Arabic, English letters, numbers, commas, and full stop.',
+
+            'employmentAndEducation.employmentDetails.dateOfJoining.required_if' => 'The date of joining is required.',
+            'employmentAndEducation.employmentDetails.dateOfJoining.date' => 'The  date of joining must be a valid date.',
+
+            'employmentAndEducation.employmentDetails.companyClassification.required_if' => 'The company classification is required.',
+            'employmentAndEducation.employmentDetails.companyClassification.in' => 'The company classification must be one of the following: Publicly Listed Joint-Stock Company, Bank/Financial Institution, Insurance Company, Consulting Firm, Other.',
+
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.required_if' => 'The other company classification is required.',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.min' => 'The other company classification must be at least 6 characters.',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.max' => 'The other company classification may not exceed 255 characters.',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification.regex' => 'The other company classification may only contain Arabic, English letters, numbers, commas, and full stop.',
+
+            'employmentAndEducation.employmentDetails.monthlySalary.required_if' => 'The monthly salary is required.',
+            'employmentAndEducation.employmentDetails.monthlySalary.decimal' => 'The monthly salary must be a valid decimal number.',
+            'employmentAndEducation.employmentDetails.monthlySalary.regex' => 'The monthly salary may only contain numbers.',
 
             'employmentAndEducation.employmentDetails.profession.required' => 'The profession is required.',
             'employmentAndEducation.employmentDetails.profession.min' => 'The profession must be at least 3 characters.',

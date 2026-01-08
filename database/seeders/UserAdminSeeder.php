@@ -48,32 +48,5 @@ class UserAdminSeeder extends Seeder
             'password' => Hash::make('Jusour@2025')
         ]);
         $applicant->assignRole('applicant');
-
-        // Creating Entity User
-        $entity = User::create([
-            'name' => 'Entity Officer',
-            'email' => 'entity-officer@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $entity->assignRole('entity');
-        $entity->assignLevel('officer',1);
-
-        // Creating Entity User
-        $entity = User::create([
-            'name' => 'Entity Supervisor',
-            'email' => 'entity-supervisor@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $entity->assignRole('entity');
-        $entity->assignLevel('supervisor',2);
-
-        // Creating Entity User
-        $entity = User::create([
-            'name' => 'Entity',
-            'email' => 'entity-manager@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $entity->assignRole('entity');
-        $entity->assignLevel('manager',3);
     }
 }

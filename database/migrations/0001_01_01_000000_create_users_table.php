@@ -38,6 +38,17 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        Schema::create('user_meta_data', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
+            $table->json('meta');
+            $table->tinyInteger('status')->default(1);
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
