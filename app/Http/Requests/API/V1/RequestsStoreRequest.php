@@ -91,8 +91,8 @@ class RequestsStoreRequest extends FormRequest
             'employmentAndEducation.employmentDetails.currentJobTitle' => 'required_if:personalInfo.identificationData.category,exe|nullable|in:Chairman,CEO,COO,CFO,CTO,Executive Director,Other',
             'employmentAndEducation.employmentDetails.otherCurrentJobTitle' => 'required_if:employmentAndEducation.employmentDetails.currentJobTitle,Other|nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'employmentAndEducation.employmentDetails.dateOfJoining' => 'required_if:personalInfo.identificationData.category,exe|nullable|date',
-            'employmentAndEducation.employmentDetails.companyClassification' => 'required_if:employmentAndEducation.employmentDetails.companyClassification,Other|nullable|in:Publicly Listed Joint-Stock Company,Bank/Financial Institution,Insurance Company,Consulting Firm,Other',
-            'employmentAndEducation.employmentDetails.otherCompanyClassification' => 'required_if:personalInfo.identificationData.category,exe|nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
+            'employmentAndEducation.employmentDetails.companyClassification' => 'required_if:personalInfo.identificationData.category,exe|nullable|in:Publicly Listed Joint-Stock Company,Bank/Financial Institution,Insurance Company,Consulting Firm,Other',
+            'employmentAndEducation.employmentDetails.otherCompanyClassification' => 'required_if:employmentAndEducation.employmentDetails.companyClassification,Other|nullable|min:3|max:255|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
             'employmentAndEducation.employmentDetails.monthlySalary' => 'required_if:personalInfo.identificationData.category,exe|nullable|decimal:0,2|regex:/^[0-9.]+$/u',
 
             'employmentAndEducation.employmentDetails.profession' => [
