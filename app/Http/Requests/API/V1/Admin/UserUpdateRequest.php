@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
-class UserCreateRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     use FailedValidationTrait;
 
@@ -27,13 +27,14 @@ class UserCreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('uId');
         $rules = [
             'personalInfo' => 'required|array',
             'personalInfo.name' => 'required|min:3|max:50|regex:/^[a-zA-Z.,، ]+$/u',
             'personalInfo.nameArabic' => 'nullable|min:3|max:255|regex:/^[\p{Arabic}.,، ]+$/u',
-            'personalInfo.email' => 'required|min:5|max:255|email|unique:users,email',
+            'personalInfo.email' => 'required|min:5|max:255|email|unique:users,email,'.$id,
             'personalInfo.password' => [
-                'required',
+                'nullable',
                 Password::min(8)
                 ->max(64)
                 ->letters()
@@ -41,7 +42,7 @@ class UserCreateRequest extends FormRequest
                 ->numbers()
                 ->symbols()
             ],
-            'personalInfo.confirmPassword' => 'required|same:personalInfo.password',
+            'personalInfo.confirmPassword' => 'nullable|same:personalInfo.password',
             'personalInfo.status' => 'required|in:active,inactive,disable',
         ];
 

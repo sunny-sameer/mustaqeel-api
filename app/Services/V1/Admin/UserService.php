@@ -3,6 +3,7 @@
 namespace App\Services\V1\Admin;
 
 use App\DTOs\V1\User\UserDTO;
+use App\DTOs\V1\User\UserMetaDataDTO;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RoleNotFoundException;
 use App\Exceptions\UserNotFoundException;
@@ -35,8 +36,8 @@ class UserService extends BaseService
     public function roleExists($role)
     {
         $roleData = Role::where('name',$role)->first();
-        if(empty($roleData)){
-            throw new RoleNotFoundException();
+        if ($roleData === null) {
+            throw new RoleNotFoundException('Invalid path or route.');
         }
         $this->role = $role;
         return $this;
@@ -88,12 +89,13 @@ class UserService extends BaseService
             $response = $this->usersInterface->store($userData);
             $response->assignRole($this->role);
 
-            if(isset($this->requests->level)){
-                $response->assignLevel($this->requests->level->name,$this->requests->level->position);
+            if(isset($this->requests->level) && $this->role !== 'applicant'){
+                $response->assignLevel($this->requests->level['name'],$this->requests->level['position']);
             }
 
-            if(isset($this->requests->identificationData)){
-                $response->assignLevel($this->requests->level->name,$this->requests->level->position);
+            if(isset($this->requests->identificationData) && $this->role == 'entity'){
+                $metaData = UserMetaDataDTO::fromRequest($this->requests)->toArray();
+                $response->metaData()->create($metaData);
             }
 
             DB::commit();
@@ -107,6 +109,90 @@ class UserService extends BaseService
 
             return $this->error(
                 message: ucfirst($this->role).' creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function updateUser($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = $this->usersInterface->showUserByRole($this->role, $id);
+            if($user == null){
+                throw new UserNotFoundException('No '.$this->role.' found.');
+            }
+            $userData = UserDTO::fromRequest($this->requests,$user->id)->toArray();
+            $response = $this->usersInterface->update($id,$userData);
+            $response->assignRole($this->role);
+
+            if(isset($this->requests->level) && $this->role !== 'applicant'){
+                $response->assignLevel($this->requests->level['name'],$this->requests->level['position']);
+            }
+
+            if(isset($this->requests->identificationData) && $this->role == 'entity'){
+                $metaData = UserMetaDataDTO::fromRequest($this->requests)->toArray();
+                $response->metaData()->update($metaData);
+            }
+
+            DB::commit();
+
+            return $this->success(
+                data: ['user' => $response],
+                message: ucfirst($this->role).' updated successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: ucfirst($this->role).' updation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = $this->usersInterface->showUserByRole($this->role, $id);
+            if($user == null){
+                throw new UserNotFoundException('No '.$this->role.' found.');
+            }
+
+            if(isset($user->level) && $user->roles->pluck('name')->first() !== 'applicant'){
+                $user->level()->delete();
+            }
+
+            if(isset($user->metaData) && $user->roles->pluck('name')->first() == 'entity'){
+                $user->metaData()->delete();
+            }
+
+            if($user->roles->pluck('name')->first() == 'applicant'){
+                $user->profile()->delete();
+                $user->communication()->delete();
+                $user->passport()->delete();
+                $user->address()->delete();
+                $user->qatarInfo()->delete();
+            }
+
+            $this->usersInterface->destroy($id);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['user' => $user],
+                message: ucfirst($this->role).' deleted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: ucfirst($this->role).' deletion failed',
                 errors: $e->getMessage(),
                 statusCode: 500
             );

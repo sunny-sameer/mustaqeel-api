@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\RoleNotFoundException;
 use App\Exceptions\UserNotFoundException;
-
-
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\API\V1\Admin\UserCreateRequest;
+use App\Http\Requests\API\V1\Admin\UserUpdateRequest;
 use App\Services\V1\Admin\UserService;
 
 
 use Illuminate\Http\Request;
 
 
-class UserController extends Controller
+class UserController extends BaseController
 {
+    /**
+     * See Swagger annotations in \App\Swaggers\V1\Admin\UserSwagger
+    */
+
+
     protected $userService;
 
     public function __construct(UserService $userService) {
@@ -104,16 +108,43 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, $role, $id)
     {
-        //
+        try {
+            return $this->userService
+                ->userExists()
+                ->roleExists($role)
+                ->setInput($request)
+                ->updateUser($id);
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($role, $id)
     {
-        //
+        try {
+            return $this->userService
+                ->userExists()
+                ->roleExists($role)
+                ->deleteUser($id);
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 }

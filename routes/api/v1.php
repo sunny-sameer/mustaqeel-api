@@ -125,7 +125,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::get('users/{role}/{uId}', [AdminUserController::class, 'show']);
             Route::post('users/{role}', [AdminUserController::class, 'store']);
             Route::put('users/{role}/{uId}', [AdminUserController::class, 'update']);
-            Route::delete('users/{role}/{uId}', [AdminUserController::class, 'delete']);
+            Route::delete('users/{role}/{uId}', [AdminUserController::class, 'destroy']);
 
             // Request
             Route::post('requests/reupload-documents/{reqId}', [RequestsController::class, 'reuploadDocumentRequest']);

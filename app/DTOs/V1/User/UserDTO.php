@@ -2,6 +2,7 @@
 
 namespace App\DTOs\V1\User;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,21 +18,22 @@ final readonly class UserDTO
     ) {}
 
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data, $id=0): self
     {
+        $user = User::find($id);
         return new self(
             name: $data['personalInfo']['name'],
             nameArabic: $data['personalInfo']['nameArabic'],
             email: $data['personalInfo']['email'],
-            password: Hash::make($data['personalInfo']['password']),
-            termsAccepted: 0,
+            password: isset($data['personalInfo']['password']) ? Hash::make($data['personalInfo']['password']) : $user->passsword,
+            termsAccepted: $user->termsAccepted,
             status: $data['personalInfo']['status'],
         );
     }
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request, $id=0): self
     {
-        return self::fromArray($request->validated());
+        return self::fromArray($request->validated(), $id);
     }
 
     public function toArray(): array
