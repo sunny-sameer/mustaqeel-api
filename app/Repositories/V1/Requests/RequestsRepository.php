@@ -448,6 +448,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     {
         $categories = Categories::all();
         $submitted = [];
+        $rejected = [];
         $qcCompleted = [];
         $endorsed = [];
         $molApproved = [];
@@ -457,6 +458,18 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $submitted[$value->name] = $this->model
             ->whereHas('metas',function($query) use ($value){
                 $query->where('key','category')->where('value',$value->slug);
+            })->count();
+
+            $rejected[$value->name] = $this->model
+            ->whereHas('metas',function($query) use ($value){
+                $query->where('key','category')->where('value',$value->slug);
+            })->whereHas('requestStage.lastRequestStatus', function ($q){
+                $q->whereHas('stageStatus', function ($q) {
+                    $q->where('name', 'Rejected')
+                    ->whereHas('stage', function ($q) {
+                        $q->where('name', 'Application');
+                    });
+                });
             })->count();
 
             $qcCompleted[$value->name] = $this->model
@@ -485,7 +498,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $molApproved[$value->name] = $this->model
             ->whereHas('metas',function($query) use ($value){
                 $query->where('key','category')->where('value',$value->slug);
-            })->whereHas('requestStage.lastRequestStatus', function ($q) use ($entityRole) {
+            })->whereHas('requestStage.lastRequestStatus', function ($q){
                 $q->whereHas('stageStatus', function ($q) {
                     $q->where('name', 'Approved')
                     ->whereHas('stage', function ($q) {
@@ -497,7 +510,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $hayyaApproved[$value->name] = $this->model
             ->whereHas('metas',function($query) use ($value){
                 $query->where('key','category')->where('value',$value->slug);
-            })->whereHas('requestStage.lastRequestStatus', function ($q) use ($entityRole) {
+            })->whereHas('requestStage.lastRequestStatus', function ($q){
                 $q->whereHas('stageStatus', function ($q) {
                     $q->where('name', 'Approved')
                     ->whereHas('stage', function ($q) {
@@ -509,6 +522,6 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $visaQidIssue[$value->name] = 0;
         }
 
-        return ['submitted'=>$submitted,'qcCompleted'=>$qcCompleted,'endorsed'=>$endorsed,'molApproved'=>$molApproved,'hayyaApproved'=>$hayyaApproved,'visaQidIssue'=>$visaQidIssue];
+        return ['submitted'=>$submitted,'rejected'=>$rejected,'qcCompleted'=>$qcCompleted,'endorsed'=>$endorsed,'molApproved'=>$molApproved,'hayyaApproved'=>$hayyaApproved,'visaQidIssue'=>$visaQidIssue];
     }
 }
