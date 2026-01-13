@@ -294,6 +294,19 @@ class RequestsController extends BaseController
         }
     }
 
+    public function requestsCount()
+    {
+        try {
+            return $this->requests
+                ->userExists()
+                ->getAllRequestsCount();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
     public function getAllNationalities()
     {
         return $this->sendSuccessResponse($this->requests->getAllNationalities());

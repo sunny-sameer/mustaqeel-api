@@ -9,7 +9,7 @@ trait ArabicValidationTrait
      *
      * @return array
      */
-    public static function arabicNameRule(string $unique): array
+    public static function arabicNameRule(?string $unique=''): array
     {
         return [
             'required',

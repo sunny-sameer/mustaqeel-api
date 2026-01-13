@@ -12,4 +12,9 @@ class UserMetaData extends Model
 
     protected $table = 'user_meta_data';
     protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

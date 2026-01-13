@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Exceptions\BadRequestException;
+use App\Exceptions\RoleNotFoundException;
 use App\Exceptions\UserNotFoundException;
 
 
 use App\Http\Controllers\Controller;
-
-
-use App\Services\V1\User\UserService;
+use App\Http\Requests\API\V1\Admin\UserCreateRequest;
+use App\Services\V1\Admin\UserService;
 
 
 use Illuminate\Http\Request;
@@ -26,14 +27,16 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, $role = 'applicant')
+    public function index(Request $request, $role)
     {
         try {
             return $this->userService
                 ->userExists()
-                ->requestAlreadyExists()
-                ->deleteDocumentsIfExist()
-                ->createRequest();
+                ->roleExists($role)
+                ->setInput($request)
+                ->getAllUsers();
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
@@ -52,17 +55,42 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserCreateRequest $request, $role)
     {
-        //
+        try {
+            return $this->userService
+                ->userExists()
+                ->roleExists($role)
+                ->setInput($request)
+                ->createUser();
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($role, $id)
     {
-        //
+        try {
+            return $this->userService
+                ->userExists()
+                ->roleExists($role)
+                ->showUser($id);
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     /**

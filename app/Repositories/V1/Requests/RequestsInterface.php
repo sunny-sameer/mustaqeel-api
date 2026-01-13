@@ -23,4 +23,5 @@ interface RequestsInterface  extends CoreInterface {
     public function getQc($requestId, $status);
     public function createQc($request);
     public function updateQc($request, $qcId);
+    public function getRequestsCount();
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\V1\Requests;
 
+use App\Models\Categories;
 use App\Models\QualityCheck;
 use App\Models\RequestAttribute;
 use App\Models\RequestMetaData;
@@ -441,5 +442,73 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $qc = $this->qualityCheck->find($qcId);
         $qc->update($request);
         return $qc;
+    }
+
+    public function getRequestsCount()
+    {
+        $categories = Categories::all();
+        $submitted = [];
+        $qcCompleted = [];
+        $endorsed = [];
+        $molApproved = [];
+        $hayyaApproved = [];
+        $visaQidIssue = [];
+        foreach ($categories as $key => $value) {
+            $submitted[$value->name] = $this->model
+            ->whereHas('metas',function($query) use ($value){
+                $query->where('key','category')->where('value',$value->slug);
+            })->count();
+
+            $qcCompleted[$value->name] = $this->model
+            ->whereHas('metas',function($query) use ($value){
+                $query->where('key','category')->where('value',$value->slug);
+            })->whereHas('qualityCheck',function($query){
+                $query->where('status','QC Approved');
+            })->count();
+
+            $entityRole = Role::where('name','entity')->first();
+            $endorsed[$value->name] = $this->model
+            ->whereHas('metas',function($query) use ($value){
+                $query->where('key','category')->where('value',$value->slug);
+            })->whereHas('requestStage.lastRequestStatus', function ($q) use ($entityRole) {
+                $q->whereHas('stageStatus', function ($q) {
+                    $q->where('name', 'Approved')
+                    ->whereHas('stage', function ($q) {
+                        $q->where('name', 'Entity');
+                    });
+                });
+                $q->whereHas('user.level', function ($q) use ($entityRole) {
+                    $q->where('level', $entityRole->approval_levels);
+                });
+            })->count();
+
+            $molApproved[$value->name] = $this->model
+            ->whereHas('metas',function($query) use ($value){
+                $query->where('key','category')->where('value',$value->slug);
+            })->whereHas('requestStage.lastRequestStatus', function ($q) use ($entityRole) {
+                $q->whereHas('stageStatus', function ($q) {
+                    $q->where('name', 'Approved')
+                    ->whereHas('stage', function ($q) {
+                        $q->where('name', 'MOL');
+                    });
+                });
+            })->count();
+
+            $hayyaApproved[$value->name] = $this->model
+            ->whereHas('metas',function($query) use ($value){
+                $query->where('key','category')->where('value',$value->slug);
+            })->whereHas('requestStage.lastRequestStatus', function ($q) use ($entityRole) {
+                $q->whereHas('stageStatus', function ($q) {
+                    $q->where('name', 'Approved')
+                    ->whereHas('stage', function ($q) {
+                        $q->where('name', 'Hayya');
+                    });
+                });
+            })->count();
+
+            $visaQidIssue[$value->name] = 0;
+        }
+
+        return ['submitted'=>$submitted,'qcCompleted'=>$qcCompleted,'endorsed'=>$endorsed,'molApproved'=>$molApproved,'hayyaApproved'=>$hayyaApproved,'visaQidIssue'=>$visaQidIssue];
     }
 }

@@ -722,6 +722,16 @@ class RequestsService extends BaseService
         }
     }
 
+    public function getAllRequestsCount()
+    {
+        $requestsCount = $this->requestsInterface->getRequestsCount();
+
+        return $this->success(
+            data: $requestsCount,
+            message: 'Requests count fetched successfully'
+        );
+    }
+
     public function getAllNationalities()
     {
         return $this->genericInterface->getAllNationalities();

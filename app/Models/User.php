@@ -120,4 +120,9 @@ class User extends Authenticatable
         return $this->hasOne(UserRoleLevel::class,'userId','id');
     }
 
+    public function metaData()
+    {
+        return $this->hasOne(UserMetaData::class,'userId','id');
+    }
+
 }

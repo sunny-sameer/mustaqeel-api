@@ -12,8 +12,6 @@ use App\Models\QatarInfo;
 
 
 use App\Repositories\V1\Core\CoreRepository;
-
-
 use Illuminate\Support\Facades\Hash;
 
 class UsersRepository extends CoreRepository implements UsersInterface
@@ -110,4 +108,61 @@ class UsersRepository extends CoreRepository implements UsersInterface
             $query->where($levelColumn,$levelOperator,(int) $levelValue);
         })->get();
     }
+
+    // start CRUD operation for admin portal
+
+    public function getUsersByRole($request,$role)
+    {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
+        $model = $this->model->query();
+        if($role == 'admin'){
+            $model = $model->with('level');
+        }else if($role == 'entity'){
+            $model = $model->with('level','metaData');
+        }
+        $model = $model->whereHas('roles',function ($query) use ($role){
+            $query->where('name',$role);
+        })
+        ->paginate($paginate);
+
+        $model->map(function ($query){
+            if(isset($query->metaData)){
+                $query->metaData->meta = json_decode($query->metaData->meta,true);
+                return $query;
+            }
+        });
+        return $model;
+    }
+
+    public function showUserByRole($role,$id)
+    {
+        $model = $this->model->query();
+        if($role == 'admin'){
+            $model = $model->with('level');
+        }else if($role == 'entity'){
+            $model = $model->with('level','metaData');
+        }else if($role == 'applicant'){
+            $model = $model->with('profile','communication','passport','address','qatarInfo');
+        }
+        $model = $model->whereHas('roles',function ($query) use ($role){
+            $query->where('name',$role);
+        })
+        ->where('id',$id)->first();
+
+        if(isset($model->metaData)){
+            $model->metaData->meta = json_decode($model->metaData->meta,true);
+        }
+
+        if(isset($model->qatarInfo)){
+            $model->qatarInfo->value = json_decode($model->qatarInfo->value,true);
+        }
+
+        if(isset($model->communication)){
+            $model->communication->value = json_decode($model->communication->value,true);
+        }
+
+        return $model;
+    }
+
+    // end CRUD operation for admin portal
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Auth\TwoFactorController;
 use App\Http\Controllers\Api\V1\Admin\GenericController;
 use App\Http\Controllers\Api\V1\Requests\RequestsController;
 use App\Http\Controllers\Api\V1\User\UserController;
+use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 
 
 
@@ -119,11 +120,19 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::put('form-fields/{ffId}', [GenericController::class, 'updateFormField']);
             Route::delete('form-fields/{ffId}', [GenericController::class, 'deleteFormField']);
 
+            // Users
+            Route::get('users/{role}', [AdminUserController::class, 'index']);
+            Route::get('users/{role}/{uId}', [AdminUserController::class, 'show']);
+            Route::post('users/{role}', [AdminUserController::class, 'store']);
+            Route::put('users/{role}/{uId}', [AdminUserController::class, 'update']);
+            Route::delete('users/{role}/{uId}', [AdminUserController::class, 'delete']);
+
             // Request
             Route::post('requests/reupload-documents/{reqId}', [RequestsController::class, 'reuploadDocumentRequest']);
             Route::post('requests/qc', [RequestsController::class, 'submitQC']);
             Route::post('requests/qc/approved', [RequestsController::class, 'approveQC']);
             Route::put('requests/{reqId}/update-status', [RequestsController::class, 'updateStatus']);
+            Route::get('requests/count', [RequestsController::class, 'requestsCount']);
         });
     });
 });

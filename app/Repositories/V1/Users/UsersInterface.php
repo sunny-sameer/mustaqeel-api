@@ -21,4 +21,11 @@ interface UsersInterface extends CoreInterface
     public function createUpdateAddress($request, $id);
     public function createUpdateQatarInfo($request, $id);
     public function getUsersByRoleAndLevel($role,$levelColumn,$levelOperator,$levelValue);
+
+    // start CRUD operation for admin portal
+
+    public function getUsersByRole($request,$role);
+    public function showUserByRole($role,$id);
+
+    // end CRUD operation for admin portal
 }
