@@ -223,6 +223,21 @@ use OpenApi\Annotations as OA;
  *         description="Validation error"
  *     )
  * )
+ *
+ * // Get Requests count
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/requests/count",
+ *     tags={"Admin Requests"},
+ *     summary="Get Requests Count",
+ *     description="Get Submitted, Qc Completed, Endorsed, MOL Approved, Hayya Approved and Visa/Qid Issued Requests Count.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Requests found",
+ *     )
+ * )
  */
 
 class AdminRequestsSwagger
