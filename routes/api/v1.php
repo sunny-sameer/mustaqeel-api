@@ -120,6 +120,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::put('form-fields/{ffId}', [GenericController::class, 'updateFormField']);
             Route::delete('form-fields/{ffId}', [GenericController::class, 'deleteFormField']);
 
+            // Stages
+            Route::get('stages', [GenericController::class, 'stages']);
+            Route::get('stages/{sId}', [GenericController::class, 'stage']);
+            Route::post('stages', [GenericController::class, 'createStage']);
+            Route::put('stages/{sId}', [GenericController::class, 'updateStage']);
+            Route::delete('stages/{sId}', [GenericController::class, 'deleteStage']);
+
+            // Stage Statuses
+            Route::get('stage-statuses', [GenericController::class, 'stageStatuses']);
+            Route::get('stage-statuses/{ssId}', [GenericController::class, 'stageStatus']);
+            Route::post('stage-statuses', [GenericController::class, 'createStageStatus']);
+            Route::put('stage-statuses/{ssId}', [GenericController::class, 'updateStageStatus']);
+            Route::delete('stage-statuses/{ssId}', [GenericController::class, 'deleteStageStatus']);
+
             // Users
             Route::get('users/{role}', [AdminUserController::class, 'index']);
             Route::get('users/{role}/{uId}', [AdminUserController::class, 'show']);

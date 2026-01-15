@@ -218,7 +218,7 @@ use OpenApi\Annotations as OA;
  *     ),
  *
  *     @OA\Parameter(
- *         name="id",
+ *         name="uId",
  *         in="path",
  *         required=true,
  *         description="ID of the User to update",
@@ -375,7 +375,7 @@ use OpenApi\Annotations as OA;
  *         @OA\Schema(type="string")
  *     ),
  *     @OA\Parameter(
- *         name="id",
+ *         name="uId",
  *         in="path",
  *         description="ID of the User to delete",
  *         required=true,

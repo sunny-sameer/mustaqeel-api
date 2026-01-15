@@ -9,9 +9,6 @@ use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 use App\Http\Requests\API\V1\Traits\ArabicValidationTrait;
 
 
-use Illuminate\Validation\Rule;
-
-
 class FormFieldCreateRequest extends FormRequest
 {
     use FailedValidationTrait, ArabicValidationTrait;

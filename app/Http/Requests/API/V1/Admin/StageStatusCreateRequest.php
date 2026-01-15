@@ -12,7 +12,7 @@ use App\Http\Requests\API\V1\Traits\ArabicValidationTrait;
 use Illuminate\Validation\Rule;
 
 
-class IncubatorCreateRequest extends FormRequest
+class StageStatusCreateRequest extends FormRequest
 {
     use FailedValidationTrait, ArabicValidationTrait;
 
@@ -20,22 +20,21 @@ class IncubatorCreateRequest extends FormRequest
 
     public function rules(): array
     {
-        $categoryId = $this->input('categoryId');
-
+        $stageId = $this->input('stageId');
         return [
-            'categoryId' => 'required|integer|exists:categories,id',
+            'stageId'   => 'required|integer|exists:stages,id',
             'name' => [
                 'required',
                 'min:3',
                 'max:50',
                 'regex:/^[a-zA-Z.,، ]+$/u',
-                Rule::unique('incubators', 'name')
-                    ->where(fn ($q) => $q->where('categoryId', $categoryId)),
+                Rule::unique('stages_statuses', 'name')
+                    ->where(fn ($q) => $q->where('stageId', $stageId)),
             ],
 
             'nameAr' => self::arabicNameRule(
-                Rule::unique('incubators', 'nameAr')
-                    ->where(fn ($q) => $q->where('categoryId', $categoryId))
+                Rule::unique('stages_statuses', 'nameAr')
+                    ->where(fn ($q) => $q->where('stageId', $stageId))
             ),
             'status' => 'required|boolean',
         ];
@@ -44,9 +43,9 @@ class IncubatorCreateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'categoryId.required' => 'The category is required.',
-            'categoryId.integer' => 'The category must be type integer.',
-            'categoryId.exists' => 'The category is invalid.',
+            'stageId.required' => 'The stage is required.',
+            'stageId.integer' => 'The stage must be type integer.',
+            'stageId.exists' => 'The stage is invalid.',
 
             'name.required' => 'The english name is required.',
             'name.min' => 'The english name must be at least :min characters.',

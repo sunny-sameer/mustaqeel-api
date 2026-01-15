@@ -35,9 +35,9 @@ class AttachCategoryToSectorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'categoryIds.*.required' => 'The category ids field is required.',
-            'categoryIds.*.integer' => 'The category ids field must be type of integer.',
-            'categoryIds.*.exists' => 'The selected category ids is invalid.',
+            'categoryIds.*.required' => 'The category is required.',
+            'categoryIds.*.integer' => 'The category must be type integer.',
+            'categoryIds.*.exists' => 'The category is invalid.',
         ];
     }
 }

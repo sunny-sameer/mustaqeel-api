@@ -25,13 +25,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/categories/{id}",
+ *     path="/api/v1/admin/categories/{catId}",
  *     tags={"Admin"},
  *     summary="Get a single Category by ID",
  *     description="Returns Category details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="catId",
  *         in="path",
  *         description="ID of the Category",
  *         required=true,
@@ -69,13 +69,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/categories/{id}",
+ *     path="/api/v1/admin/categories/{catId}",
  *     tags={"Admin"},
  *     summary="Update a Category by ID",
  *     description="Updates an existing Category",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="catId",
  *         in="path",
  *         description="ID of the Category to update",
  *         required=true,
@@ -105,13 +105,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/categories/{id}",
+ *     path="/api/v1/admin/categories/{catId}",
  *     tags={"Admin"},
  *     summary="Delete a Category by ID",
  *     description="Deletes the Category identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="catId",
  *         in="path",
  *         description="ID of the Category to delete",
  *         required=true,
@@ -141,13 +141,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/sub-categories/{id}",
+ *     path="/api/v1/admin/sub-categories/{subCatId}",
  *     tags={"Admin"},
  *     summary="Get a single Sub Category by ID",
  *     description="Returns Sub Category details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="subCatId",
  *         in="path",
  *         description="ID of the Sub Category",
  *         required=true,
@@ -186,13 +186,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/sub-categories/{id}",
+ *     path="/api/v1/admin/sub-categories/{subCatId}",
  *     tags={"Admin"},
  *     summary="Update a Sub Category by ID",
  *     description="Updates an existing Sub Category",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="subCatId",
  *         in="path",
  *         description="ID of the Sub Category to update",
  *         required=true,
@@ -223,13 +223,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/sub-categories/{id}",
+ *     path="/api/v1/admin/sub-categories/{subCatId}",
  *     tags={"Admin"},
  *     summary="Delete a Sub Category by ID",
  *     description="Deletes the Sub Category identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="subCatId",
  *         in="path",
  *         description="ID of the Sub Category to delete",
  *         required=true,
@@ -259,13 +259,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/sectors/{id}",
+ *     path="/api/v1/admin/sectors/{secId}",
  *     tags={"Admin"},
  *     summary="Get a single Sector by ID",
  *     description="Returns Sector details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="secId",
  *         in="path",
  *         description="ID of the Sector",
  *         required=true,
@@ -309,13 +309,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/sectors/{id}",
+ *     path="/api/v1/admin/sectors/{secId}",
  *     tags={"Admin"},
  *     summary="Update a Sector by ID",
  *     description="Updates an existing Sector",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="secId",
  *         in="path",
  *         description="ID of the Sector to update",
  *         required=true,
@@ -351,13 +351,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/sectors/{id}",
+ *     path="/api/v1/admin/sectors/{secId}",
  *     tags={"Admin"},
  *     summary="Delete a Sector by ID",
  *     description="Deletes the Sector identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="secId",
  *         in="path",
  *         description="ID of the Sector to delete",
  *         required=true,
@@ -387,13 +387,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/activities/{id}",
+ *     path="/api/v1/admin/activities/{actId}",
  *     tags={"Admin"},
  *     summary="Get a single Activity by ID",
  *     description="Returns Activity details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="actId",
  *         in="path",
  *         description="ID of the Activity",
  *         required=true,
@@ -432,13 +432,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/activities/{id}",
+ *     path="/api/v1/admin/activities/{actId}",
  *     tags={"Admin"},
  *     summary="Update a Activity by ID",
  *     description="Updates an existing Activity",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="actId",
  *         in="path",
  *         description="ID of the Activity to update",
  *         required=true,
@@ -469,13 +469,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/activities/{id}",
+ *     path="/api/v1/admin/activities/{actId}",
  *     tags={"Admin"},
  *     summary="Delete a Activity by ID",
  *     description="Deletes the Activity identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="actId",
  *         in="path",
  *         description="ID of the Activity to delete",
  *         required=true,
@@ -492,13 +492,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/activities/{id}/entities",
+ *     path="/api/v1/admin/activities/{actId}/entities",
  *     tags={"Admin"},
  *     summary="Update a Entities of Activity by ID",
  *     description="Updates an existing Entities of  Activity",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="actId",
  *         in="path",
  *         description="ID of the Activity to update",
  *         required=true,
@@ -544,13 +544,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/sub-activities/{id}",
+ *     path="/api/v1/admin/sub-activities/{subActId}",
  *     tags={"Admin"},
  *     summary="Get a single Sub Activity by ID",
  *     description="Returns Sub Activity details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="subActId",
  *         in="path",
  *         description="ID of the Sub Activity",
  *         required=true,
@@ -589,13 +589,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/sub-activities/{id}",
+ *     path="/api/v1/admin/sub-activities/{subActId}",
  *     tags={"Admin"},
  *     summary="Update a Sub Activity by ID",
  *     description="Updates an existing Sub Activity",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="subActId",
  *         in="path",
  *         description="ID of the Sub Activity to update",
  *         required=true,
@@ -626,13 +626,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/sub-activities/{id}",
+ *     path="/api/v1/admin/sub-activities/{subActId}",
  *     tags={"Admin"},
  *     summary="Delete a Sub Activity by ID",
  *     description="Deletes the Sub Activity identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="subActId",
  *         in="path",
  *         description="ID of the Sub Activity to delete",
  *         required=true,
@@ -662,13 +662,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/entities/{id}",
+ *     path="/api/v1/admin/entities/{entId}",
  *     tags={"Admin"},
  *     summary="Get a single Entity by ID",
  *     description="Returns Entity details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="entId",
  *         in="path",
  *         description="ID of the Entity",
  *         required=true,
@@ -712,13 +712,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/entities/{id}",
+ *     path="/api/v1/admin/entities/{entId}",
  *     tags={"Admin"},
  *     summary="Update a Entity by ID",
  *     description="Updates an existing Entity",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="entId",
  *         in="path",
  *         description="ID of the Entity to update",
  *         required=true,
@@ -754,13 +754,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/entities/{id}",
+ *     path="/api/v1/admin/entities/{entId}",
  *     tags={"Admin"},
  *     summary="Delete a Entity by ID",
  *     description="Deletes the Entity identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="entId",
  *         in="path",
  *         description="ID of the Entity to delete",
  *         required=true,
@@ -777,13 +777,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/entities/{id}/activities",
+ *     path="/api/v1/admin/entities/{entId}/activities",
  *     tags={"Admin"},
  *     summary="Update a Activities of Entity by ID",
  *     description="Updates an existing Activities of Entity",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="entId",
  *         in="path",
  *         description="ID of the Entity to update",
  *         required=true,
@@ -827,13 +827,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/incubators/{id}",
+ *     path="/api/v1/admin/incubators/{incId}",
  *     tags={"Admin"},
  *     summary="Get a single Incubator by ID",
  *     description="Returns Incubator details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="incId",
  *         in="path",
  *         description="ID of the Incubator",
  *         required=true,
@@ -872,13 +872,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/incubators/{id}",
+ *     path="/api/v1/admin/incubators/{incId}",
  *     tags={"Admin"},
  *     summary="Update a Incubator by ID",
  *     description="Updates an existing Incubator",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="incId",
  *         in="path",
  *         description="ID of the Incubator to update",
  *         required=true,
@@ -909,13 +909,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/incubators/{id}",
+ *     path="/api/v1/admin/incubators/{incId}",
  *     tags={"Admin"},
  *     summary="Delete a Incubator by ID",
  *     description="Deletes the Incubator identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="incId",
  *         in="path",
  *         description="ID of the Incubator to delete",
  *         required=true,
@@ -945,13 +945,13 @@ use OpenApi\Annotations as OA;
  *
  *
  * @OA\Get(
- *     path="/api/v1/admin/form-fields/{id}",
+ *     path="/api/v1/admin/form-fields/{ffId}",
  *     tags={"Admin"},
  *     summary="Get a single Form Field by ID",
  *     description="Returns Form Field details for the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="ffId",
  *         in="path",
  *         description="ID of the Form Field",
  *         required=true,
@@ -1043,14 +1043,14 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Put(
- *     path="/api/v1/admin/form-fields/{id}",
+ *     path="/api/v1/admin/form-fields/{ffId}",
  *     tags={"Admin"},
  *     summary="Update a Form Field by ID",
  *     description="Updates an existing Form Field",
  *     security={{ "bearerAuth": {} }},
  *
  *     @OA\Parameter(
- *         name="id",
+ *         name="ffId",
  *         in="path",
  *         required=true,
  *         description="ID of the Form Field to update",
@@ -1126,13 +1126,13 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Delete(
- *     path="/api/v1/admin/form-fields/{id}",
+ *     path="/api/v1/admin/form-fields/{ffId}",
  *     tags={"Admin"},
  *     summary="Delete a Form Field by ID",
  *     description="Deletes the Form Field identified by the given ID",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Parameter(
- *         name="id",
+ *         name="ffId",
  *         in="path",
  *         description="ID of the Form Field to delete",
  *         required=true,
@@ -1145,6 +1145,242 @@ use OpenApi\Annotations as OA;
  *     @OA\Response(
  *         response=404,
  *         description="Form Field not found"
+ *     )
+ * )
+ *
+ *
+ * // Stages Endpoints
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/stages",
+ *     tags={"Admin"},
+ *     summary="Get all Stages",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Response(response=200, description="OK")
+ * )
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/stages/{sId}",
+ *     tags={"Admin"},
+ *     summary="Get a single Stage by ID",
+ *     description="Returns Stage details for the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="sId",
+ *         in="path",
+ *         description="ID of the Stage",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Stage found"
+ *     )
+ * )
+ *
+ * @OA\Post(
+ *     path="/api/v1/admin/stages",
+ *     tags={"Admin"},
+ *     summary="Create a new Stage",
+ *     description="Creates a new Stage with given data",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"name","nameAr","order","status"},
+ *             @OA\Property(property="name", type="string", example="Technology"),
+ *             @OA\Property(property="nameAr", type="string", example="تكنولوجيا"),
+ *             @OA\Property(property="order", type="integer", example=1),
+ *             @OA\Property(property="status", type="boolean", example=true),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Stage created successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ * @OA\Put(
+ *     path="/api/v1/admin/stages/{sId}",
+ *     tags={"Admin"},
+ *     summary="Update a Stage by ID",
+ *     description="Updates an existing Stage",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="sId",
+ *         in="path",
+ *         description="ID of the Stage to update",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"name","nameAr","order","status"},
+ *             @OA\Property(property="name", type="string", example="Technology"),
+ *             @OA\Property(property="nameAr", type="string", example="تكنولوجيا"),
+ *             @OA\Property(property="order", type="integer", example=1),
+ *             @OA\Property(property="status", type="boolean", example=true),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Stage updated successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Stage not found"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ * @OA\Delete(
+ *     path="/api/v1/admin/stages/{sId}",
+ *     tags={"Admin"},
+ *     summary="Delete a Stage by ID",
+ *     description="Deletes the Stage identified by the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="sId",
+ *         in="path",
+ *         description="ID of the Stage to delete",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Stage deleted successfully (no content)"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Stage not found"
+ *     )
+ * )
+ *
+ *
+ * // Stage Statuses Endpoints
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/stage-statuses",
+ *     tags={"Admin"},
+ *     summary="Get all Stage Statuses",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Response(response=200, description="OK")
+ * )
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/stage-statuses/{ssId}",
+ *     tags={"Admin"},
+ *     summary="Get a single Stage Statuses by ID",
+ *     description="Returns Stage Statuses details for the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="ssId",
+ *         in="path",
+ *         description="ID of the Stage Statuses",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Incubator found"
+ *     )
+ * )
+ *
+ * @OA\Post(
+ *     path="/api/v1/admin/stage-statuses",
+ *     tags={"Admin"},
+ *     summary="Create a new Stage Statuses",
+ *     description="Creates a new Stage Statuses with given data",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"name","nameAr","stageId","status"},
+ *             @OA\Property(property="name", type="string", example="Technology"),
+ *             @OA\Property(property="nameAr", type="string", example="تكنولوجيا"),
+ *             @OA\Property(property="stageId", type="integer", example=1),
+ *             @OA\Property(property="status", type="boolean", example=true),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Stage Status created successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ * @OA\Put(
+ *     path="/api/v1/admin/stage-statuses/{ssId}",
+ *     tags={"Admin"},
+ *     summary="Update a Stage Statuses by ID",
+ *     description="Updates an existing Stage Statuses",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="ssId",
+ *         in="path",
+ *         description="ID of the Stage Statuses to update",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"name","nameAr","stageId","status"},
+ *             @OA\Property(property="name", type="string", example="Technology"),
+ *             @OA\Property(property="nameAr", type="string", example="تكنولوجيا"),
+ *             @OA\Property(property="stageId", type="integer", example=1),
+ *             @OA\Property(property="status", type="boolean", example=true),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Stage Status updated successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Stage Status not found"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ * @OA\Delete(
+ *     path="/api/v1/admin/stage-statuses/{ssId}",
+ *     tags={"Admin"},
+ *     summary="Delete a Stage Statuses by ID",
+ *     description="Deletes the Stage Statuses identified by the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="ssId",
+ *         in="path",
+ *         description="ID of the Stage Statuses to delete",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Stage Status deleted successfully (no content)"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Stage Status not found"
  *     )
  * )
  */

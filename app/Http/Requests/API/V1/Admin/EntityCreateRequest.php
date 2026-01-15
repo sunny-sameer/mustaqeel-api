@@ -21,7 +21,7 @@ class EntityCreateRequest extends FormRequest
             'activityIds' => 'required|array',
             'activityIds.*' => 'required|integer|exists:activities,id',
 
-            'name' => 'required|string|min:3|max:50|unique:entities,name|regex:/^[a-zA-Z.,، ]+$/u',
+            'name' => 'required|min:3|max:50|unique:entities,name|regex:/^[a-zA-Z.,، ]+$/u',
             'nameAr' => self::arabicNameRule('unique:entities,nameAr'),
             'status' => 'required|boolean',
         ];
@@ -30,11 +30,24 @@ class EntityCreateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.regex' => 'The :attribute field only contains characters, spaces, commas and dots.',
-            'nameAr.regex' => 'The :attribute field only contains arabic letters, spaces, commas and dots.',
-            'activityIds.*.required' => 'The activity ids field is required.',
-            'activityIds.*.integer' => 'The activity ids field must be type of integer.',
-            'activityIds.*.exists' => 'The selected activity ids is invalid.',
+            'name.required' => 'The english name is required.',
+            'name.min' => 'The english name must be at least :min characters.',
+            'name.max' => 'The english name may not be greater than :max characters.',
+            'name.regex' => 'The english name may only contain letters, commas, full stop, and spaces.',
+            'name.unique' => 'The english name has already been taken.',
+
+            'nameAr.required' => 'The arabic name is required.',
+            'nameAr.min' => 'The arabic name must be at least :min characters.',
+            'nameAr.max' => 'The arabic name may not be greater than :max characters.',
+            'nameAr.regex' => 'The arabic name may only contain arabic letters, commas, full stop, and spaces.',
+            'nameAr.unique' => 'The arabic name has already been taken.',
+
+            'status.required' => 'The status is required.',
+            'status.boolean' => 'The status must be either true or false.',
+
+            'activityIds.*.required' => 'The activity is required.',
+            'activityIds.*.integer' => 'The activity must be type integer.',
+            'activityIds.*.exists' => 'The activity is invalid.',
         ];
     }
 }

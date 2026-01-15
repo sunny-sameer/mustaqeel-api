@@ -16,6 +16,8 @@ use App\Models\FormFieldMeta;
 use App\Models\FormFields;
 use App\Models\Incubator;
 use App\Models\Nationality;
+use App\Models\Stages;
+use App\Models\StagesStatuses;
 use Illuminate\Support\Arr;
 
 class GenericRepository extends CoreRepository implements GenericInterface
@@ -328,6 +330,62 @@ class GenericRepository extends CoreRepository implements GenericInterface
             $meta[] = $ffm;
         }
         return $meta;
+    }
+
+    // ===== STAGES =====
+    public function allStages($request)
+    {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
+        return Stages::paginate($paginate);
+    }
+    public function findStage($id)
+    {
+        return Stages::findOrFail($id);
+    }
+    public function createStage($data)
+    {
+        $stage = Stages::create($data);
+
+        return $this->findStage($stage->id);
+    }
+    public function updateStage($id, $data)
+    {
+        $stage = Stages::findOrFail($id);
+        $stage->update($data);
+
+        return $this->findStage($stage->id);
+    }
+    public function deleteStage($id)
+    {
+        return Stages::findOrFail($id)->delete();
+    }
+
+    // ===== STAGE STATUSES =====
+    public function allStageStatuses($request)
+    {
+        $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
+        return StagesStatuses::with('stage')->paginate($paginate);
+    }
+    public function findStageStatus($id)
+    {
+        return StagesStatuses::with('stage')->findOrFail($id);
+    }
+    public function createStageStatus($data)
+    {
+        $stageStatus = StagesStatuses::create($data);
+
+        return $this->findStageStatus($stageStatus->id);
+    }
+    public function updateStageStatus($id, $data)
+    {
+        $stageStatus = StagesStatuses::findOrFail($id);
+        $stageStatus->update($data);
+
+        return $this->findStageStatus($stageStatus->id);
+    }
+    public function deleteStageStatus($id)
+    {
+        return StagesStatuses::findOrFail($id)->delete();
     }
 
     // ===== PIVOTS (category_sector / activity_entity) =====

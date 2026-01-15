@@ -9,10 +9,7 @@ use App\Http\Requests\API\V1\Traits\FailedValidationTrait;
 use App\Http\Requests\API\V1\Traits\ArabicValidationTrait;
 
 
-use Illuminate\Validation\Rule;
-
-
-class IncubatorCreateRequest extends FormRequest
+class StageCreateRequest extends FormRequest
 {
     use FailedValidationTrait, ArabicValidationTrait;
 
@@ -20,23 +17,10 @@ class IncubatorCreateRequest extends FormRequest
 
     public function rules(): array
     {
-        $categoryId = $this->input('categoryId');
-
         return [
-            'categoryId' => 'required|integer|exists:categories,id',
-            'name' => [
-                'required',
-                'min:3',
-                'max:50',
-                'regex:/^[a-zA-Z.,، ]+$/u',
-                Rule::unique('incubators', 'name')
-                    ->where(fn ($q) => $q->where('categoryId', $categoryId)),
-            ],
-
-            'nameAr' => self::arabicNameRule(
-                Rule::unique('incubators', 'nameAr')
-                    ->where(fn ($q) => $q->where('categoryId', $categoryId))
-            ),
+            'name' => 'required|min:3|max:50|unique:stages,name|regex:/^[a-zA-Z.,، ]+$/u',
+            'nameAr' => self::arabicNameRule('unique:stages,nameAr'),
+            'order' => 'required|integer',
             'status' => 'required|boolean',
         ];
     }
@@ -44,10 +28,6 @@ class IncubatorCreateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'categoryId.required' => 'The category is required.',
-            'categoryId.integer' => 'The category must be type integer.',
-            'categoryId.exists' => 'The category is invalid.',
-
             'name.required' => 'The english name is required.',
             'name.min' => 'The english name must be at least :min characters.',
             'name.max' => 'The english name may not be greater than :max characters.',
@@ -59,6 +39,9 @@ class IncubatorCreateRequest extends FormRequest
             'nameAr.max' => 'The arabic name may not be greater than :max characters.',
             'nameAr.regex' => 'The arabic name may only contain arabic letters, commas, full stop, and spaces.',
             'nameAr.unique' => 'The arabic name has already been taken.',
+
+            'order.required' => 'The order is required.',
+            'order.integer' => 'The order must be number.',
 
             'status.required' => 'The status is required.',
             'status.boolean' => 'The status must be either true or false.',

@@ -35,9 +35,9 @@ class AttachEntityOfActivityRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'entityIds.*.required' => 'The entity ids field is required.',
-            'entityIds.*.integer' => 'The entity ids field must be type of integer.',
-            'entityIds.*.exists' => 'The selected entity ids is invalid.',
+            'entityIds.*.required' => 'The entity is required.',
+            'entityIds.*.integer' => 'The entity must be type integer.',
+            'entityIds.*.exists' => 'The entity is invalid.',
         ];
     }
 }

@@ -212,6 +212,50 @@ class GenericService
         return $this->genericInterface->deleteFormField($id);
     }
 
+    // Stages
+    public function allStages($request)
+    {
+        return $this->genericInterface->allStages($request);
+    }
+    public function findStage($id)
+    {
+        return $this->genericInterface->findStage($id);
+    }
+    public function createStage($data)
+    {
+        return $this->genericInterface->createStage($data);
+    }
+    public function updateStage($id, $data)
+    {
+        return $this->genericInterface->updateStage($id, $data);
+    }
+    public function deleteStage($id)
+    {
+        return $this->genericInterface->deleteStage($id);
+    }
+
+    // Stage Statuses
+    public function allStageStatuses($request)
+    {
+        return $this->genericInterface->allStageStatuses($request);
+    }
+    public function findStageStatus($id)
+    {
+        return $this->genericInterface->findStageStatus($id);
+    }
+    public function createStageStatus($data)
+    {
+        return $this->genericInterface->createStageStatus($data);
+    }
+    public function updateStageStatus($id, $data)
+    {
+        return $this->genericInterface->updateStageStatus($id, $data);
+    }
+    public function deleteStageStatus($id)
+    {
+        return $this->genericInterface->deleteStageStatus($id);
+    }
+
     // Pivot helpers
     public function attachCategoriesToSector($sectorId, $categoryIds)
     {

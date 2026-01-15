@@ -25,11 +25,13 @@ use App\Http\Requests\API\V1\Admin\FormFieldUpdateRequest;
 use App\Http\Requests\API\V1\Admin\AttachCategoryToSectorRequest;
 use App\Http\Requests\API\V1\Admin\AttachEntityOfActivityRequest;
 use App\Http\Requests\API\V1\Admin\AttachActivityOfEntityRequest;
+use App\Http\Requests\API\V1\Admin\StageCreateRequest;
+use App\Http\Requests\API\V1\Admin\StageUpdateRequest;
+use App\Http\Requests\API\V1\Admin\StageStatusCreateRequest;
+use App\Http\Requests\API\V1\Admin\StageStatusUpdateRequest;
 
 
 use App\Http\Controllers\Api\BaseController;
-
-
 use App\Services\V1\Admin\GenericService;
 
 class GenericController extends BaseController
@@ -233,6 +235,52 @@ class GenericController extends BaseController
     public function deleteFormField($id)
     {
         $this->service->deleteFormField($id);
+        return response()->json(['message' => 'Deleted']);
+    }
+
+    // ===== STAGES =====
+    public function stages(Request $request)
+    {
+        return response()->json($this->service->allStages($request->all()));
+    }
+    public function stage($id)
+    {
+        return response()->json($this->service->findStage($id));
+    }
+    public function createStage(StageCreateRequest $request)
+    {
+        return response()->json($this->service->createStage($request->all()), 201);
+    }
+    public function updateStage(StageUpdateRequest $request, $id)
+    {
+        return response()->json($this->service->updateStage($id, $request->all()));
+    }
+    public function deleteStage($id)
+    {
+        $this->service->deleteStage($id);
+        return response()->json(['message' => 'Deleted']);
+    }
+
+    // ===== STAGE STATUSES =====
+    public function stageStatuses(Request $request)
+    {
+        return response()->json($this->service->allStageStatuses($request->all()));
+    }
+    public function stageStatus($id)
+    {
+        return response()->json($this->service->findStageStatus($id));
+    }
+    public function createStageStatus(StageStatusCreateRequest $request)
+    {
+        return response()->json($this->service->createStageStatus($request->all()), 201);
+    }
+    public function updateStageStatus(StageStatusUpdateRequest $request, $id)
+    {
+        return response()->json($this->service->updateStageStatus($id, $request->all()));
+    }
+    public function deleteStageStatus($id)
+    {
+        $this->service->deleteStageStatus($id);
         return response()->json(['message' => 'Deleted']);
     }
 }
