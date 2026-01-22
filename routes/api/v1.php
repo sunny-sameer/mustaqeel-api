@@ -134,12 +134,18 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::put('stage-statuses/{ssId}', [GenericController::class, 'updateStageStatus']);
             Route::delete('stage-statuses/{ssId}', [GenericController::class, 'deleteStageStatus']);
 
-            // Users
-            Route::get('users/{role}', [AdminUserController::class, 'index']);
-            Route::get('users/{role}/{uId}', [AdminUserController::class, 'show']);
-            Route::post('users/{role}', [AdminUserController::class, 'store']);
-            Route::put('users/{role}/{uId}', [AdminUserController::class, 'update']);
-            Route::delete('users/{role}/{uId}', [AdminUserController::class, 'destroy']);
+            // Roles
+            Route::get('roles', [AdminUserController::class, 'roles']);
+            Route::get('roles/{rId}', [AdminUserController::class, 'role']);
+            Route::post('roles', [AdminUserController::class, 'createRole']);
+            Route::put('roles/{rId}', [AdminUserController::class, 'updateRole']);
+            Route::delete('roles/{rId}', [AdminUserController::class, 'deleteRole']);
+            Route::get('roles-by-type/{type}', [AdminUserController::class, 'rolesByType']);
+
+            // Permissions
+            Route::get('permissions', [AdminUserController::class, 'permissions']);
+            Route::get('permissions/roles/{rId}', [AdminUserController::class, 'rolePermissions']);
+            Route::get('permissions/users/{uId}', [AdminUserController::class, 'userPermissions']);
 
             // Request
             Route::post('requests/reupload-documents/{reqId}', [RequestsController::class, 'reuploadDocumentRequest']);
@@ -147,6 +153,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('requests/qc/approved', [RequestsController::class, 'approveQC']);
             Route::put('requests/{reqId}/update-status', [RequestsController::class, 'updateStatus']);
             Route::get('requests/count', [RequestsController::class, 'requestsCount']);
+
+            // Users
+            Route::get('users/{role}', [AdminUserController::class, 'users']);
+            Route::get('users/{role}/{uId}', [AdminUserController::class, 'user']);
+            Route::post('users/{role}', [AdminUserController::class, 'createUser']);
+            Route::put('users/{role}/{uId}', [AdminUserController::class, 'updateUser']);
+            Route::delete('users/{role}/{uId}', [AdminUserController::class, 'deleteUser']);
         });
     });
 });

@@ -22,10 +22,29 @@ interface UsersInterface extends CoreInterface
     public function createUpdateQatarInfo($request, $id);
     public function getUsersByRoleAndLevel($role,$levelColumn,$levelOperator,$levelValue);
 
-    // start CRUD operation for admin portal
+    // start user CRUD operation for admin portal
 
     public function getUsersByRole($request,$role);
     public function showUserByRole($role,$id);
 
-    // end CRUD operation for admin portal
+    // end user CRUD operation for admin portal
+
+    // start role CRUD operation for admin portal
+
+    public function getAllRoles($request);
+    public function getRole($id);
+    public function createRole($request,$permissions);
+    public function updateRole($request,$permissions,$id);
+    public function deleteRole($id);
+    public function getRolesByType($type);
+
+    // end role CRUD operation for admin portal
+
+    // start permissions operation for admin portal
+
+    public function getAllPermissions();
+    public function getAllRolePermissions($roleId);
+    public function getAllUserPermissions($userId);
+
+    // end permissions operation for admin portal
 }

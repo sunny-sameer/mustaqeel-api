@@ -26,7 +26,7 @@ final readonly class UserDTO
             nameArabic: $data['personalInfo']['nameArabic'],
             email: $data['personalInfo']['email'],
             password: isset($data['personalInfo']['password']) ? Hash::make($data['personalInfo']['password']) : $user->passsword,
-            termsAccepted: $user->termsAccepted,
+            termsAccepted: isset($user->termsAccepted) ? $user->termsAccepted : 0,
             status: $data['personalInfo']['status'],
         );
     }

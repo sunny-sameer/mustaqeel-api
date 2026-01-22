@@ -5,11 +5,16 @@ namespace App\Models;
 use App\Models\Traits\DisableSnakeAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Models\Role;
 
-class UserRoleLevel extends Model
+class RoleLevel extends Model
 {
     use SoftDeletes, DisableSnakeAttributes;
 
-    protected $table = 'user_role_levels';
+    protected $table = 'role_levels';
     protected $guarded = [];
+
+    public function role() {
+        return $this->belongsTo(Role::class,'role_id','id');
+    }
 }

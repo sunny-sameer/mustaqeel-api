@@ -188,24 +188,24 @@ class RequestsStoreRequest extends FormRequest
             'ResidencyAndTravelAndFamily.familyMembers.*.profession' => 'required_if:personalInfo.applicantInfo.maritalStatus,Married|nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
         ];
 
-        foreach ($ff as $key => $value) {
-            if($value->formMetas->onshoreOffShore == 'onshore' && $value->formMetas->isRequired){
-                $validation['documents.'.$value->slug][] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,true';
-                $validation['documents.'.$value->slug][] = 'nullable';
-            } else if($value->formMetas->onshoreOffShore == 'both' && $value->formMetas->isRequired){
-                $validation['documents.'.$value->slug][] = 'required';
-            } else if($value->formMetas->onshoreOffShore == 'offshore' && $value->formMetas->isRequired){
-                $validation['documents.'.$value->slug][] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,false';
-                $validation['documents.'.$value->slug][] = 'nullable';
-            }else{
-                $validation['documents.'.$value->slug][] = 'nullable';
-            }
-            $validation['documents.'.$value->slug][] = 'string';
-            $validation['documents.'.$value->slug][] = Rule::exists('documents', 'documentName')
-            ->where('entityId', $this->input('id'))
-            ->where('entityType', Requests::class)
-            ->where('type', $value->slug);
-        }
+        // foreach ($ff as $key => $value) {
+        //     if($value->formMetas->onshoreOffShore == 'onshore' && $value->formMetas->isRequired){
+        //         $validation['documents.'.$value->slug][] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,true';
+        //         $validation['documents.'.$value->slug][] = 'nullable';
+        //     } else if($value->formMetas->onshoreOffShore == 'both' && $value->formMetas->isRequired){
+        //         $validation['documents.'.$value->slug][] = 'required';
+        //     } else if($value->formMetas->onshoreOffShore == 'offshore' && $value->formMetas->isRequired){
+        //         $validation['documents.'.$value->slug][] = 'required_if:personalInfo.applicantInfo.areYouQatarResident,false';
+        //         $validation['documents.'.$value->slug][] = 'nullable';
+        //     }else{
+        //         $validation['documents.'.$value->slug][] = 'nullable';
+        //     }
+        //     $validation['documents.'.$value->slug][] = 'string';
+        //     $validation['documents.'.$value->slug][] = Rule::exists('documents', 'documentName')
+        //     ->where('entityId', $this->input('id'))
+        //     ->where('entityType', Requests::class)
+        //     ->where('type', $value->slug);
+        // }
 
         return $validation;
     }

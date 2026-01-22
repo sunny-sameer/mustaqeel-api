@@ -18,6 +18,36 @@ class Requests extends Model
         return $this->hasMany(RequestMetaData::class, 'reqId');
     }
 
+    public function category()
+    {
+        return $this->hasOne(RequestMetaData::class, 'reqId','id')
+        ->where('key','category');
+    }
+
+    public function activity()
+    {
+        return $this->hasOne(RequestMetaData::class, 'reqId','id')
+        ->where('key','activity');
+    }
+
+    public function subActivity()
+    {
+        return $this->hasOne(RequestMetaData::class, 'reqId','id')
+        ->where('key','subActivity');
+    }
+
+    public function entity()
+    {
+        return $this->hasOne(RequestMetaData::class, 'reqId','id')
+        ->where('key','entity');
+    }
+
+    public function incubator()
+    {
+        return $this->hasOne(RequestMetaData::class, 'reqId','id')
+        ->where('key','incubator');
+    }
+
     public function attributes()
     {
         return $this->hasMany(RequestAttribute::class,'reqId','id');

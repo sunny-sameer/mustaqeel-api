@@ -6,6 +6,12 @@ namespace App\Http\Controllers\API\V1\Admin;
 use Illuminate\Http\Request;
 
 
+use App\Http\Controllers\Api\BaseController;
+
+
+use App\Services\V1\Admin\GenericService;
+
+
 use App\Http\Requests\API\V1\Admin\CategoryCreateRequest;
 use App\Http\Requests\API\V1\Admin\CategoryUpdateRequest;
 use App\Http\Requests\API\V1\Admin\SubCategoryCreateRequest;
@@ -30,9 +36,6 @@ use App\Http\Requests\API\V1\Admin\StageUpdateRequest;
 use App\Http\Requests\API\V1\Admin\StageStatusCreateRequest;
 use App\Http\Requests\API\V1\Admin\StageStatusUpdateRequest;
 
-
-use App\Http\Controllers\Api\BaseController;
-use App\Services\V1\Admin\GenericService;
 
 class GenericController extends BaseController
 {

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Traits\DisableSnakeAttributes;
+use App\Models\Traits\HasUserRoleLevels;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpKernel\Profiler\Profile;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, UserRules, HasApiTokens, HasRoles, SoftDeletes, DisableSnakeAttributes;
+    use HasFactory, Notifiable, UserRules, HasApiTokens, HasRoles, SoftDeletes, DisableSnakeAttributes, HasUserRoleLevels;
 
     /**
      * The attributes that are mass assignable.
@@ -105,19 +106,9 @@ class User extends Authenticatable
         return $this->hasOne(QatarInfo::class,'userId','id');
     }
 
-    public function assignLevel(string $name, int $level)
+    public function levels()
     {
-        $roleId = $this->roles->pluck('id')->first();
-
-        DB::table('user_role_levels')->updateOrInsert(
-            ['userId' => $this->id, 'roleId' => $roleId],
-            ['name' => $name, 'level' => $level]
-        );
-    }
-
-    public function level()
-    {
-        return $this->hasOne(UserRoleLevel::class,'userId','id');
+        return $this->belongsToMany(RoleLevel::class, 'user_role_levels');
     }
 
     public function metaData()

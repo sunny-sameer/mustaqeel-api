@@ -25,6 +25,7 @@ return new class extends Migration
             $table->bigIncrements('id'); // permission id
             $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
             $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
+            $table->string('type'); // For MyISAM use string('type', 25);
             $table->timestamps();
 
             $table->unique(['name', 'guard_name']);
@@ -118,16 +119,32 @@ return new class extends Migration
             ->forget(config('permission.cache.key'));
 
 
-        Schema::create('user_role_levels', function (Blueprint $table) {
+        Schema::create('role_levels', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
-            $table->foreignId('roleId')->constrained('roles')->onDelete('cascade');
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->string('name');
             $table->integer('level');
 
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::create('user_role_levels', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('role_level_id');
+
+            $table->foreign('user_id')
+                ->references('id') // permission id
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('role_level_id')
+                ->references('id') // role id
+                ->on('role_levels')
+                ->onDelete('cascade');
+
+            $table->primary(['user_id', 'role_level_id'], 'user_has_role_levels_role_level_id_user_id_primary');
         });
     }
 
@@ -147,6 +164,7 @@ return new class extends Migration
         Schema::drop($tableNames['model_has_permissions']);
         Schema::drop($tableNames['roles']);
         Schema::drop($tableNames['permissions']);
+        Schema::dropIfExists('role_levels');
         Schema::dropIfExists('user_role_levels');
     }
 };

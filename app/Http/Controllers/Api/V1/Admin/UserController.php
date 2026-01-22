@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Exceptions\BadRequestException;
-use App\Exceptions\RoleNotFoundException;
-use App\Exceptions\UserNotFoundException;
+
+use Illuminate\Http\Request;
+
+
 use App\Http\Controllers\Api\BaseController;
-use App\Http\Requests\API\V1\Admin\UserCreateRequest;
-use App\Http\Requests\API\V1\Admin\UserUpdateRequest;
+
+
 use App\Services\V1\Admin\UserService;
 
 
-use Illuminate\Http\Request;
+use App\Exceptions\BadRequestException;
+use App\Exceptions\RoleNotFoundException;
+use App\Exceptions\UserNotFoundException;
+
+
+use App\Http\Requests\API\V1\Admin\RoleCreateRequest;
+use App\Http\Requests\API\V1\Admin\RoleUpdateRequest;
+use App\Http\Requests\API\V1\Admin\UserCreateRequest;
+use App\Http\Requests\API\V1\Admin\UserUpdateRequest;
 
 
 class UserController extends BaseController
@@ -27,11 +36,7 @@ class UserController extends BaseController
         $this->userService = $userService;
     }
 
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request, $role)
+    public function users(Request $request, $role)
     {
         try {
             return $this->userService
@@ -48,18 +53,23 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function user($role, $id)
     {
-        //
+        try {
+            return $this->userService
+                ->userExists()
+                ->roleExists($role)
+                ->showUser($id);
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(UserCreateRequest $request, $role)
+    public function createUser(UserCreateRequest $request, $role)
     {
         try {
             return $this->userService
@@ -78,37 +88,7 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($role, $id)
-    {
-        try {
-            return $this->userService
-                ->userExists()
-                ->roleExists($role)
-                ->showUser($id);
-        } catch (RoleNotFoundException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (UserNotFoundException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (\Exception $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UserUpdateRequest $request, $role, $id)
+    public function updateUser(UserUpdateRequest $request, $role, $id)
     {
         try {
             return $this->userService
@@ -127,10 +107,7 @@ class UserController extends BaseController
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($role, $id)
+    public function deleteUser($role, $id)
     {
         try {
             return $this->userService
@@ -143,6 +120,136 @@ class UserController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function roles(Request $request)
+    {
+        try {
+            return $this->userService
+                ->setInput($request)
+                ->userExists()
+                ->getAllRoles();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function role($id)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->getRole($id);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function createRole(RoleCreateRequest $request)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->setInput($request)
+                ->createRole();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function updateRole(RoleUpdateRequest $request, $id)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->setInput($request)
+                ->updateRole($id);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function deleteRole( $id)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->deleteRole($id);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function rolesByType($type)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->getRolesByType($type);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function permissions()
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->getAllPermissions();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function rolePermissions($roleId)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->roleExistsById($roleId)
+                ->getAllRolePermissions($roleId);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RoleNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function userPermissions($userId)
+    {
+        try {
+            return $this->userService
+                ->userExists()
+                ->userExistsById($userId)
+                ->getAllUserPermissions($userId);
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }

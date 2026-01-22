@@ -157,7 +157,7 @@ class RequestsService extends BaseService
 
     public function userExists()
     {
-        $this->user = User::with('profile','level')->find(auth()->id());
+        $this->user = User::with('profile','levels')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
@@ -234,18 +234,20 @@ class RequestsService extends BaseService
         $type = $this->user->roles->pluck('type')->first();
 
         if($type == 'entity'){
-            if((isset($request->status->jusour[0]->status) && $request->status->jusour[0]->status == 'Approved') &&
-                ($this->user->level?->level == $this->user->roles->pluck('approval_levels')->first())
-            ){
-            }else{
+            if((isset($request->status['jusour'][0]['status']) && $request->status['jusour'][0]['status'] == 'Approved'))
+            {
+                if((isset($request->status['entity'][0]['status']) &&
+                ($request->status['entity'][0]['status'] == 'Approved' || $request->status['entity'][0]['status'] == 'Rejected'))){
+                    throw new RequestInvalidException('Request status has already '.$request->status['entity'][0]['status']);
+                }
+            } else {
                 throw new RequestNotExistException();
             }
         }else if($type == 'jusour'){
-            if((isset($request->status->jusour[0]->status) &&
-                ($request->status->jusour[0]->status == 'Approved' || $request->status->jusour[0]->status == 'Rejected')) &&
-                ($this->user->level?->level == $this->user->roles->pluck('approval_levels')->first())
-            ){
-                throw new RequestInvalidException();
+            if((isset($request->status['jusour'][0]['status']) &&
+                ($request->status['jusour'][0]['status'] == 'Approved' || $request->status['jusour'][0]['status'] == 'Rejected')))
+            {
+                throw new RequestInvalidException('Request status has already '.$request->status['jusour'][0]['status']);
             }
         }
 
@@ -525,17 +527,17 @@ class RequestsService extends BaseService
 
             $stage = ucfirst($type);
 
-            if($this->status == 'Rejected' && $this->user->roles->pluck('approval_levels')->first() == $this->user->level?->level) {
+            if($this->status == 'Rejected' && $this->user->levels->pluck('level')->first() == $this->user->roles->pluck('approval_levels')->first()) {
                 $this->createOrUpdateStageStatus('Application',$this->requestId, $metaData);
             }
 
             if($this->status == 'Rejected' || $this->status == 'Approved'){
-                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','<=',$this->user?->level?->level);
+                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','<=',$this->user->levels->pluck('level')->first());
                 foreach ($users as $key => $value) {
                     $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
                 }
 
-                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','>',$this->user?->level?->level);
+                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','>',$this->user->levels->pluck('level')->first());
                 $this->status = 'Under Review';
                 foreach ($users as $key => $value) {
                     $this->createOrUpdateStageStatus($stage,$this->requestId, [], $value->id);

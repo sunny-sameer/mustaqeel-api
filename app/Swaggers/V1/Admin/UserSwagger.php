@@ -8,7 +8,7 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Tag(
  *     name="Admin Users",
- *     description="All Admin-related APIs Users"
+ *     description="All Admin-related APIs Users, Roles and Permissions"
  * )
  *
  *
@@ -188,7 +188,18 @@ use OpenApi\Annotations as OA;
  *                         )
  *                     )
  *                 )
- *             )
+ *             ),
+ *              @OA\Property(
+ *                  property="permissions",
+ *                  type="array",
+ *                  nullable=true,
+ *                  description="Permissions assigned to this role.",
+ *                  @OA\Items(
+ *                      type="string",
+ *                      example="view-dashboard",
+ *                      description="Permission name, which should exist in the 'permissions' table."
+ *                  )
+ *              )
  *         )
  *     ),
  *
@@ -343,7 +354,18 @@ use OpenApi\Annotations as OA;
  *                         )
  *                     )
  *                 )
- *             )
+ *             ),
+ *             @OA\Property(
+ *                  property="permissions",
+ *                  type="array",
+ *                  nullable=true,
+ *                  description="Permissions assigned to this role.",
+ *                  @OA\Items(
+ *                      type="string",
+ *                      example="view-dashboard",
+ *                      description="Permission name, which should exist in the 'permissions' table."
+ *                  )
+ *              )
  *         )
  *     ),
  *
@@ -389,6 +411,255 @@ use OpenApi\Annotations as OA;
  *         response=404,
  *         description="User not found"
  *     )
+ * )
+ *
+ *
+ * // Role Endpoints
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/roles",
+ *     tags={"Admin Users"},
+ *     summary="Get all Role",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Response(response=200, description="OK")
+ * )
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/roles/{rId}",
+ *     tags={"Admin Users"},
+ *     summary="Get a single Role by ID",
+ *     description="Returns Role details for the given ID And Role",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="rId",
+ *         in="path",
+ *         description="ID of the Role",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Role found"
+ *     )
+ * )
+ *
+ * @OA\Post(
+ *     path="/api/v1/admin/roles",
+ *     tags={"Admin Users"},
+ *     summary="Create a new Role",
+ *     description="Creates a new Role with given data",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="Create Role request payload.",
+ *          @OA\JsonContent(
+ *              type="object",
+ *              required={"name","type","approvalLevels"},
+ *              @OA\Property(
+ *                  property="name",
+ *                  type="string",
+ *                  minLength=3,
+ *                  maxLength=50,
+ *                  example="Muhammad Talha",
+ *                  description="Role name. Must be unique, contain only lowercase letters, numbers, and specific punctuation, and be between 3-50 characters."
+ *              ),
+ *
+ *              @OA\Property(
+ *                  property="type",
+ *                  type="string",
+ *                  enum={"jusour","applicant","entity"},
+ *                  example="jusour",
+ *                  description="Role type. Must be one of: 'jusour', 'applicant', 'entity'."
+ *              ),
+ *
+ *              @OA\Property(
+ *                  property="approvalLevels",
+ *                  type="integer",
+ *                  description="Approval level is required."
+ *              ),
+ *
+ *              @OA\Property(
+ *                  property="permissions",
+ *                  type="array",
+ *                  nullable=true,
+ *                  description="Permissions assigned to this role.",
+ *                  @OA\Items(
+ *                      type="string",
+ *                      example="view-dashboard",
+ *                      description="Permission name, which should exist in the 'permissions' table."
+ *                   )
+ *              )
+ *          )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=201,
+ *         description="Role created successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ * @OA\Put(
+ *     path="/api/v1/admin/roles/{rId}",
+ *     tags={"Admin Users"},
+ *     summary="Update a Role by ID",
+ *     description="Updates an existing Role",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="rId",
+ *         in="path",
+ *         required=true,
+ *         description="ID of the Role to update",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="Update Role request payload.",
+ *          @OA\JsonContent(
+ *              type="object",
+ *              required={"name","type","approvalLevels"},
+ *              @OA\Property(
+ *                  property="name",
+ *                  type="string",
+ *                  minLength=3,
+ *                  maxLength=50,
+ *                  example="Muhammad Talha",
+ *                  description="Role name. Must be unique, contain only lowercase letters, numbers, and specific punctuation, and be between 3-50 characters."
+ *              ),
+ *
+ *              @OA\Property(
+ *                  property="type",
+ *                  type="string",
+ *                  enum={"jusour","applicant","entity","other"},
+ *                  example="jusour",
+ *                  description="Role type. Must be one of: 'jusour', 'applicant', 'entity'."
+ *              ),
+ *
+ *              @OA\Property(
+ *                  property="approvalLevels",
+ *                  type="integer",
+ *                  description="Approval level is required."
+ *              ),
+ *
+ *              @OA\Property(
+ *                  property="permissions",
+ *                  type="array",
+ *                  nullable=true,
+ *                  description="Permissions assigned to this role.",
+ *                  @OA\Items(
+ *                      type="string",
+ *                      example="view-dashboard",
+ *                      description="Permission name, which should exist in the 'permissions' table."
+ *                   )
+ *              )
+ *          )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Role updated successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Role not found"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ * @OA\Delete(
+ *     path="/api/v1/admin/roles/{rId}",
+ *     tags={"Admin Users"},
+ *     summary="Delete a Role by ID",
+ *     description="Deletes the Role identified by the given ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="rId",
+ *         in="path",
+ *         description="ID of the Role to delete",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Role deleted successfully (no content)"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Role not found"
+ *     )
+ * )
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/roles-by-type/{type}",
+ *     tags={"Admin Users"},
+ *     summary="Get a all Roles and it's levels by Type",
+ *     description="Returns Role details and it's levels for the given Type",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="type",
+ *         in="path",
+ *         description="Type of the Role",
+ *         required=true,
+ *         @OA\Schema(type="string")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Role found"
+ *     )
+ * )
+ *
+ *
+ * // Permission Endpoints
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/permissions",
+ *     tags={"Admin Users"},
+ *     summary="Get all Permissions",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Response(response=200, description="OK")
+ * )
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/permissions/roles/{rId}",
+ *     tags={"Admin Users"},
+ *     summary="Get permissions by role ID",
+ *     description="Get the permissions identified by the given role ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="rId",
+ *         in="path",
+ *         description="ID of the role to get permissions",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="OK")
+ * )
+ *
+ *
+ * @OA\Get(
+ *     path="/api/v1/admin/permissions/users/{uId}",
+ *     tags={"Admin Users"},
+ *     summary="Get permissions by user ID",
+ *     description="Get the permissions identified by the given user ID",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="uId",
+ *         in="path",
+ *         description="ID of the user to get permissions",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="OK")
  * )
  */
 

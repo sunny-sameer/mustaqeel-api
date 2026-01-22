@@ -97,8 +97,38 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         $q->where('name', 'Jusour');
                     });
                 });
-                $q->whereHas('user.level', function ($q) use ($adminRole) {
+                $q->whereHas('user.levels', function ($q) use ($adminRole) {
                     $q->where('level', $adminRole->approval_levels);
+                });
+            });
+
+            $getUserMetas =  getUserMetas();
+            $getEntityRoles = getEntityRoles();
+            $req = $req->where(function ($query1) use ($getUserMetas,$getEntityRoles){
+                $query1->where(function ($query2) use ($getUserMetas,$getEntityRoles){
+                    if(in_array('incubator',$getEntityRoles)){
+                        $query2->whereHas('category', function ($query){
+                            $query->where('value','ent');
+                        })->whereHas('incubator', function ($query) use ($getUserMetas){
+                            $query->whereIn('value',$getUserMetas['incubators']);
+                        });
+                    }
+                })->orWhere(function ($query2) use ($getUserMetas,$getEntityRoles){
+                    if(in_array('entity',$getEntityRoles)){
+                        $query2->whereHas('category', function ($query){
+                            $query->where('value','tal');
+                        })->whereHas('entity', function ($query) use ($getUserMetas){
+                            $query->whereIn('value',$getUserMetas['entities']);
+                        })->whereHas('activity', function ($query) use ($getUserMetas){
+                            $query->whereIn('value',$getUserMetas['activities']);
+                        })->where(function ($query) use ($getUserMetas) {
+                            $query->whereDoesntHave('subActivity')
+                            ->orWhereHas('subActivity', function ($q) use ($getUserMetas) {
+                                $q->whereIn('value', $getUserMetas['subActivities']);
+                            });
+                        });
+                    }
+
                 });
             });
         }
@@ -228,8 +258,39 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         $q->where('name', 'Jusour');
                     });
                 });
-                $q->whereHas('user.level', function ($q) use ($adminRole) {
+                $q->whereHas('user.levels', function ($q) use ($adminRole) {
                     $q->where('level', $adminRole->approval_levels);
+                });
+            });
+
+
+            $getUserMetas =  getUserMetas();
+            $getEntityRoles = getEntityRoles();
+            $req = $req->where(function ($query1) use ($getUserMetas,$getEntityRoles){
+                $query1->where(function ($query2) use ($getUserMetas,$getEntityRoles){
+                    if(in_array('incubator',$getEntityRoles)){
+                        $query2->whereHas('category', function ($query){
+                            $query->where('value','ent');
+                        })->whereHas('incubator', function ($query) use ($getUserMetas){
+                            $query->whereIn('value',$getUserMetas['incubators']);
+                        });
+                    }
+                })->orWhere(function ($query2) use ($getUserMetas,$getEntityRoles){
+                    if(in_array('entity',$getEntityRoles)){
+                        $query2->whereHas('category', function ($query){
+                            $query->where('value','tal');
+                        })->whereHas('entity', function ($query) use ($getUserMetas){
+                            $query->whereIn('value',$getUserMetas['entities']);
+                        })->whereHas('activity', function ($query) use ($getUserMetas){
+                            $query->whereIn('value',$getUserMetas['activities']);
+                        })->where(function ($query) use ($getUserMetas) {
+                            $query->whereDoesntHave('subActivity')
+                            ->orWhereHas('subActivity', function ($q) use ($getUserMetas) {
+                                $q->whereIn('value', $getUserMetas['subActivities']);
+                            });
+                        });
+                    }
+
                 });
             });
         }
@@ -313,9 +374,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 'status' => $requestStatus?->stageStatus?->name ?? 'Under Review',
                 'stage' => $requestStatus?->requestStage?->stage?->name ?? $stage->name,
                 'username' => $requestStatus?->user?->name ?? null,
-                'role' => $requestStatus?->user?->roles->pluck('name')->first() ?? null,
-                'totalLevels' => $requestStatus?->user?->roles->pluck('approval_levels')->first() ?? null,
-                'userLevel' => $requestStatus?->user?->level?->level
+                'levels' => $requestStatus?->user?->levels?->map(fn ($level) => [
+                    'name' => $level->name,
+                    'level' => $level->level,
+                    'role'  => $level?->role?->name,
+                    'totalLevels' => $level?->role?->approval_levels,
+                ])->values(),
             ];
         }
 
@@ -344,9 +408,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         'status' => $value?->stageStatus?->name ?? 'Under Review',
                         'stage' => $value?->requestStage?->stage?->name ?? $stage->name,
                         'username' => $value?->user?->name,
-                        'role' => $value?->user?->roles->pluck('name')->first(),
-                        'totalLevels' => $value?->user?->roles->pluck('approval_levels')->first(),
-                        'userLevel' => $value?->user?->level?->level,
+                        'levels' => $value?->user?->levels?->map(fn ($level) => [
+                            'name' => $level->name,
+                            'level' => $level->level,
+                            'role'  => $level?->role?->name,
+                            'totalLevels' => $level?->role?->approval_levels,
+                        ])->values(),
                         'meta' => $value?->meta ? json_decode($value->meta) : [],
                     ];
                 }
@@ -355,9 +422,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     'status' => 'Under Review',
                     'stage' => $stage->name,
                     'username' => null,
-                    'role' => null,
-                    'totalLevels' => null,
-                    'userLevel' => null,
+                    'levels' => null,
                     'meta' => [],
                 ];
             }
@@ -490,8 +555,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         $q->where('name', 'Entity');
                     });
                 });
-                $q->whereHas('user.level', function ($q) use ($entityRole) {
-                    $q->where('level', $entityRole->approval_levels);
+                $q->whereHas('user.levels', function ($q) use ($entityRole) {
+                    $q->where('levels', $entityRole->approval_levels);
                 });
             })->count();
 

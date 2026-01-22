@@ -14,7 +14,8 @@ class UserUpdateRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    protected $approvals = '';
+    protected $approvals = [];
+    protected $approval = '';
     public function authorize(): bool
     {
         return true;
@@ -46,11 +47,10 @@ class UserUpdateRequest extends FormRequest
             'personalInfo.status' => 'required|in:active,inactive,disable',
         ];
 
-        $role = $this->route('role');
-
-        $rules['level'] = '';
-        $rules['level.name'] = '';
-        $rules['level.position'] = '';
+        $rules['level'] = 'required|array';
+        $rules['level.*.name'] = '';
+        $rules['level.*.position'] = '';
+        $rules['level.*.role'] = 'required|exists:roles,name';
 
         $rules['identificationData'] = '';
         $rules['identificationData.entities'] = '';
@@ -59,36 +59,52 @@ class UserUpdateRequest extends FormRequest
         $rules['identificationData.entities.*.activities.*.slug'] = '';
         $rules['identificationData.entities.*.activities.*.subActivities'] = '';
         $rules['identificationData.entities.*.activities.*.subActivities.*'] = '';
+        $rules['identificationData.incubators'] = '';
+        $rules['identificationData.incubators.*.slug'] = '';
 
-        $roleData = Role::where('name',$role)->first();
-
-        if(isset($roleData->approval_levels) && $roleData->approval_levels > 0){
-            for ($i=1; $i <=$roleData->approval_levels ; $i++) {
-                if($i == $roleData->approval_levels){
-                    $this->approvals = $this->approvals.$i;
-                }else{
-                    $this->approvals = $this->approvals.$i.',';
+        $roles = [];
+        foreach ($this->input('level') as $key => $value) {
+            $roleData = Role::where('name',$value['role'])->first();
+            array_push($roles,$value['role']);
+            $this->approval = '';
+            if(isset($roleData->approval_levels) && $roleData->approval_levels > 0){
+                for ($i=1; $i <=$roleData->approval_levels ; $i++) {
+                    if($i == $roleData->approval_levels){
+                        $this->approval = $this->approval.$i;
+                        $this->approvals[$key]['approval'] = $this->approval;
+                    }else{
+                        $this->approval = $this->approval.$i.',';
+                        $this->approvals[$key]['approval'] = $this->approval;
+                    }
                 }
-            }
-            if(!empty($this->approvals)){
-                $rules['level'] = 'required|array';
-                $rules['level.name'] = 'required|min:3|max:50|regex:/^[a-z- ]+$/u';
-                $rules['level.position'] = 'required|in:'.$this->approvals;
+                if(!empty($this->approvals)){
+                    $rules['level.'.$key.'.name'] = 'required|min:3|max:50|regex:/^[a-z- ]+$/u';
+                    $rules['level.'.$key.'.position'] = 'required|in:'.$this->approvals[$key]['approval'];
+                }
             }
         }
 
+        $type = $this->route('role');
 
-        if($role == 'entity'){
+        if($type == 'entity'){
             $rules['identificationData'] = 'required|array';
+            if(in_array('entity',$roles)){
+                $rules['identificationData.entities'] = 'required|array';
+                $rules['identificationData.entities.*.slug'] = 'required|exists:entities,slug';
 
-            $rules['identificationData.entities'] = 'required|array';
-            $rules['identificationData.entities.*.slug'] = 'required|exists:entities,slug';
+                $rules['identificationData.entities.*.activities'] = 'required|array';
+                $rules['identificationData.entities.*.activities.*.slug'] = 'required|exists:activities,slug';
 
-            $rules['identificationData.entities.*.activities'] = 'required|array';
-            $rules['identificationData.entities.*.activities.*.slug'] = 'required|exists:activities,slug';
-
-            $rules['identificationData.entities.*.activities.*.subActivities'] = 'nullable|array';
-            $rules['identificationData.entities.*.activities.*.subActivities.*'] = 'nullable|exists:sub_activities,slug';
+                $rules['identificationData.entities.*.activities.*.subActivities'] = 'nullable|array';
+                $rules['identificationData.entities.*.activities.*.subActivities.*'] = 'nullable|exists:sub_activities,slug';
+            }
+            if(in_array('incubator',$roles)){
+                $rules['identificationData.incubators'] = 'required|array';
+                $rules['identificationData.incubators.*.slug'] = 'required|exists:incubators,slug';
+            }
+        }else if($type == 'jusour'){
+            $rules['permissions'] = 'required|array';
+            $rules['permissions.*'] = 'required|exists:permissions,name';
         }
 
         return $rules;
@@ -96,7 +112,7 @@ class UserUpdateRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+        $messages = [
             'personalInfo.required' => 'The personal info array is required.',
             'personalInfo.array' => 'The personal info must be an array.',
 
@@ -132,13 +148,15 @@ class UserUpdateRequest extends FormRequest
             'level.required' => 'The level array is required.',
             'level.array' => 'The level must be an array.',
 
-            'level.name.required' => 'The name of level is required.',
-            'level.name.min' => 'The name of level must be at least :min characters.',
-            'level.name.max' => 'The name of level may not be greater than :max characters.',
-            'level.name.regex' => 'The name of level may only contains small letters and hyphen(-).',
+            'level.*.name.required' => 'The name of level is required.',
+            'level.*.name.min' => 'The name of level must be at least :min characters.',
+            'level.*.name.max' => 'The name of level may not be greater than :max characters.',
+            'level.*.name.regex' => 'The name of level may only contains small letters and hyphen(-).',
 
-            'level.position.required' => 'The position of level is required.',
-            'level.position.in' => 'The position of level must be one of the following: '.$this->approvals.'.',
+            'level.*.position.required' => 'The position of level is required.',
+
+            'level.*.role.required' => 'The role is required.',
+            'level.*.role.exists' => 'The role is not valid.',
 
             'identificationData.required' => 'The identification data array is required.',
             'identificationData.array' => 'The identification data must be an array.',
@@ -158,7 +176,24 @@ class UserUpdateRequest extends FormRequest
             'identificationData.entities.*.activities.*.subActivities.array' => 'The sub activity must be an array.',
 
             'identificationData.entities.*.activities.*.subActivities.*.exists' => 'The sub activity is not valid.',
+
+            'identificationData.incubators.required' => 'The incubator array is required.',
+            'identificationData.incubators.array' => 'The incubator must be an array.',
+
+            'identificationData.incubators.*.slug.required' => 'Atleast one incubator is required.',
+            'identificationData.incubators.*.slug.exists' => 'The incubator is not valid.',
+
+            'permissions.required' => 'The permission array is required.',
+            'permissions.array' => 'The permission must be an array.',
+            'permissions.*.required' => 'Atleast one permission is required.',
+            'permissions.*' => 'One or more permissions are invalid. Please submit the existence permissions.'
         ];
+
+        foreach ($this->approvals as $key => $value) {
+            $messages['level.'.$key.'.position.in'] = 'The position of level must be one of the following: '.$value['approval'].'.';
+        }
+
+        return $messages;
     }
 
     /**

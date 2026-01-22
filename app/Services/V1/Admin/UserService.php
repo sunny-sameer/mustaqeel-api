@@ -2,6 +2,7 @@
 
 namespace App\Services\V1\Admin;
 
+use App\DTOs\V1\User\RoleDTO;
 use App\DTOs\V1\User\UserDTO;
 use App\DTOs\V1\User\UserMetaDataDTO;
 use App\Exceptions\BadRequestException;
@@ -35,11 +36,20 @@ class UserService extends BaseService
 
     public function roleExists($role)
     {
-        $roleData = Role::where('name',$role)->first();
-        if ($roleData === null) {
+        $roleCount = Role::where('type',$role)->count();
+        if ($roleCount === 0) {
             throw new RoleNotFoundException('Invalid path or route.');
         }
         $this->role = $role;
+        return $this;
+    }
+
+    public function roleExistsById($roleId)
+    {
+        $role = $this->usersInterface->getRole($roleId);
+        if ($role === null) {
+            throw new RoleNotFoundException('Invalid path or route.');
+        }
         return $this;
     }
 
@@ -51,10 +61,21 @@ class UserService extends BaseService
 
     public function userExists()
     {
-        $this->user = User::with('level')->find(auth()->id());
+        $this->user = User::with('levels')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
+        }
+
+        return $this;
+    }
+
+    public function userExistsById($userId)
+    {
+        $user = User::find($userId);
+
+        if ($user === null) {
+            throw new UserNotFoundException('Invalid path or route.');
         }
 
         return $this;
@@ -87,10 +108,16 @@ class UserService extends BaseService
         try {
             $userData = UserDTO::fromRequest($this->requests)->toArray();
             $response = $this->usersInterface->store($userData);
-            $response->assignRole($this->role);
+            $roles = [];
+            foreach ($this->requests->level as $key => $value) {
+                array_push($roles,$value['role']);
+            }
 
-            if(isset($this->requests->level) && $this->role !== 'applicant'){
-                $response->assignLevel($this->requests->level['name'],$this->requests->level['position']);
+            $response->assignRole($roles);
+
+
+            if(isset($this->requests->level) && !in_array('applicant',$roles)){
+                $response->assignMultiLevel($this->requests->level);
             }
 
             if(isset($this->requests->identificationData) && $this->role == 'entity'){
@@ -98,10 +125,15 @@ class UserService extends BaseService
                 $response->metaData()->create($metaData);
             }
 
+            if(isset($this->requests->permissions) && $this->role == 'jusour'){
+                $response->givePermissionTo($this->requests->permissions);
+            }
+
             DB::commit();
 
+            $user = $this->usersInterface->showUserByRole($this->role,$response->id);
             return $this->success(
-                data: ['user' => $response],
+                data: ['user' => $user],
                 message: ucfirst($this->role).' created successfully'
             );
         } catch (BadRequestException $e) {
@@ -126,10 +158,16 @@ class UserService extends BaseService
             }
             $userData = UserDTO::fromRequest($this->requests,$user->id)->toArray();
             $response = $this->usersInterface->update($id,$userData);
-            $response->assignRole($this->role);
 
-            if(isset($this->requests->level) && $this->role !== 'applicant'){
-                $response->assignLevel($this->requests->level['name'],$this->requests->level['position']);
+            $roles = [];
+            foreach ($this->requests->level as $key => $value) {
+                array_push($roles,$value['role']);
+            }
+
+            $response->syncRoles($roles);
+
+            if(isset($this->requests->level) && !in_array('applicant',$roles)){
+                $response->assignMultiLevel($this->requests->level);
             }
 
             if(isset($this->requests->identificationData) && $this->role == 'entity'){
@@ -137,10 +175,15 @@ class UserService extends BaseService
                 $response->metaData()->update($metaData);
             }
 
+            if(isset($this->requests->permissions) && $this->role == 'jusour'){
+                $response->syncPermissions($this->requests->permissions);
+            }
+
             DB::commit();
 
+            $user = $this->usersInterface->showUserByRole($this->role,$response->id);
             return $this->success(
-                data: ['user' => $response],
+                data: ['user' => $user],
                 message: ucfirst($this->role).' updated successfully'
             );
         } catch (BadRequestException $e) {
@@ -164,15 +207,11 @@ class UserService extends BaseService
                 throw new UserNotFoundException('No '.$this->role.' found.');
             }
 
-            if(isset($user->level) && $user->roles->pluck('name')->first() !== 'applicant'){
-                $user->level()->delete();
-            }
-
-            if(isset($user->metaData) && $user->roles->pluck('name')->first() == 'entity'){
+            if(isset($user->metaData) && $this->role == 'entity'){
                 $user->metaData()->delete();
             }
 
-            if($user->roles->pluck('name')->first() == 'applicant'){
+            if($this->role == 'applicant'){
                 $user->profile()->delete();
                 $user->communication()->delete();
                 $user->passport()->delete();
@@ -197,5 +236,141 @@ class UserService extends BaseService
                 statusCode: 500
             );
         }
+    }
+
+    public function getAllRoles()
+    {
+        $role = $this->usersInterface->getAllRoles($this->requests);
+
+        return $this->success(
+            data: ['role' => $role],
+            message: 'Roles fetched successfully'
+        );
+    }
+
+    public function getRole($id)
+    {
+        $role = $this->usersInterface->getRole($id);
+
+        return $this->success(
+            data: ['role' => $role],
+            message: 'Role fetched successfully'
+        );
+    }
+
+    public function createRole()
+    {
+        DB::beginTransaction();
+
+        try {
+            $roleData = RoleDTO::fromRequest($this->requests)->toArray();
+            $permissions = $this->requests?->permissions;
+            $response = $this->usersInterface->createRole($roleData,$permissions);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['role' => $response],
+                message: 'Role created successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Role creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function updateRole($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $roleData = RoleDTO::fromRequest($this->requests)->toArray();
+            $permissions = $this->requests?->permissions;
+            $response = $this->usersInterface->updateRole($roleData,$permissions,$id);
+
+            DB::commit();
+
+            return $this->success(
+                data: ['role' => $response],
+                message: 'Role updated successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Role updation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function deleteRole($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $role = $this->usersInterface->getRole($id);
+            $this->usersInterface->deleteRole($id);
+            DB::commit();
+
+            return $this->success(
+                data: ['role' => $role],
+                message: 'Role deleted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Role deletion failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function getRolesByType($type)
+    {
+        $role = $this->usersInterface->getRolesByType($type);
+
+        return $this->success(
+            data: ['role' => $role],
+            message: 'Roles by type fetched successfully'
+        );
+    }
+
+    public function getAllPermissions()
+    {
+        $permissions = $this->usersInterface->getAllPermissions();
+
+        return $this->success(
+            data: ['permissions' => $permissions],
+            message: 'Permissions fetched successfully'
+        );
+    }
+
+    public function getAllRolePermissions($roleId)
+    {
+        $permissions = $this->usersInterface->getAllRolePermissions($roleId);
+
+        return $this->success(
+            data: ['permissions' => $permissions],
+            message: 'Role Permissions fetched successfully'
+        );
+    }
+
+    public function getAllUserPermissions($userId)
+    {
+        $permissions = $this->usersInterface->getAllUserPermissions($userId);
+
+        return $this->success(
+            data: ['permissions' => $permissions],
+            message: 'User Permissions fetched successfully'
+        );
     }
 }
