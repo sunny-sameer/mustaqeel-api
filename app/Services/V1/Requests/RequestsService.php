@@ -36,6 +36,7 @@ use App\Exceptions\RequestInvalidException;
 use App\Exceptions\RequestNotExistException;
 use App\Exceptions\RequestQcAlreadyExistException;
 use App\Exceptions\RequestQcNotExistException;
+use App\Exceptions\StageStatusNotFoundException;
 use App\Exceptions\UserNotFoundException;
 
 
@@ -69,7 +70,7 @@ class RequestsService extends BaseService
     private ?object $requestsQc = null;
     private ?string $requestId = null;
     private ?string $referenceNumber = null;
-    private ?string $status = 'Under Review';
+    private ?string $status = 'ur';
 
 
     public function __construct(
@@ -121,7 +122,6 @@ class RequestsService extends BaseService
     {
         $this->requests = $request;
         $this->requestId = $id;
-        $this->status = $request->status;
         return $this;
     }
 
@@ -136,14 +136,14 @@ class RequestsService extends BaseService
     {
         $this->requests = $request;
         $this->requestId = $request->id;
-        $this->status = 'Draft';
+        $this->status = 'dra';
         return $this;
     }
 
     public function setReuploadInputsDocument(ReuploadDocumentRequest $request, $id)
     {
         $this->requests = $request;
-        $this->status = 'Reupload Documents Requested';
+        $this->status = 'rdr';
         $this->requestId = $id;
         return $this;
     }
@@ -152,6 +152,20 @@ class RequestsService extends BaseService
     {
         $this->requests = $request;
         $this->requestId = $request->requestId;
+        return $this;
+    }
+
+    public function stageStatus($status)
+    {
+        $type = $this->user->roles->pluck('type')->first();
+        $stage = substr($type, 0, 3);
+
+        $slug = $this->genericInterface->getStatusWithStage($stage,$status);
+        if(!$slug){
+            throw new StageStatusNotFoundException();
+        }
+
+        $this->status = $slug;
         return $this;
     }
 
@@ -234,18 +248,18 @@ class RequestsService extends BaseService
         $type = $this->user->roles->pluck('type')->first();
 
         if($type == 'entity'){
-            if((isset($request->status['jusour'][0]['status']) && $request->status['jusour'][0]['status'] == 'Approved'))
+            if((isset($request->status['jusour'][0]['slug']) && $request->status['jusour'][0]['slug'] == 'app'))
             {
-                if((isset($request->status['entity'][0]['status']) &&
-                ($request->status['entity'][0]['status'] == 'Approved' || $request->status['entity'][0]['status'] == 'Rejected'))){
+                if((isset($request->status['entity'][0]['slug']) &&
+                ($request->status['entity'][0]['slug'] == 'app' || $request->status['entity'][0]['slug'] == 'rej'))){
                     throw new RequestInvalidException('Request status has already '.$request->status['entity'][0]['status']);
                 }
             } else {
                 throw new RequestNotExistException();
             }
         }else if($type == 'jusour'){
-            if((isset($request->status['jusour'][0]['status']) &&
-                ($request->status['jusour'][0]['status'] == 'Approved' || $request->status['jusour'][0]['status'] == 'Rejected')))
+            if((isset($request->status['jusour'][0]['slug']) &&
+                ($request->status['jusour'][0]['slug'] == 'app' || $request->status['jusour'][0]['slug'] == 'rej')))
             {
                 throw new RequestInvalidException('Request status has already '.$request->status['jusour'][0]['status']);
             }
@@ -321,12 +335,12 @@ class RequestsService extends BaseService
             $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData, $request->id);
 
 
-            $this->createOrUpdateStageStatus('Application', $request->id);
+            $this->createOrUpdateStageStatus('app', $request->id);
 
             DB::commit();
 
             $response =  $this->requestsInterface->getRequest($request->id);
-            $message = $this->status = 'Draft' ? 'Request partially created successfully' : 'Request created successfully';
+            $message = $this->status = 'dra' ? 'Request partially created successfully' : 'Request created successfully';
             return $this->success(
                 data: ['request' => $response],
                 message: $message
@@ -390,14 +404,18 @@ class RequestsService extends BaseService
         }
     }
 
-    public function createOrUpdateStageStatus($stageName, $reqId, $metaData = [], $userId = null)
+    public function createOrUpdateStageStatus($stageSlug, $reqId, $metaData = [], $userId = null)
     {
-        $stage = $this->requestsInterface->getStage(['name' => $stageName]);
+        $stage = $this->requestsInterface->getStage(['slug' => $stageSlug]);
         $data = ['reqId' => $reqId, 'stageSlug' => $stage->slug];
         $requestStageData = RequestStageDTO::fromRequest($data)->toArray();
         $requestStage = $this->requestsInterface->createRequestStage($data, $requestStageData);
 
-        $stageStatus = $this->requestsInterface->getStageStatus(['stageId' => $stage->id, 'name' => $this->status]);
+        $stageStatus = $this->requestsInterface->getStageStatus('stageId', $stage->id, 'slug', $this->status);
+
+        if(!$stageStatus){
+            throw new StageStatusNotFoundException('Invalid status.');
+        }
 
         $meta = [];
         if (!empty($metaData)) {
@@ -415,21 +433,21 @@ class RequestsService extends BaseService
             'meta' => $meta,
         ];
 
-        if($this->status == 'Approved' || $this->status == 'Rejected'){
+        if($this->status == 'app' || $this->status == 'rej'){
             $data2['endDate'] = Carbon::now()->format('Y-m-d');
         }
 
-        if ($stageName == 'Application') {
+        if ($stageSlug == 'app') {
             $request = $this->requestsInterface->show($reqId);
             $data2['userId'] = $request->userId;
             $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
-            $this->requestsInterface->createRequestStageStatus($data2, $requestStatusData, $this->status);
+            $this->requestsInterface->createRequestStageStatus(['reqStageId' => $requestStage->id, 'stageStatusSlug' => $stageStatus->slug, 'userId' => $request->userId], $requestStatusData, $this->status);
         }else{
             $user = $this->usersInterface->getUserById($data2['userId']);
             $getUserRequestStatusExistence = $this->requestsInterface->getUserRequestStatus($reqId,$user);
             if(!isset($getUserRequestStatusExistence->id) || (isset($getUserRequestStatusExistence->id) && empty($getUserRequestStatusExistence->endDate))){
                 $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
-                $this->requestsInterface->createRequestStageStatus($data2, $requestStatusData, $this->status);
+                $this->requestsInterface->createRequestStageStatus(['reqStageId' => $requestStage->id, 'stageStatusSlug' => $stageStatus->slug, 'userId' => $userId ?? auth()->id()], $requestStatusData, $this->status);
             }
         }
 
@@ -525,20 +543,20 @@ class RequestsService extends BaseService
                 ]];
             }
 
-            $stage = ucfirst($type);
+            $stage = substr($type, 0, 3);
 
-            if($this->status == 'Rejected' && $this->user->levels->pluck('level')->first() == $this->user->roles->pluck('approval_levels')->first()) {
-                $this->createOrUpdateStageStatus('Application',$this->requestId, $metaData);
+            if($this->status == 'rej' && $this->user->levels->pluck('level')->first() == $this->user->roles->pluck('approval_levels')->first()) {
+                $this->createOrUpdateStageStatus('app',$this->requestId, $metaData);
             }
 
-            if($this->status == 'Rejected' || $this->status == 'Approved'){
+            if($this->status == 'rej' || $this->status == 'app'){
                 $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','<=',$this->user->levels->pluck('level')->first());
                 foreach ($users as $key => $value) {
                     $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
                 }
 
                 $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','>',$this->user->levels->pluck('level')->first());
-                $this->status = 'Under Review';
+                $this->status = 'ur';
                 foreach ($users as $key => $value) {
                     $this->createOrUpdateStageStatus($stage,$this->requestId, [], $value->id);
                 }
@@ -571,8 +589,8 @@ class RequestsService extends BaseService
         DB::beginTransaction();
 
         try {
-            $this->createOrUpdateStageStatus('Application', $this->requestId, $this->requests->reuploadDocument);
-            $this->createOrUpdateStageStatus('Jusour', $this->requestId, $this->requests->reuploadDocument);
+            $this->createOrUpdateStageStatus('app', $this->requestId, $this->requests->reuploadDocument);
+            $this->createOrUpdateStageStatus('jus', $this->requestId, $this->requests->reuploadDocument);
 
             $this->artifactsInterface->updateDocuments($this->requests, $this->requestId, Requests::class);
 
@@ -678,7 +696,7 @@ class RequestsService extends BaseService
 
             $this->requestsInterface->createQc($qcData);
 
-            $this->createOrUpdateStageStatus('Jusour', $this->requestId);
+            $this->createOrUpdateStageStatus('jus', $this->requestId);
 
 
             DB::commit();

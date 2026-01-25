@@ -12,7 +12,7 @@ interface RequestsInterface  extends CoreInterface {
     public function getStage($params = []);
     public function getRequestStage($params = []);
     public function createRequestStage($params = [], $request);
-    public function getStageStatus($params = []);
+    public function getStageStatus($column1,$value1,$column2,$value2);
     public function createRequestStageStatus($params = [], $request, $status);
     public function getRequest($requestId);
     public function getUserRequestStatus($requestId,$user);

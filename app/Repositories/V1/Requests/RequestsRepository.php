@@ -92,9 +92,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $adminRole = Role::where('type','jusour')->first();
             $req = $req->whereHas('requestStage.lastRequestStatus', function ($q) use ($adminRole) {
                 $q->whereHas('stageStatus', function ($q) {
-                    $q->where('name', 'Approved')
+                    $q->where('slug', 'LIKE', 'app%')
                     ->whereHas('stage', function ($q) {
-                        $q->where('name', 'Jusour');
+                        $q->where('slug', 'jus');
                     });
                 });
                 $q->whereHas('user.levels', function ($q) use ($adminRole) {
@@ -213,18 +213,16 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         return $requestStage;
     }
 
-    public function getStageStatus($params = [])
+    public function getStageStatus($column1,$value1,$column2,$value2)
     {
-        $stagesStatuses = $this->stagesStatuses->where($params)->first();
-        if (empty($stagesStatuses)) {
-            $stagesStatuses = $this->stagesStatuses->create($params);
-        }
+        $stagesStatuses = $this->stagesStatuses->where($column1,$value1)
+        ->where($column2,'LIKE',$value2.'%')->first();
         return $stagesStatuses;
     }
 
     public function createRequestStageStatus($params = [], $request, $status)
     {
-        if ($status === "Draft") {
+        if ($status === "dra") {
             return $this->requestStatuses->updateOrCreate($params, $request);
         }
         return $this->requestStatuses->create($request);
@@ -253,9 +251,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $adminRole = Role::where('type','jusour')->first();
             $req = $req->whereHas('requestStage.lastRequestStatus', function ($q) use ($adminRole) {
                 $q->whereHas('stageStatus', function ($q) {
-                    $q->where('name', 'Approved')
+                    $q->where('slug', 'LIKE', 'app%')
                     ->whereHas('stage', function ($q) {
-                        $q->where('name', 'Jusour');
+                        $q->where('slug', 'jus');
                     });
                 });
                 $q->whereHas('user.levels', function ($q) use ($adminRole) {
@@ -372,6 +370,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             $key = Str::lower($stage->name);
             $data[$key] = [
                 'status' => $requestStatus?->stageStatus?->name ?? 'Under Review',
+                'slug' => $requestStatus?->stageStatus?->slug ?? 'ur',
                 'stage' => $requestStatus?->requestStage?->stage?->name ?? $stage->name,
                 'username' => $requestStatus?->user?->name ?? null,
                 'levels' => $requestStatus?->user?->levels?->map(fn ($level) => [
@@ -406,6 +405,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 foreach ($requestStatus as $value) {
                     $data[$key][] = [
                         'status' => $value?->stageStatus?->name ?? 'Under Review',
+                        'slug' => $value?->stageStatus?->slug ?? 'ur',
                         'stage' => $value?->requestStage?->stage?->name ?? $stage->name,
                         'username' => $value?->user?->name,
                         'levels' => $value?->user?->levels?->map(fn ($level) => [
@@ -420,6 +420,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             } else {
                 $data[$key][] = [
                     'status' => 'Under Review',
+                    'slug' => 'ur',
                     'stage' => $stage->name,
                     'username' => null,
                     'levels' => null,
@@ -470,19 +471,21 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     $q2->whereHas('metas', function ($query) use ($entitySlug) {
                         $query->where('entitySlug', $entitySlug);
                     })
-                        ->whereHas('metas.activity', function ($query) use ($activitiesIds) {
-                            $query->whereIn('id', $activitiesIds);
-                        })
-                        ->whereHas('requestStage.stage', function ($query) {
-                            $query->where('name', 'Application');
-                        })
-                        ->whereHas('requestStage.requestStatuses.stageStatus', function ($query) {
-                            $query->where('name', 'Rejected');
+                    ->whereHas('metas.activity', function ($query) use ($activitiesIds) {
+                        $query->whereIn('id', $activitiesIds);
+                    })
+                    ->whereHas('requestStage.lastRequestStatus', function ($q){
+                        $q->whereHas('stageStatus', function ($q) {
+                            $q->where('slug', 'LIKE', 'rej%')
+                            ->whereHas('stage', function ($q) {
+                                $q->where('slug', 'app');
+                            });
                         });
-                })
-                    ->orWheredoesntHave('metas', function ($query) use ($entitySlug) {
-                        $query->where('entitySlug', $entitySlug);
                     });
+                })
+                ->orWheredoesntHave('metas', function ($query) use ($entitySlug) {
+                    $query->where('entitySlug', $entitySlug);
+                });
             })
             ->where('userId', auth()->id())->exists();
 
@@ -530,9 +533,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->where('key','category')->where('value',$value->slug);
             })->whereHas('requestStage.lastRequestStatus', function ($q){
                 $q->whereHas('stageStatus', function ($q) {
-                    $q->where('name', 'Rejected')
+                    $q->where('slug', 'LIKE', 'rej%')
                     ->whereHas('stage', function ($q) {
-                        $q->where('name', 'Application');
+                        $q->where('slug', 'app');
                     });
                 });
             })->count();
@@ -550,9 +553,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->where('key','category')->where('value',$value->slug);
             })->whereHas('requestStage.lastRequestStatus', function ($q) use ($entityRole) {
                 $q->whereHas('stageStatus', function ($q) {
-                    $q->where('name', 'Approved')
+                    $q->where('slug', 'LIKE', 'app%')
                     ->whereHas('stage', function ($q) {
-                        $q->where('name', 'Entity');
+                        $q->where('slug', 'ent');
                     });
                 });
                 $q->whereHas('user.levels', function ($q) use ($entityRole) {
@@ -565,9 +568,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->where('key','category')->where('value',$value->slug);
             })->whereHas('requestStage.lastRequestStatus', function ($q){
                 $q->whereHas('stageStatus', function ($q) {
-                    $q->where('name', 'Approved')
+                    $q->where('slug', 'LIKE', 'app%')
                     ->whereHas('stage', function ($q) {
-                        $q->where('name', 'MOL');
+                        $q->where('slug', 'mol');
                     });
                 });
             })->count();
@@ -577,9 +580,9 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->where('key','category')->where('value',$value->slug);
             })->whereHas('requestStage.lastRequestStatus', function ($q){
                 $q->whereHas('stageStatus', function ($q) {
-                    $q->where('name', 'Approved')
+                    $q->where('slug', 'LIKE', 'app%')
                     ->whereHas('stage', function ($q) {
-                        $q->where('name', 'Hayya');
+                        $q->where('name', 'hay');
                     });
                 });
             })->count();

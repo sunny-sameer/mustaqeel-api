@@ -9,6 +9,7 @@ use App\Exceptions\RequestNotExistException;
 use App\Exceptions\RequestQcAlreadyExistException;
 use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\UserNotFoundException;
+use App\Exceptions\StageStatusNotFoundException;
 
 
 use App\Http\Controllers\Api\BaseController;
@@ -39,7 +40,7 @@ class RequestsController extends BaseController
      */
 
 
-    protected $status = 'Draft';
+    protected $status = 'dra';
     protected $requests;
     protected $documentService;
 
@@ -101,7 +102,7 @@ class RequestsController extends BaseController
     public function createRequest(RequestsStoreRequest $request)
     {
         try {
-            $this->status = 'Under Review';
+            $this->status = 'ur';
             return $this->requests
                 ->setInputs($request, $this->status)
                 ->userExists()
@@ -180,15 +181,18 @@ class RequestsController extends BaseController
             return $this->requests
                 ->setInputsUpdateRequestStatus($request, $id)
                 ->userExists()
+                ->stageStatus($request->status)
                 ->requestNotFound()
                 ->requestInvalid()
                 ->updateRequestStatus();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (StageStatusNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
         } catch (RequestNotExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         }  catch (RequestInvalidException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
         } catch (\Exception $e) {

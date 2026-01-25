@@ -78,6 +78,7 @@ interface GenericInterface extends CoreInterface
     public function createStageStatus($data);
     public function updateStageStatus($id, $data);
     public function deleteStageStatus($id);
+    public function getStatusWithStage($stageSlug,$status);
 
     // ===== PIVOTS =====
     public function attachCategoriesToSector($sectorId, $categoryIds);

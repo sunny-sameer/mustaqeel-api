@@ -336,7 +336,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
     public function allStages($request)
     {
         $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
-        return Stages::paginate($paginate);
+        return Stages::orderBy('order','ASC')->paginate($paginate);
     }
     public function findStage($id)
     {
@@ -386,6 +386,18 @@ class GenericRepository extends CoreRepository implements GenericInterface
     public function deleteStageStatus($id)
     {
         return StagesStatuses::findOrFail($id)->delete();
+    }
+    public function getStatusWithStage($stageSlug,$status)
+    {
+        $stageStatus = StagesStatuses::whereHas('stage',function($q)use($stageSlug){
+            $q->where('slug',$stageSlug);
+        })->where('name',$status)->first();
+
+        if(isset($stageStatus->slug)){
+            $slug = explode('-',$stageStatus->slug);
+            return $slug[0];
+        }
+        return null;
     }
 
     // ===== PIVOTS (category_sector / activity_entity) =====
