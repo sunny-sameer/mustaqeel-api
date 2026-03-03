@@ -134,34 +134,65 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Form Fields
+        // Form Fields table
         Schema::create('form_fields', function (Blueprint $table) {
             $table->id();
+
+            // Basic Information
             $table->string('nameEn');
             $table->string('nameAr');
-            $table->string('slug');
-            $table->string('type');
-            $table->longText('meta')->nullable();
+            $table->string('slug')->unique();
+            $table->string('type'); // text, textarea, select, radio, checkbox, file, date, email, number
 
+            // Organization & Layout
+            $table->string('section')->default('general'); // personal-info, employment-education, etc
+            $table->string('group')->default('general');   // identification-data, applicant-info, etc
+            $table->integer('field_order')->default(0);
+            $table->integer('grid_columns')->default(4);   // 1-12 for grid layout
+
+            // Repeatable Groups
+            $table->boolean('repeatable')->default(false);
+            $table->string('repeatable_label')->nullable(); // "Add Previous Job"
+            $table->integer('repeatable_max')->nullable();  // Maximum number of repeats
+
+            // Meta & Conditions
+            $table->longText('meta')->nullable();           // Field-specific config (options, placeholders, validations)
+            $table->json('conditions')->nullable();         // Conditional logic (show/hide based on other fields)
+
+            // Status
             $table->tinyInteger('status')->default(1);
 
+            // Timestamps
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes for better performance
+            $table->index(['section', 'group', 'field_order']);
+            $table->index('status');
+            $table->index('type');
         });
 
+        // Form Field 
         Schema::create('form_field_metas', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('ffId')->constrained('form_fields')->onDelete('cascade');
+            $table->foreignId('ffId')->constrained('form_fields')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('key',50);
-            $table->json('value');
+            // Category hierarchy
+            $table->string('key', 50);                    // category_slug
+            $table->json('value');                          // Stores sub_category, sector, activity, etc.
 
-            $table->string('onshoreOffShore');
+            // Visibility rules
+            $table->string('onshoreOffShore');              // onshore, offshore, both
             $table->boolean('isRequired');
 
+            // Timestamps
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes
+            $table->index('key');
+            $table->index('onshoreOffShore');
         });
     }
 

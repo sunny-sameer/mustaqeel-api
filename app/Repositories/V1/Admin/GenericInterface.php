@@ -62,8 +62,9 @@ interface GenericInterface extends CoreInterface
     public function createFormField($data);
     public function updateFormField($id, $data);
     public function deleteFormField($id);
-
+    
     public function updateOrCreateFormFieldMetaData($data, $formFieldId);
+    public function getFormStructure(array $params);
 
     // ===== STAGES =====
     public function allStages($request);

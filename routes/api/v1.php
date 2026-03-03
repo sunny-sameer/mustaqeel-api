@@ -113,12 +113,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::put('incubators/{incId}', [GenericController::class, 'updateIncubator']);
             Route::delete('incubators/{incId}', [GenericController::class, 'deleteIncubator']);
 
-            // Form Fields
-            Route::get('form-fields', [GenericController::class, 'formFields']);
-            Route::get('form-fields/{ffId}', [GenericController::class, 'formField']);
-            Route::post('form-fields', [GenericController::class, 'createFormField']);
-            Route::put('form-fields/{ffId}', [GenericController::class, 'updateFormField']);
-            Route::delete('form-fields/{ffId}', [GenericController::class, 'deleteFormField']);
+            // ===== FORM FIELDS (Enhanced) =====
+            Route::prefix('form-fields')->group(function () {
+                Route::get('/', [GenericController::class, 'formFields']);           // List all
+                Route::get('/types', [GenericController::class, 'types']);        // Get field types
+                Route::get('/sections', [GenericController::class, 'sections']);  // Get sections
+                Route::get('/{ffId}', [GenericController::class, 'formField']);     // Get single
+                Route::post('/', [GenericController::class, 'createFormField']);    // Create
+                Route::put('/{ffId}', [GenericController::class, 'updateFormField']); // Update
+                Route::delete('/{ffId}', [GenericController::class, 'deleteFormField']); // Delete
+            });
 
             // Stages
             Route::get('stages', [GenericController::class, 'stages']);
@@ -167,6 +171,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
 
+Route::get('/form-structure', [GenericController::class, 'formStructure']);
 
 // Route::get('/test-mail', function () {
 //     try {

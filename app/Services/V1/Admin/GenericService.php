@@ -4,10 +4,13 @@ namespace App\Services\V1\Admin;
 
 use App\DTOs\V1\Requests\FormFieldsDTO;
 use App\DTOs\V1\Requests\FormFieldsMetaDTO;
-
-
+use App\Models\FormFieldMeta;
+use App\Models\FormFields;
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class GenericService
 {
@@ -174,42 +177,40 @@ class GenericService
         return $this->genericInterface->deleteIncubator($id);
     }
 
-    // Form Fields
+    // ===== FORM FIELDS - Now clean and consistent =====
     public function allFormFields($request)
     {
         return $this->genericInterface->allFormFields($request);
     }
+
     public function findFormField($id)
     {
         return $this->genericInterface->findFormField($id);
     }
+
     public function createFormField($data)
     {
-        $formFieldData = FormFieldsDTO::fromRequest($data->all())->toArray();
-        $formField = $this->genericInterface->createFormField($formFieldData);
-
-        $formFieldMetaData = collect(FormFieldsMetaDTO::fromRequest($data, $formField->id))
-            ->map(fn($dto) => $dto->toArray())
-            ->all();
-        $formFieldMeta = $this->genericInterface->updateOrCreateFormFieldMetaData($formFieldMetaData,$formField->id);
-
-        return $this->genericInterface->findFormField($formField->id);
+        return $this->genericInterface->createFormField($data);
     }
+
     public function updateFormField($id, $data)
     {
-        $formFieldData = FormFieldsDTO::fromRequest($data->all())->toArray();
-        $formField = $this->genericInterface->updateFormField($id, $formFieldData);
-
-        $formFieldMetaData = collect(FormFieldsMetaDTO::fromRequest($data, $formField->id))
-            ->map(fn($dto) => $dto->toArray())
-            ->all();
-        $formFieldMeta = $this->genericInterface->updateOrCreateFormFieldMetaData($formFieldMetaData,$formField->id);
-
-        return $this->genericInterface->findFormField($formField->id);
+        return $this->genericInterface->updateFormField($id, $data);
     }
+
     public function deleteFormField($id)
     {
         return $this->genericInterface->deleteFormField($id);
+    }
+
+    public function updateOrCreateFormFieldMetaData($data, $formFieldId)
+    {
+        return $this->genericInterface->updateOrCreateFormFieldMetaData($data, $formFieldId);
+    }
+
+    public function getFormStructure(array $params): array
+    {
+        return $this->genericInterface->getFormStructure($params);
     }
 
     // Stages

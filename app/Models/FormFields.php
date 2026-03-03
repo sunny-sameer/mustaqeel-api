@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\Traits\DisableSnakeAttributes;
 use App\Models\Traits\HasCamelSlug;
 use Illuminate\Database\Eloquent\Model;
@@ -14,8 +15,118 @@ class FormFields extends Model
     protected $table = 'form_fields';
     protected $guarded = [];
 
+    /**
+     * Get the meta data for this field (category rules)
+     */
     public function formMetas()
     {
-        return $this->hasOne(FormFieldMeta::class,'ffId');
+        return $this->hasMany(FormFieldMeta::class, 'ffId');
+    }
+
+    /**
+     * Get field options from meta
+     */
+    protected function options(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->meta['options'] ?? []
+        );
+    }
+
+    /**
+     * Get field validations from meta
+     */
+    protected function validations(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->meta['validations'] ?? []
+        );
+    }
+
+    /**
+     * Get field placeholders from meta
+     */
+    protected function placeholders(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => [
+                'en' => $this->meta['placeholderEn'] ?? null,
+                'ar' => $this->meta['placeholderAr'] ?? null
+            ]
+        );
+    }
+
+    /**
+     * Get field help text from meta
+     */
+    protected function helpText(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => [
+                'en' => $this->meta['helpTextEn'] ?? null,
+                'ar' => $this->meta['helpTextAr'] ?? null
+            ]
+        );
+    }
+
+    /**
+     * Get field tooltip from meta
+     */
+    protected function tooltip(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => [
+                'en' => $this->meta['tooltipEn'] ?? null,
+                'ar' => $this->meta['tooltipAr'] ?? null
+            ]
+        );
+    }
+
+    /**
+     * Check if field has a specific option
+     */
+    public function hasOption(string $key): bool
+    {
+        return isset($this->meta[$key]);
+    }
+
+    /**
+     * Get a specific meta value
+     */
+    public function getMetaValue(string $key, $default = null)
+    {
+        return $this->meta[$key] ?? $default;
+    }
+
+    /**
+     * Scope for active fields
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
+
+    /**
+     * Scope for section
+     */
+    public function scopeInSection($query, string $section)
+    {
+        return $query->where('section', $section);
+    }
+
+    /**
+     * Scope for group
+     */
+    public function scopeInGroup($query, string $group)
+    {
+        return $query->where('group', $group);
+    }
+
+    /**
+     * Scope ordered by field_order
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('field_order');
     }
 }

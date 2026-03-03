@@ -36,12 +36,14 @@ use App\Http\Requests\API\V1\Admin\StageUpdateRequest;
 use App\Http\Requests\API\V1\Admin\StageStatusCreateRequest;
 use App\Http\Requests\API\V1\Admin\StageStatusUpdateRequest;
 
+use Illuminate\Http\JsonResponse;
+
 
 class GenericController extends BaseController
 {
     /**
      * See Swagger annotations in \App\Swaggers\V1\Admin\GenericSwagger
-    */
+     */
 
     public function __construct(private GenericService $service) {}
 
@@ -219,26 +221,142 @@ class GenericController extends BaseController
     }
 
     // ===== FORM FIELDS =====
-    public function formFields(Request $request)
+    public function formFields(Request $request): JsonResponse
     {
-        return response()->json($this->service->allFormFields($request->all()));
+        $fields = $this->service->allFormFields($request->all());
+        return response()->json(['success' => true, 'data' => $fields]);
     }
-    public function formField($id)
+    public function formField(int $id): JsonResponse
     {
-        return response()->json($this->service->findFormField($id));
+        $field = $this->service->findFormField($id);
+
+        if (!$field) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Form field not found'
+            ], 404);
+        }
+        return response()->json(['success' => true, 'data' => $field]);
     }
-    public function createFormField(FormFieldCreateRequest $request)
+    public function createFormField(FormFieldCreateRequest $request): JsonResponse
     {
-        return response()->json($this->service->createFormField($request), 201);
+        try {
+            $field = $this->service->createFormField($request);
+            return response()->json([
+                'success' => true,
+                'message' => 'Form field created successfully',
+                'data' => $field
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create form field',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-    public function updateFormField(FormFieldUpdateRequest $request, $id)
+    public function updateFormField(FormFieldUpdateRequest $request, int $id): JsonResponse
     {
-        return response()->json($this->service->updateFormField($id, $request));
+        try {
+            $field = $this->service->updateFormField($id, $request);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Form field updated successfully',
+                'data' => $field
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update form field',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-    public function deleteFormField($id)
+    public function deleteFormField(int $id): JsonResponse
     {
-        $this->service->deleteFormField($id);
-        return response()->json(['message' => 'Deleted']);
+        try {
+            $this->service->deleteFormField($id);
+
+            return response()->json(['success' => true, 'message' => 'Form field deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete form field',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Get form structure for frontend
+     */
+    public function formStructure(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'category' => 'required|string|exists:categories,slug',
+                'sub_category' => 'nullable|string|exists:sub_categories,slug',
+                'sector' => 'nullable|string|exists:sectors,slug',
+                'activity' => 'nullable|string|exists:activities,slug',
+                'sub_activity' => 'nullable|string|exists:sub_activities,slug',
+                'entity' => 'nullable|string|exists:entities,slug',
+                'incubator' => 'nullable|string|exists:incubators,slug',
+                'onshore_offshore' => 'nullable|in:onshore,offshore,both'
+            ]);
+
+            $structure = $this->service->getFormStructure($validated);
+
+            return response()->json([
+                'success' => true,
+                'data' => $structure
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get field types
+     */
+    public function types(): JsonResponse
+    {
+        $types = [
+            ['value' => 'text', 'label' => 'Text Input', 'hasOptions' => false],
+            ['value' => 'textarea', 'label' => 'Text Area', 'hasOptions' => false],
+            ['value' => 'select', 'label' => 'Dropdown Select', 'hasOptions' => true],
+            ['value' => 'radio', 'label' => 'Radio Buttons', 'hasOptions' => true],
+            ['value' => 'checkbox', 'label' => 'Checkboxes', 'hasOptions' => true],
+            ['value' => 'file', 'label' => 'File Upload', 'hasOptions' => false],
+            ['value' => 'date', 'label' => 'Date Picker', 'hasOptions' => false],
+            ['value' => 'email', 'label' => 'Email Input', 'hasOptions' => false],
+            ['value' => 'number', 'label' => 'Number Input', 'hasOptions' => false],
+            ['value' => 'group', 'label' => 'Group (Repeatable)', 'hasOptions' => false],
+        ];
+        return response()->json(['success' => true, 'data' => $types]);
+    }
+
+    /**
+     * Get available sections
+     */
+    public function sections(): JsonResponse
+    {
+        $sections = [
+            ['value' => 'personal-info', 'label' => 'Personal Information'],
+            ['value' => 'employment-education', 'label' => 'Employment & Education'],
+            ['value' => 'residency-travel', 'label' => 'Residency, Travel & Family'],
+            ['value' => 'documents', 'label' => 'Document Upload'],
+        ];
+        return response()->json(['success' => true, 'data' => $sections]);
     }
 
     // ===== STAGES =====
