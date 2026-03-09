@@ -9,6 +9,9 @@ use App\Models\FormFields;
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
 
+
+use App\Repositories\V1\Admin\GenericRepository;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,12 +19,16 @@ class GenericService
 {
     protected $genericInterface;
     protected $requestsInterface;
+    protected $genericRepository;
 
-    public function __construct(GenericInterface $genericInterface, RequestsInterface $requestsInterface)
+    public function __construct(GenericInterface $genericInterface, RequestsInterface $requestsInterface, GenericRepository $genericRepository)
     {
         $this->genericInterface = $genericInterface;
         $this->requestsInterface = $requestsInterface;
+        $this->genericRepository = $genericRepository;
     }
+
+
 
     // Category
     public function allCategories($request)
@@ -208,9 +215,155 @@ class GenericService
         return $this->genericInterface->updateOrCreateFormFieldMetaData($data, $formFieldId);
     }
 
-    public function getFormStructure(array $params): array
+    public function getFormStructure(array $data)
     {
-        return $this->genericInterface->getFormStructure($params);
+        $formFields = $this->genericRepository->getFormFields($data);
+
+        return $this->buildFormStructure($formFields, $data);
+    }
+
+    private function buildFormStructure($formFields, array $context = [])
+    {
+        $structure = [];
+
+        // Group by section first
+        $groupedBySection = $formFields->groupBy('section');
+
+        foreach ($groupedBySection as $section => $sectionFields) {
+            $sectionData = [
+                'key' => $section,
+                'name' => [
+                    'en' => $this->getSectionName($section, 'en'),
+                    'ar' => $this->getSectionName($section, 'ar'),
+                ],
+                'groups' => []
+            ];
+
+            // Group by group within section
+            $groupedByGroup = $sectionFields->groupBy('group');
+
+            foreach ($groupedByGroup as $group => $groupFields) {
+                $firstField = $groupFields->first();
+
+                $groupData = [
+                    'key' => $group,
+                    'name' => [
+                        'en' => $this->getGroupName($group, 'en'),
+                        'ar' => $this->getGroupName($group, 'ar'),
+                    ],
+                    'repeatable' => (bool) ($firstField->repeatable ?? false),
+                    'repeatableLabel' => $firstField->repeatableLabel,
+                    'repeatableMax' => $firstField->repeatableMax,
+                    'fields' => []
+                ];
+
+                foreach ($groupFields as $field) {
+                    $fieldData = [
+                        'id' => $field->id,
+                        'nameEn' => $field->nameEn,
+                        'nameAr' => $field->nameAr,
+                        'slug' => $field->slug,
+                        'type' => $field->type,
+                        'meta' => $this->parseMeta($field->meta),
+                        'gridColumns' => $field->gridColumns,
+                        'isRequired' => $this->isFieldRequired($field, $context),
+                        'conditions' => $field->conditions ? json_decode($field->conditions, true) : null,
+                    ];
+
+                    // For group type fields, include nested fields
+                    if ($field->type === 'group' && isset($fieldData['meta']['fields'])) {
+                        $fieldData['fields'] = $fieldData['meta']['fields'];
+                    }
+
+                    $groupData['fields'][] = $fieldData;
+                }
+
+                $sectionData['groups'][] = $groupData;
+            }
+
+            $structure[] = $sectionData;
+        }
+
+        return $structure;
+    }
+
+    private function parseMeta($meta)
+    {
+        if (is_string($meta)) {
+            return json_decode($meta, true) ?? [];
+        }
+        return $meta ?? [];
+    }
+
+    private function isFieldRequired($field, array $context): bool
+    {
+        // Check if field has formMetas relationship
+        if (!isset($field->formMetas) || $field->formMetas->isEmpty()) {
+            return false;
+        }
+
+        foreach ($field->formMetas as $meta) {
+            if ($meta->key == ($context['category'] ?? null)) {
+                // Parse value conditions
+                $conditions = [];
+                if ($meta->value) {
+                    $conditions = is_string($meta->value) ? json_decode($meta->value, true) : $meta->value;
+                }
+
+                $matches = true;
+                if (is_array($conditions)) {
+                    foreach ($conditions as $key => $value) {
+                        if (isset($context[$key]) && $context[$key] != $value) {
+                            $matches = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($matches) {
+                    return (bool) $meta->isRequired;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function getSectionName($section, $lang)
+    {
+        $names = [
+            'personalInfo' => ['en' => 'Personal Information', 'ar' => 'المعلومات الشخصية'],
+            'employmentAndEducation' => ['en' => 'Employment & Education', 'ar' => 'التوظيف والتعليم'],
+            'ResidencyAndTravelAndFamily' => ['en' => 'Residency, Travel & Family', 'ar' => 'الإقامة والسفر والعائلة'],
+            'documents' => ['en' => 'Document Upload', 'ar' => 'رفع المستندات'],
+        ];
+
+        return $names[$section][$lang] ?? $section;
+    }
+
+    /**
+     * Get group name by language
+     */
+    private function getGroupName($group, $lang)
+    {
+        $names = [
+            'identificationData' => ['en' => 'Identification Data', 'ar' => 'بيانات التعريف'],
+            'applicantInfo' => ['en' => 'Applicant Information', 'ar' => 'معلومات مقدم الطلب'],
+            'contactInfo' => ['en' => 'Contact Information', 'ar' => 'معلومات الاتصال'],
+            'passportDetails' => ['en' => 'Passport Details', 'ar' => 'تفاصيل جواز السفر'],
+            'residencyDetails' => ['en' => 'Residency Details', 'ar' => 'تفاصيل الإقامة'],
+            'residences' => ['en' => 'Residences', 'ar' => 'الإقامات'],
+            'otherNationalities' => ['en' => 'Other Nationalities', 'ar' => 'الجنسيات الأخرى'],
+            'countriesVisitedLast10Years' => ['en' => 'Countries Visited', 'ar' => 'الدول التي تمت زيارتها'],
+            'familyMembers' => ['en' => 'Family Members', 'ar' => 'أفراد العائلة'],
+            'previousJobs' => ['en' => 'Previous Jobs', 'ar' => 'الوظائف السابقة'],
+            'educations' => ['en' => 'Educations', 'ar' => 'التعليم'],
+            'employmentDetails' => ['en' => 'Employment Details', 'ar' => 'تفاصيل التوظيف'],
+            'requiredDocuments' => ['en' => 'Required Documents', 'ar' => 'المستندات المطلوبة'],
+            'residencyDocuments' => ['en' => 'Residency Documents', 'ar' => 'مستندات الإقامة'],
+        ];
+
+        return $names[$group][$lang] ?? $group;
     }
 
     // Stages

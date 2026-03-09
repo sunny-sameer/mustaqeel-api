@@ -160,8 +160,8 @@ class RequestsService extends BaseService
         $type = $this->user->roles->pluck('type')->first();
         $stage = substr($type, 0, 3);
 
-        $slug = $this->genericInterface->getStatusWithStage($stage,$status);
-        if(!$slug){
+        $slug = $this->genericInterface->getStatusWithStage($stage, $status);
+        if (!$slug) {
             throw new StageStatusNotFoundException();
         }
 
@@ -171,7 +171,7 @@ class RequestsService extends BaseService
 
     public function userExists()
     {
-        $this->user = User::with('profile','levels')->find(auth()->id());
+        $this->user = User::with('profile', 'levels')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
@@ -199,8 +199,8 @@ class RequestsService extends BaseService
             $req = $this->requestsInterface->show($this->requests->id);
 
             if (isset($req->reqReferenceNumber) && !empty($req->reqReferenceNumber)) {
-                $this->requestsQc = $this->requestsInterface->getQc($this->requestId,'Action Required');
-                if(!isset($this->requestsQc->id)){
+                $this->requestsQc = $this->requestsInterface->getQc($this->requestId, 'Action Required');
+                if (!isset($this->requestsQc->id)) {
                     throw new RequestAlreadyExistException();
                 }
             }
@@ -223,8 +223,8 @@ class RequestsService extends BaseService
 
     public function requestQcAlreadyExists($status)
     {
-        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,$status);
-        if(isset($this->requestsQc->id)){
+        $this->requestsQc = $this->requestsInterface->getQc($this->requestId, $status);
+        if (isset($this->requestsQc->id)) {
             throw new RequestQcAlreadyExistException();
         }
 
@@ -233,8 +233,8 @@ class RequestsService extends BaseService
 
     public function requestQcNotFound($status)
     {
-        $this->requestsQc = $this->requestsInterface->getQc($this->requestId,$status);
-        if(!isset($this->requestsQc->id)){
+        $this->requestsQc = $this->requestsInterface->getQc($this->requestId, $status);
+        if (!isset($this->requestsQc->id)) {
             throw new RequestQcNotExistException();
         }
 
@@ -247,21 +247,19 @@ class RequestsService extends BaseService
 
         $type = $this->user->roles->pluck('type')->first();
 
-        if($type == 'entity'){
-            if((isset($request->status['jusour'][0]['slug']) && $request->status['jusour'][0]['slug'] == 'app'))
-            {
-                if((isset($request->status['entity'][0]['slug']) &&
-                ($request->status['entity'][0]['slug'] == 'app' || $request->status['entity'][0]['slug'] == 'rej'))){
-                    throw new RequestInvalidException('Request status has already '.$request->status['entity'][0]['status']);
+        if ($type == 'entity') {
+            if ((isset($request->status['jusour'][0]['slug']) && $request->status['jusour'][0]['slug'] == 'app')) {
+                if ((isset($request->status['entity'][0]['slug']) &&
+                    ($request->status['entity'][0]['slug'] == 'app' || $request->status['entity'][0]['slug'] == 'rej'))) {
+                    throw new RequestInvalidException('Request status has already ' . $request->status['entity'][0]['status']);
                 }
             } else {
                 throw new RequestNotExistException();
             }
-        }else if($type == 'jusour'){
-            if((isset($request->status['jusour'][0]['slug']) &&
-                ($request->status['jusour'][0]['slug'] == 'app' || $request->status['jusour'][0]['slug'] == 'rej')))
-            {
-                throw new RequestInvalidException('Request status has already '.$request->status['jusour'][0]['status']);
+        } else if ($type == 'jusour') {
+            if ((isset($request->status['jusour'][0]['slug']) &&
+                ($request->status['jusour'][0]['slug'] == 'app' || $request->status['jusour'][0]['slug'] == 'rej'))) {
+                throw new RequestInvalidException('Request status has already ' . $request->status['jusour'][0]['status']);
             }
         }
 
@@ -321,19 +319,17 @@ class RequestsService extends BaseService
             $requestData = RequestDTO::fromRequest($this->requests, $this->referenceNumber)->toArray();
             $request = $this->requestsInterface->updateOrCreateRequest($requestData, $this->requests->id);
 
-
             $requestMetaData = collect(RequestMetasDTO::fromRequest($this->requests, $request->id))
                 ->map(fn($dto) => $dto->toArray())
                 ->all();
 
+            // This now handles all dynamic fields including residencyDetails
             $requestAttributesData = collect(RequestAttributesDTO::fromRequest($this->requests, $request->id))
                 ->map(fn($dto) => $dto->toArray())
                 ->all();
 
-
             $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData, $request->id);
             $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData, $request->id);
-
 
             $this->createOrUpdateStageStatus('app', $request->id);
 
@@ -382,7 +378,7 @@ class RequestsService extends BaseService
             // $this->requestsInterface->updateOrCreateRequestMetaData($requestMetaData, $request->id);
             $this->requestsInterface->updateOrCreateRequestAttributes($requestAttributesData, $request->id);
 
-            $qcData = RequestQCDTO::updateFromRequest($this->requestsQc->toArray(),$this->requests->all())->toArray();
+            $qcData = RequestQCDTO::updateFromRequest($this->requestsQc->toArray(), $this->requests->all())->toArray();
 
             $this->requestsInterface->updateQc($qcData, $this->requestsQc->id);
 
@@ -413,7 +409,7 @@ class RequestsService extends BaseService
 
         $stageStatus = $this->requestsInterface->getStageStatus('stageId', $stage->id, 'slug', $this->status);
 
-        if(!$stageStatus){
+        if (!$stageStatus) {
             throw new StageStatusNotFoundException('Invalid status.');
         }
 
@@ -433,7 +429,7 @@ class RequestsService extends BaseService
             'meta' => $meta,
         ];
 
-        if($this->status == 'app' || $this->status == 'rej'){
+        if ($this->status == 'app' || $this->status == 'rej') {
             $data2['endDate'] = Carbon::now()->format('Y-m-d');
         }
 
@@ -442,10 +438,10 @@ class RequestsService extends BaseService
             $data2['userId'] = $request->userId;
             $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
             $this->requestsInterface->createRequestStageStatus(['reqStageId' => $requestStage->id, 'stageStatusSlug' => $stageStatus->slug, 'userId' => $request->userId], $requestStatusData, $this->status);
-        }else{
+        } else {
             $user = $this->usersInterface->getUserById($data2['userId']);
-            $getUserRequestStatusExistence = $this->requestsInterface->getUserRequestStatus($reqId,$user);
-            if(!isset($getUserRequestStatusExistence->id) || (isset($getUserRequestStatusExistence->id) && empty($getUserRequestStatusExistence->endDate))){
+            $getUserRequestStatusExistence = $this->requestsInterface->getUserRequestStatus($reqId, $user);
+            if (!isset($getUserRequestStatusExistence->id) || (isset($getUserRequestStatusExistence->id) && empty($getUserRequestStatusExistence->endDate))) {
                 $requestStatusData = RequestStatusDTO::fromRequest($data2)->toArray();
                 $this->requestsInterface->createRequestStageStatus(['reqStageId' => $requestStage->id, 'stageStatusSlug' => $stageStatus->slug, 'userId' => $userId ?? auth()->id()], $requestStatusData, $this->status);
             }
@@ -469,11 +465,10 @@ class RequestsService extends BaseService
             $response = $this->artifactsService->createDocuments($this->requests);
 
 
-            if(!empty($this->requestsQc))
-            {
+            if (!empty($this->requestsQc)) {
                 $meta = json_decode($this->requestsQc->meta);
                 foreach ($meta as $key => $value) {
-                    if($value->fieldPath === 'documents.'.$this->requests->key){
+                    if ($value->fieldPath === 'documents.' . $this->requests->key) {
                         $value->fieldNewValue = $response->document->documentName;
                         $value->updated = true;
                     }
@@ -482,7 +477,6 @@ class RequestsService extends BaseService
                 $qcData = RequestQCDTO::updateDocFromRequest($this->requestsQc->toArray(), $meta)->toArray();
 
                 $this->requestsInterface->updateQc($qcData, $this->requestsQc->id);
-
             }
 
             $request = $this->requestsInterface->getRequest($request->id);
@@ -500,7 +494,7 @@ class RequestsService extends BaseService
             DB::commit();
 
             return $this->success(
-                data: ['document' => $response->document,'request'=>$request],
+                data: ['document' => $response->document, 'request' => $request],
                 message: 'Document created successfully'
             );
         } catch (BadRequestException $e) {
@@ -535,33 +529,33 @@ class RequestsService extends BaseService
 
             $metaData = [];
 
-            if(isset($this->requests->commentsEn)){
+            if (isset($this->requests->commentsEn)) {
                 $metaData = [[
-                    'commentsEn'=>$this->requests->commentsEn,
-                    'commentsAr'=>$this->requests->commentsAr,
-                    'type'=>str_replace(' ','',lowerFirstWord($this->status)),
+                    'commentsEn' => $this->requests->commentsEn,
+                    'commentsAr' => $this->requests->commentsAr,
+                    'type' => str_replace(' ', '', lowerFirstWord($this->status)),
                 ]];
             }
 
             $stage = substr($type, 0, 3);
 
-            if($this->status == 'rej' && $this->user->levels->pluck('level')->first() == $this->user->roles->pluck('approval_levels')->first()) {
-                $this->createOrUpdateStageStatus('app',$this->requestId, $metaData);
+            if ($this->status == 'rej' && $this->user->levels->pluck('level')->first() == $this->user->roles->pluck('approval_levels')->first()) {
+                $this->createOrUpdateStageStatus('app', $this->requestId, $metaData);
             }
 
-            if($this->status == 'rej' || $this->status == 'app'){
-                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','<=',$this->user->levels->pluck('level')->first());
+            if ($this->status == 'rej' || $this->status == 'app') {
+                $users = $this->usersInterface->getUsersByRoleAndLevel($type, 'level', '<=', $this->user->levels->pluck('level')->first());
                 foreach ($users as $key => $value) {
-                    $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData, $value->id);
+                    $this->createOrUpdateStageStatus($stage, $this->requestId, $metaData, $value->id);
                 }
 
-                $users = $this->usersInterface->getUsersByRoleAndLevel($type,'level','>',$this->user->levels->pluck('level')->first());
+                $users = $this->usersInterface->getUsersByRoleAndLevel($type, 'level', '>', $this->user->levels->pluck('level')->first());
                 $this->status = 'ur';
                 foreach ($users as $key => $value) {
-                    $this->createOrUpdateStageStatus($stage,$this->requestId, [], $value->id);
+                    $this->createOrUpdateStageStatus($stage, $this->requestId, [], $value->id);
                 }
-            }else{
-                $this->createOrUpdateStageStatus($stage,$this->requestId, $metaData);
+            } else {
+                $this->createOrUpdateStageStatus($stage, $this->requestId, $metaData);
             }
 
             $request = $this->requestsInterface->getRequest($this->requestId);
@@ -581,7 +575,6 @@ class RequestsService extends BaseService
                 statusCode: 500
             );
         }
-
     }
 
     public function reuploadDocumentRequest()
@@ -637,7 +630,7 @@ class RequestsService extends BaseService
 
     public function getQcRequest()
     {
-        if(isset($this->requestsQc->id)){
+        if (isset($this->requestsQc->id)) {
             $this->requestsQc->meta = json_decode($this->requestsQc->meta);
             $this->requestsQc->summary = json_decode($this->requestsQc->summary);
         }
@@ -658,7 +651,7 @@ class RequestsService extends BaseService
             $request = $this->requests->all();
 
             foreach ($request['qcChecks'] as $key => $value) {
-                $path = explode('.',$value['fieldPath']);
+                $path = explode('.', $value['fieldPath']);
 
                 $current = $response;
 
@@ -687,9 +680,9 @@ class RequestsService extends BaseService
                 $request['qcChecks'][$key]['updated'] = $value['status'] === 'Correct' ? true : false;
             }
 
-            $previousQc = $this->requestsInterface->getQc($this->requestId,'Resubmitted');
-            if(isset($previousQc->id)){
-                $this->requestsInterface->updateQc(['status'=>'QC Rejected'],$previousQc->id);
+            $previousQc = $this->requestsInterface->getQc($this->requestId, 'Resubmitted');
+            if (isset($previousQc->id)) {
+                $this->requestsInterface->updateQc(['status' => 'QC Rejected'], $previousQc->id);
             }
 
             $qcData = RequestQCDTO::fromRequest($request)->toArray();
@@ -721,7 +714,7 @@ class RequestsService extends BaseService
         DB::beginTransaction();
 
         try {
-            $this->requestsInterface->updateQc(['verifiedAt'=> Carbon::now(),'status'=> 'QC Approved'],$this->requestsQc->id);
+            $this->requestsInterface->updateQc(['verifiedAt' => Carbon::now(), 'status' => 'QC Approved'], $this->requestsQc->id);
 
             $response = $this->requestsInterface->getRequest($this->requestId);
 
@@ -779,6 +772,16 @@ class RequestsService extends BaseService
 
     public function getFormFields($request)
     {
-        return $this->genericInterface->getFormFields($request);
+        $data = [
+            'category' => $request['category'] ?? null,
+            'subCategory' => $request['subCategory'] ?? null,
+            'sector' => $request['sector'] ?? null,
+            'activity' => $request['activity'] ?? null,
+            'subActivity' => $request['subActivity'] ?? null,
+            'entity' => $request['entity'] ?? null,
+            'incubator' => $request['incubator'] ?? null,
+        ];
+
+        return $this->genericInterface->getFormFields($data);
     }
 }

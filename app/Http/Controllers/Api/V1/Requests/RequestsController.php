@@ -191,7 +191,7 @@ class RequestsController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
         } catch (RequestNotExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        }  catch (RequestInvalidException $e) {
+        } catch (RequestInvalidException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
@@ -353,9 +353,28 @@ class RequestsController extends BaseController
 
     public function getFormFields(Request $request)
     {
-        if (empty($request->category) && !isset($request->category)) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
+        try {
+            $data = [
+                'category' => $request->category,
+                'subCategory' => $request->subCategory,
+                'sector' => $request->sector,
+                'activity' => $request->activity,
+                'subActivity' => $request->subActivity,
+                'entity' => $request->entity,
+                'incubator' => $request->incubator,
+            ];
 
-        return $this->requests->getFormFields($request->all());
+            // Validate required fields
+            if (empty($data['category'])) {
+                return $this->sendErrorResponse('Category is required', 'Category is required', 400);
+            }
+
+            $formFields = $this->requests->getFormFields($data);
+
+            return $this->sendSuccessResponse($formFields);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
+        }
     }
 
     /**

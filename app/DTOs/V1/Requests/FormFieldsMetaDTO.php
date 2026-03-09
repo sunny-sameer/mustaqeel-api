@@ -24,31 +24,31 @@ final readonly class FormFieldsMetaDTO
                 // Build value array with hierarchy
                 $value = [];
                 
-                if (isset($rule['sub_category_slug']) && !empty($rule['sub_category_slug'])) {
-                    $value['sub_category'] = $rule['sub_category_slug'];
+                if (isset($rule['subCategorySlug']) && !empty($rule['subCategorySlug'])) {
+                    $value['subCategory'] = $rule['subCategorySlug'];
                 }
-                if (isset($rule['sector_slug']) && !empty($rule['sector_slug'])) {
-                    $value['sector'] = $rule['sector_slug'];
+                if (isset($rule['sectorSlug']) && !empty($rule['sectorSlug'])) {
+                    $value['sector'] = $rule['sectorSlug'];
                 }
-                if (isset($rule['activity_slug']) && !empty($rule['activity_slug'])) {
-                    $value['activity'] = $rule['activity_slug'];
+                if (isset($rule['activitySlug']) && !empty($rule['activitySlug'])) {
+                    $value['activity'] = $rule['activitySlug'];
                 }
-                if (isset($rule['sub_activity_slug']) && !empty($rule['sub_activity_slug'])) {
-                    $value['sub_activity'] = $rule['sub_activity_slug'];
+                if (isset($rule['subActivitySlug']) && !empty($rule['subActivitySlug'])) {
+                    $value['subActivity'] = $rule['subActivitySlug'];
                 }
-                if (isset($rule['entity_slug']) && !empty($rule['entity_slug'])) {
-                    $value['entity'] = $rule['entity_slug'];
+                if (isset($rule['entitySlug']) && !empty($rule['entitySlug'])) {
+                    $value['entity'] = $rule['entitySlug'];
                 }
-                if (isset($rule['incubator_slug']) && !empty($rule['incubator_slug'])) {
-                    $value['incubator'] = $rule['incubator_slug'];
+                if (isset($rule['incubatorSlug']) && !empty($rule['incubatorSlug'])) {
+                    $value['incubator'] = $rule['incubatorSlug'];
                 }
 
                 $dtos[] = new self(
                     ffId: $ffId,
-                    key: $rule['category_slug'] ?? 'all',
+                    key: $rule['categorySlug'] ?? 'all',
                     value: $value,
-                    onshoreOffShore: $rule['onshore_offshore'] ?? 'both',
-                    isRequired: $rule['is_required'] ?? false,
+                    onshoreOffShore: $rule['onshoreOffShore'] ?? 'both',
+                    isRequired: $rule['isRequired'] ?? false,
                 );
             }
         }

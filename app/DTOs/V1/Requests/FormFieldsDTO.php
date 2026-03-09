@@ -1,7 +1,7 @@
 <?php
+// app/DTOs/V1/Requests/FormFieldsDTO.php
 
 namespace App\DTOs\V1\Requests;
-
 
 use Illuminate\Http\Request;
 
@@ -15,15 +15,15 @@ final readonly class FormFieldsDTO
         public ?array $meta,
         public string $section,
         public string $group,
-        public int $field_order,
-        public int $grid_columns,
+        public int $fieldOrder,
+        public int $gridColumns,
         public bool $repeatable,
-        public ?string $repeatable_label,
-        public ?int $repeatable_max,
+        public ?string $repeatableLabel,
+        public ?int $repeatableMax,
         public ?array $conditions,
         public bool $status,
+        public ?array $categoryRules, // ADD THIS - keep separate from meta
     ) {}
-
 
     public static function fromArray(array $data): self
     {
@@ -33,10 +33,9 @@ final readonly class FormFieldsDTO
         // Generate slug from English name
         $slug = str($formFields['nameEn'])->slug();
 
-        // Merge all meta data
-        $meta = array_merge($metaFields, [
-            'categoryRules' => $data['categoryRules'] ?? []
-        ]);
+        // IMPORTANT FIX: DO NOT merge categoryRules into meta
+        // Meta should ONLY contain field configuration
+        $meta = array_merge($metaFields, []); // Removed categoryRules from here
 
         return new self(
             nameEn: $formFields['nameEn'],
@@ -46,13 +45,14 @@ final readonly class FormFieldsDTO
             meta: $meta,
             section: $formFields['section'] ?? 'general',
             group: $formFields['group'] ?? 'general',
-            field_order: $formFields['field_order'] ?? 0,
-            grid_columns: $formFields['grid_columns'] ?? 4,
+            fieldOrder: $formFields['fieldOrder'] ?? 0,
+            gridColumns: $formFields['gridColumns'] ?? 4,
             repeatable: $formFields['repeatable'] ?? false,
-            repeatable_label: $formFields['repeatable_label'] ?? null,
-            repeatable_max: $formFields['repeatable_max'] ?? null,
+            repeatableLabel: $formFields['repeatableLabel'] ?? null,
+            repeatableMax: $formFields['repeatableMax'] ?? null,
             conditions: $formFields['conditions'] ?? null,
             status: $formFields['status'] ?? true,
+            categoryRules: $data['categoryRules'] ?? [], // Keep separate
         );
     }
 
@@ -71,11 +71,11 @@ final readonly class FormFieldsDTO
             'meta' => $this->meta ? json_encode($this->meta, JSON_UNESCAPED_UNICODE) : null,
             'section' => $this->section,
             'group' => $this->group,
-            'field_order' => $this->field_order,
-            'grid_columns' => $this->grid_columns,
+            'fieldOrder' => $this->fieldOrder,
+            'gridColumns' => $this->gridColumns,
             'repeatable' => $this->repeatable,
-            'repeatable_label' => $this->repeatable_label,
-            'repeatable_max' => $this->repeatable_max,
+            'repeatableLabel' => $this->repeatableLabel,
+            'repeatableMax' => $this->repeatableMax,
             'conditions' => $this->conditions ? json_encode($this->conditions, JSON_UNESCAPED_UNICODE) : null,
             'status' => $this->status,
         ];

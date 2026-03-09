@@ -147,13 +147,13 @@ return new class extends Migration
             // Organization & Layout
             $table->string('section')->default('general'); // personal-info, employment-education, etc
             $table->string('group')->default('general');   // identification-data, applicant-info, etc
-            $table->integer('field_order')->default(0);
-            $table->integer('grid_columns')->default(4);   // 1-12 for grid layout
+            $table->integer('fieldOrder')->default(0);
+            $table->integer('gridColumns')->default(4);   // 1-12 for grid layout
 
             // Repeatable Groups
             $table->boolean('repeatable')->default(false);
-            $table->string('repeatable_label')->nullable(); // "Add Previous Job"
-            $table->integer('repeatable_max')->nullable();  // Maximum number of repeats
+            $table->string('repeatableLabel')->nullable(); // "Add Previous Job"
+            $table->integer('repeatableMax')->nullable();  // Maximum number of repeats
 
             // Meta & Conditions
             $table->longText('meta')->nullable();           // Field-specific config (options, placeholders, validations)
@@ -167,7 +167,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // Indexes for better performance
-            $table->index(['section', 'group', 'field_order']);
+            $table->index(['section', 'group', 'fieldOrder']);
             $table->index('status');
             $table->index('type');
         });

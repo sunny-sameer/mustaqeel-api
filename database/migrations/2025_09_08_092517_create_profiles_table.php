@@ -54,7 +54,7 @@ return new class extends Migration
 
             $table->bigInteger('userId')->constrained('users')->onDelete('cascade'); // userId
 
-            $table->string('key')->nullable(); // mobileName,email,langProficiencyEng,langProficiencyAr
+            $table->string('key')->nullable(); // mobileName,email
             $table->json('value')->nullable(); //93933939,tet@yahoo.com,2,3
             $table->tinyInteger('status')->default(1);
 

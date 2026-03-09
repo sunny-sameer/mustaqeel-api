@@ -270,8 +270,6 @@ use OpenApi\Annotations as OA;
  *                     @OA\Property(property="currentCountry", type="string", example="Pakistan"),
  *                     @OA\Property(property="nationality", type="string", example="Pakistan"),
  *                     @OA\Property(property="shortBio", type="string", example="Hello world"),
- *                     @OA\Property(property="langProficiencyAr", type="string", example="no proficiency"),
- *                     @OA\Property(property="langProficiencyEn", type="string", example="intermediate"),
  *                     @OA\Property(property="areYouQatarResident", type="boolean", example=true),
  *                     @OA\Property(property="qidNumber", type="string", example="45345323413"),
  *                     @OA\Property(property="qidType", type="string", example="Work Residency"),
@@ -437,7 +435,7 @@ use OpenApi\Annotations as OA;
  *                     type="object",
  *                     required={
  *                         "nameEn", "gender", "dob", "religion", "maritalStatus", "placeOfBirth",
- *                         "currentCountry", "nationality", "shortBio", "langProficiencyAr", "langProficiencyEn"
+ *                         "currentCountry", "nationality", "shortBio"
  *                     },
  *                     @OA\Property(property="nameEn", type="string", example="Muhammad Talha Khalid"),
  *                     @OA\Property(property="gender", type="string", example="Male"),
@@ -448,8 +446,6 @@ use OpenApi\Annotations as OA;
  *                     @OA\Property(property="currentCountry", type="string", example="Pakistan"),
  *                     @OA\Property(property="nationality", type="string", example="Pakistan"),
  *                     @OA\Property(property="shortBio", type="string", example="Hello world"),
- *                     @OA\Property(property="langProficiencyAr", type="string", example="no proficiency"),
- *                     @OA\Property(property="langProficiencyEn", type="string", example="intermediate"),
  *                     @OA\Property(property="areYouQatarResident", type="boolean"),
  *                     @OA\Property(property="qidNumber", type="string", description="required_if:isQatarResident,true"),
  *                     @OA\Property(property="qidType", type="string", description="required_if:isQatarResident,true"),
@@ -611,8 +607,6 @@ use OpenApi\Annotations as OA;
  *                     @OA\Property(property="currentCountry", type="string", example="Pakistan"),
  *                     @OA\Property(property="nationality", type="string", example="Pakistan"),
  *                     @OA\Property(property="shortBio", type="string", example="Hello world"),
- *                     @OA\Property(property="langProficiencyAr", type="string", example="no proficiency"),
- *                     @OA\Property(property="langProficiencyEn", type="string", example="intermediate"),
  *                     @OA\Property(property="areYouQatarResident", type="boolean"),
  *                     @OA\Property(property="qidNumber", type="string"),
  *                     @OA\Property(property="qidType", type="string"),

@@ -4,10 +4,7 @@ namespace App\DTOs\V1\Requests;
 
 use App\Models\RequestAttribute;
 use Illuminate\Http\Request;
-
-
 use Illuminate\Support\Arr;
-
 
 final readonly class RequestAttributesDTO
 {
@@ -17,25 +14,59 @@ final readonly class RequestAttributesDTO
         public string $type,
     ) {}
 
-
     public static function fromArray(array $data, int $reqId): array
     {
         $attributes = [];
-
-        $map = Arr::except($data,['personalInfo.identificationData','documents','id']);
-
-
+        
+        // Exclude fields that are stored elsewhere
+        $excludedFields = [
+            'personalInfo.identificationData',
+            'documents',
+            'id'
+        ];
+        
+        $map = Arr::except($data, $excludedFields);
+        
         foreach ($map as $key => $value) {
-            if (!empty($value)) {
-                $attributes[] = new self(
-                    reqId: $reqId,
-                    meta: isset($value[$key]) ? json_encode(array_filter($value[$key])) : json_encode(array_filter($value)),
-                    type: $key,
-                );
+            // Only create attribute if there's data
+            if (!empty($value) && is_array($value)) {
+                // Recursively filter out empty values
+                $filteredValue = self::filterEmptyValues($value);
+                
+                if (!empty($filteredValue)) {
+                    $attributes[] = new self(
+                        reqId: $reqId,
+                        meta: json_encode($filteredValue, JSON_UNESCAPED_UNICODE),
+                        type: $key,
+                    );
+                }
             }
         }
-
+        
         return $attributes;
+    }
+    
+    /**
+     * Recursively filter out empty values from arrays
+     */
+    private static function filterEmptyValues($array)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+        
+        $result = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $filtered = self::filterEmptyValues($value);
+                if (!empty($filtered)) {
+                    $result[$key] = $filtered;
+                }
+            } elseif ($value !== null && $value !== '' && $value !== []) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
     }
 
     public static function fromRequest(Request $request, $reqId): array
@@ -46,29 +77,66 @@ final readonly class RequestAttributesDTO
     public static function updateFromArray(array $data, int $reqId): array
     {
         $attributes = [];
-
-        foreach ($data as $key => $value) {
-            if (!empty($value)) {
-                $request = RequestAttribute::where(['reqId'=>$reqId,'type'=>$key])->first();
-                $requestMeta = json_decode($request->meta,true);
-                foreach ($value as $metaKey => $metaValue) {
-                    foreach ($metaValue as $k => $v) {
-                        if(is_string($v)){
-                            $requestMeta[$metaKey][$k] = $v;
-                        }else if(is_array($v)){
-                            $requestMeta[$metaKey] = $metaValue;
-                        }
+        
+        $excludedFields = [
+            'personalInfo.identificationData',
+            'documents',
+            'id'
+        ];
+        
+        $map = Arr::except($data, $excludedFields);
+        
+        foreach ($map as $key => $value) {
+            if (!empty($value) && is_array($value)) {
+                // Find existing attribute
+                $requestAttribute = RequestAttribute::where([
+                    'reqId' => $reqId,
+                    'type' => $key
+                ])->first();
+                
+                if ($requestAttribute) {
+                    // Merge with existing data
+                    $existingMeta = json_decode($requestAttribute->meta, true) ?? [];
+                    $newMeta = self::mergeArrays($existingMeta, $value);
+                    $filteredMeta = self::filterEmptyValues($newMeta);
+                    
+                    if (!empty($filteredMeta)) {
+                        $attributes[] = new self(
+                            reqId: $reqId,
+                            meta: json_encode($filteredMeta, JSON_UNESCAPED_UNICODE),
+                            type: $key,
+                        );
+                    }
+                } else {
+                    // Create new attribute
+                    $filteredValue = self::filterEmptyValues($value);
+                    if (!empty($filteredValue)) {
+                        $attributes[] = new self(
+                            reqId: $reqId,
+                            meta: json_encode($filteredValue, JSON_UNESCAPED_UNICODE),
+                            type: $key,
+                        );
                     }
                 }
-                $attributes[] = new self(
-                    reqId: $reqId,
-                    meta: json_encode(array_filter($requestMeta)),
-                    type: $key,
-                );
             }
         }
-
+        
         return $attributes;
+    }
+    
+    /**
+     * Recursively merge arrays
+     */
+    private static function mergeArrays($existing, $new)
+    {
+        foreach ($new as $key => $value) {
+            if (is_array($value) && isset($existing[$key]) && is_array($existing[$key])) {
+                $existing[$key] = self::mergeArrays($existing[$key], $value);
+            } else {
+                $existing[$key] = $value;
+            }
+        }
+        return $existing;
     }
 
     public function toArray(): array

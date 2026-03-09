@@ -4,10 +4,7 @@ namespace App\DTOs\V1\Requests;
 
 use App\Models\Requests;
 use Illuminate\Http\Request;
-
-
 use Carbon\Carbon;
-
 
 final readonly class RequestDTO
 {
@@ -24,21 +21,42 @@ final readonly class RequestDTO
         public string $submittedAt
     ) {}
 
-
     public static function fromArray(array $data, ?string $reqReferenceNumber = null): self
     {
         return new self(
             userId: auth()->id(),
-            reqReferenceNumber: $reqReferenceNumber ?? NULL,
-            nameEn: isset($data['personalInfo']['applicantInfo']['nameEn']) ? $data['personalInfo']['applicantInfo']['nameEn'] : NULL,
-            nameAr: isset($data['personalInfo']['applicantInfo']['nameAr']) ? $data['personalInfo']['applicantInfo']['nameAr'] : NULL,
-            email: isset($data['personalInfo']['contactInfo']['email']) ? $data['personalInfo']['contactInfo']['email'] : NULL,
-            mobileNumber: isset($data['personalInfo']['contactInfo']['mobile']) ? $data['personalInfo']['contactInfo']['mobile'] : NULL,
-            passportNumber: isset($data['personalInfo']['passportDetails']['number']) ? $data['personalInfo']['passportDetails']['number'] : NULL,
-            qid: isset($data['personalInfo']['applicantInfo']['areYouQatarResident']) && isset($data['personalInfo']['applicantInfo']['qidNumber']) ? $data['personalInfo']['applicantInfo']['qidNumber'] : NULL,
+            reqReferenceNumber: $reqReferenceNumber ?? null,
+            nameEn: $data['personalInfo']['applicantInfo']['nameEn'] ?? null,
+            nameAr: $data['personalInfo']['applicantInfo']['nameAr'] ?? null,
+            email: $data['personalInfo']['contactInfo']['email'] ?? null,
+            mobileNumber: $data['personalInfo']['contactInfo']['mobile'] ?? null,
+            passportNumber: $data['personalInfo']['passportDetails']['number'] ?? null,
+            qid: self::extractQid($data), // Use helper method to extract QID
             status: true,
             submittedAt: Carbon::now(),
         );
+    }
+    
+    /**
+     * Extract QID from residencyDetails (new location) or applicantInfo (old location for backward compatibility)
+     */
+    private static function extractQid(array $data): ?string
+    {
+        // Check if user is Qatar resident
+        $isQatarResident = $data['ResidencyAndTravelAndFamily']['residencyDetails']['areYouQatarResident?'] ?? 
+                          $data['personalInfo']['applicantInfo']['areYouQatarResident'] ?? false;
+        
+        if (!$isQatarResident) {
+            return null;
+        }
+        
+        // Try new location first (residencyDetails)
+        if (isset($data['ResidencyAndTravelAndFamily']['residencyDetails']['qIDNumber'])) {
+            return $data['ResidencyAndTravelAndFamily']['residencyDetails']['qIDNumber'];
+        }
+        
+        // Fallback to old location (applicantInfo)
+        return $data['personalInfo']['applicantInfo']['qidNumber'] ?? null;
     }
 
     public static function fromRequest(Request $request, $reqReferenceNumber = null): self
@@ -46,22 +64,41 @@ final readonly class RequestDTO
         return self::fromArray($request->validated(), $reqReferenceNumber);
     }
 
-
     public static function updateFromArray(array $data, ?string $reqReferenceNumber = null): self
     {
-        $request = Requests::where('reqReferenceNumber',$reqReferenceNumber)->first();
+        $request = Requests::where('reqReferenceNumber', $reqReferenceNumber)->first();
+        
         return new self(
             userId: $request->userId,
             reqReferenceNumber: $request->reqReferenceNumber,
-            nameEn: isset($data['personalInfo']['applicantInfo']['nameEn']) ? $data['personalInfo']['applicantInfo']['nameEn'] : $request->nameEn,
-            nameAr: isset($data['personalInfo']['applicantInfo']['nameAr']) ? $data['personalInfo']['applicantInfo']['nameAr'] : $request->nameAr,
-            email: isset($data['personalInfo']['contactInfo']['email']) ? $data['personalInfo']['contactInfo']['email'] : $request->email,
-            mobileNumber: isset($data['personalInfo']['contactInfo']['mobile']) ? $data['personalInfo']['contactInfo']['mobile'] : $request->mobileNumber,
-            passportNumber: isset($data['personalInfo']['passportDetails']['number']) ? $data['personalInfo']['passportDetails']['number'] : $request->passportNumber,
-            qid: isset($data['personalInfo']['applicantInfo']['qidNumber']) ? $data['personalInfo']['applicantInfo']['qidNumber'] : $request->qid,
+            nameEn: $data['personalInfo']['applicantInfo']['nameEn'] ?? $request->nameEn,
+            nameAr: $data['personalInfo']['applicantInfo']['nameAr'] ?? $request->nameAr,
+            email: $data['personalInfo']['contactInfo']['email'] ?? $request->email,
+            mobileNumber: $data['personalInfo']['contactInfo']['mobile'] ?? $request->mobileNumber,
+            passportNumber: $data['personalInfo']['passportDetails']['number'] ?? $request->passportNumber,
+            qid: self::extractQidForUpdate($data, $request), // Use update helper
             status: $request->status,
             submittedAt: $request->submittedAt,
         );
+    }
+    
+    /**
+     * Extract QID for update operations
+     */
+    private static function extractQidForUpdate(array $data, Requests $request): ?string
+    {
+        // Check if new QID is provided in residencyDetails
+        if (isset($data['ResidencyAndTravelAndFamily']['residencyDetails']['qIDNumber'])) {
+            return $data['ResidencyAndTravelAndFamily']['residencyDetails']['qIDNumber'];
+        }
+        
+        // Check if new QID is provided in old location
+        if (isset($data['personalInfo']['applicantInfo']['qidNumber'])) {
+            return $data['personalInfo']['applicantInfo']['qidNumber'];
+        }
+        
+        // Otherwise keep existing
+        return $request->qid;
     }
 
     public function toArray(): array

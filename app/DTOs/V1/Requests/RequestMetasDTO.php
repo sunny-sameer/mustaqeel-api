@@ -6,7 +6,6 @@ use App\Models\RequestMetaData;
 use App\Models\Requests;
 use Illuminate\Http\Request;
 
-
 final readonly class RequestMetasDTO
 {
     public function __construct(
@@ -15,22 +14,24 @@ final readonly class RequestMetasDTO
         public string $value,
     ) {}
 
-
     public static function fromArray(array $data, int $reqId): array
     {
         $attributes = [];
-        $identificationData = ['category','subCategory','sector','activity','subActivity','entity','incubator'];
+        $identificationData = ['category', 'subCategory', 'sector', 'activity', 'subActivity', 'entity', 'incubator'];
 
-        foreach ($identificationData as $key => $value) {
-            if(isset($data['personalInfo']['identificationData'][$value])){
+        foreach ($identificationData as $value) {
+            if (isset($data['personalInfo']['identificationData'][$value]) && 
+                !empty($data['personalInfo']['identificationData'][$value])) {
                 $attributes[] = new self(
                     reqId: $reqId,
                     key: $value,
                     value: $data['personalInfo']['identificationData'][$value]
                 );
-            }else{
-                RequestMetaData::where('reqId',$reqId)
-                ->where('key',$value)->delete();
+            } else {
+                // Delete if exists but not provided
+                RequestMetaData::where('reqId', $reqId)
+                    ->where('key', $value)
+                    ->delete();
             }
         }
 

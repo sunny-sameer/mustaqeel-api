@@ -24,11 +24,54 @@ use App\DTOs\V1\Requests\FormFieldsDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
+use App\Models\Categories;
+use App\Models\SubCategories;
+use App\Models\Sectors;
+use App\Models\Activities;
+use App\Models\SubActivities;
+use App\Models\Entities;
+
 class GenericRepository extends CoreRepository implements GenericInterface
 {
-    public function __construct(Category $model)
-    {
+    protected $categories;
+    protected $subCategories;
+    protected $sectors;
+    protected $activities;
+    protected $subActivities;
+    protected $entities;
+    protected $incubators;
+    protected $nationality;
+    protected $formFields;
+    protected $stages;
+    protected $stagesStatuses;
+
+    public function __construct(
+        Category $model,
+        Categories $categories,
+        SubCategories $subCategories,
+        Sectors $sectors,
+        Activities $activities,
+        SubActivities $subActivities,
+        Entities $entities,
+        Incubator $incubators,
+        Nationality $nationality,
+        FormFields $formFields,
+        Stages $stages,
+        StagesStatuses $stagesStatuses
+    ) {
+
         parent::__construct($model);
+        $this->categories = $categories;
+        $this->subCategories = $subCategories;
+        $this->sectors = $sectors;
+        $this->activities = $activities;
+        $this->subActivities = $subActivities;
+        $this->entities = $entities;
+        $this->incubators = $incubators;
+        $this->nationality = $nationality;
+        $this->formFields = $formFields;
+        $this->stages = $stages;
+        $this->stagesStatuses = $stagesStatuses;
     }
     // ===== CATEGORIES =====
     public function allCategories($request)
@@ -290,10 +333,15 @@ class GenericRepository extends CoreRepository implements GenericInterface
             $query->where('status', $request['status']);
         }
 
-        $ff = $query->orderBy('section')
-            ->orderBy('group')
-            ->orderBy('field_order')
-            ->paginate($paginate);
+        // Check if custom sort is requested
+        if (isset($request['sort_field']) && isset($request['sort_order'])) {
+            $query->orderBy($request['sort_field'], $request['sort_order']);
+        } else {
+            // Default sorting: newest first (by created_at descending)
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $ff = $query->paginate($paginate);
 
         // Transform the data
         $ff->getCollection()->transform(function ($query) {
@@ -324,21 +372,30 @@ class GenericRepository extends CoreRepository implements GenericInterface
 
         return $ff;
     }
-
     public function createFormField($data)
     {
         return DB::transaction(function () use ($data) {
             // Create form field
-            $formFieldData = FormFieldsDTO::fromRequest($data)->toArray();
+            $dto = FormFieldsDTO::fromRequest($data);
+            $formFieldData = $dto->toArray();
 
             // Ensure unique slug
             $formFieldData['slug'] = $this->generateUniqueSlug($formFieldData['slug']);
 
             $ff = FormFields::create($formFieldData);
 
-            return $ff;
+            // Save category rules if any
+            if (!empty($dto->categoryRules)) {
+                $this->saveCategoryRules($ff->id, $dto->categoryRules);
+            }
+
+            // Clear cache
+            $this->clearFormCache();
+
+            return $this->findFormField($ff->id);
         });
     }
+
 
     public function updateFormField($id, $data)
     {
@@ -346,7 +403,8 @@ class GenericRepository extends CoreRepository implements GenericInterface
             $ff = FormFields::findOrFail($id);
 
             // Update form field
-            $formFieldData = FormFieldsDTO::fromRequest($data)->toArray();
+            $dto = FormFieldsDTO::fromRequest($data);
+            $formFieldData = $dto->toArray();
 
             // Check if slug needs to be updated
             if ($formFieldData['slug'] !== $ff->slug) {
@@ -355,7 +413,21 @@ class GenericRepository extends CoreRepository implements GenericInterface
 
             $ff->update($formFieldData);
 
-            return $ff;
+            // Update category rules if provided
+            if (isset($dto->categoryRules)) {
+                // Delete existing rules
+                $ff->formMetas()->delete();
+
+                // Save new rules
+                if (!empty($dto->categoryRules)) {
+                    $this->saveCategoryRules($ff->id, $dto->categoryRules);
+                }
+            }
+
+            // Clear cache
+            $this->clearFormCache();
+
+            return $this->findFormField($ff->id);
         });
     }
 
@@ -418,7 +490,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
                 ->where('status', true)
                 ->orderBy('section')
                 ->orderBy('group')
-                ->orderBy('field_order')
+                ->orderBy('fieldOrder')
                 ->get();
 
             // Decode JSON data
@@ -460,8 +532,8 @@ class GenericRepository extends CoreRepository implements GenericInterface
                         'key' => $group,
                         'name' => $this->getGroupName($group),
                         'repeatable' => $field->repeatable,
-                        'repeatable_label' => $field->repeatable_label,
-                        'repeatable_max' => $field->repeatable_max,
+                        'repeatableLabel' => $field->repeatableLabel,
+                        'repeatableMax' => $field->repeatableMax,
                         'fields' => []
                     ];
                 }
@@ -476,8 +548,8 @@ class GenericRepository extends CoreRepository implements GenericInterface
                     'slug' => $field->slug,
                     'type' => $field->type,
                     'meta' => $field->meta,
-                    'grid_columns' => $field->grid_columns,
-                    'is_required' => $isRequired,
+                    'gridColumns' => $field->gridColumns,
+                    'isRequired' => $isRequired,
                     'conditions' => $field->conditions,
                 ];
 
@@ -489,15 +561,118 @@ class GenericRepository extends CoreRepository implements GenericInterface
                 $structure[$section]['groups'][$group]['fields'][] = $fieldData;
             }
 
-            // Reformat to remove numeric keys
+            // Define custom section order
+            $sectionOrder = [
+                'personalInfo',
+                'employmentAndEducation',
+                'ResidencyAndTravelAndFamily',
+                'documents'
+            ];
+
+            // Sort sections by custom order
+            uksort($structure, function ($a, $b) use ($sectionOrder) {
+                $posA = array_search($a, $sectionOrder);
+                $posB = array_search($b, $sectionOrder);
+
+                if ($posA === false) $posA = count($sectionOrder);
+                if ($posB === false) $posB = count($sectionOrder);
+
+                return $posA - $posB;
+            });
+
+            // Reformat and sort groups within each section
             $result = [];
             foreach ($structure as $sectionKey => $sectionData) {
+                // Get group order for this section
+                $groupOrder = $this->getGroupOrder($sectionKey);
+
+                if (!empty($groupOrder)) {
+                    // Sort groups by defined order
+                    uksort($sectionData['groups'], function ($a, $b) use ($groupOrder) {
+                        $posA = array_search($a, $groupOrder);
+                        $posB = array_search($b, $groupOrder);
+
+                        if ($posA === false) $posA = count($groupOrder);
+                        if ($posB === false) $posB = count($groupOrder);
+
+                        return $posA - $posB;
+                    });
+                }
+
                 $sectionData['groups'] = array_values($sectionData['groups']);
                 $result[] = $sectionData;
             }
 
             return $result;
         });
+    }
+
+    private function getGroupOrder(string $section): array
+    {
+        return match ($section) {
+            'personalInfo' => [
+                'applicantInfo',
+                'contactInfo',
+                'passportDetails'
+            ],
+            'employmentAndEducation' => [
+                'educations',
+                'previousJobs',
+                'employmentDetails',
+                'investmentDetails'
+            ],
+            'ResidencyAndTravelAndFamily' => [
+                'residencyDetails',
+                'residences',
+                'otherNationalities',
+                'countriesVisitedLast10Years',
+                'familyMembers'
+            ],
+            'documents' => [
+                'requiredDocuments',
+                'residencyDocuments',
+                'investmentDocuments',
+                'ictMinistryDocuments'
+            ],
+            default => []
+        };
+    }
+
+    private function saveCategoryRules(int $formFieldId, array $rules): void
+    {
+        foreach ($rules as $rule) {
+            // Build value array with hierarchy
+            $value = [];
+
+            if (isset($rule['subCategorySlug']) && !empty($rule['subCategorySlug'])) {
+                $value['sub_category'] = $rule['subCategorySlug'];
+            }
+            if (isset($rule['sectorSlug']) && !empty($rule['sectorSlug'])) {
+                $value['sector'] = $rule['sectorSlug'];
+            }
+            if (isset($rule['activitySlug']) && !empty($rule['activitySlug'])) {
+                $value['activity'] = $rule['activitySlug'];
+            }
+            if (isset($rule['subActivitySlug']) && !empty($rule['subActivitySlug'])) {
+                $value['sub_activity'] = $rule['subActivitySlug'];
+            }
+            if (isset($rule['entitySlug']) && !empty($rule['entitySlug'])) {
+                $value['entity'] = $rule['entitySlug'];
+            }
+            if (isset($rule['incubatorSlug']) && !empty($rule['incubatorSlug'])) {
+                $value['incubator'] = $rule['incubatorSlug'];
+            }
+
+            $metaData = [
+                'ffId' => $formFieldId,
+                'key' => $rule['categorySlug'] ?? 'all',
+                'value' => json_encode($value, JSON_UNESCAPED_UNICODE),
+                'onshoreOffShore' => $rule['onshoreOffShore'] ?? 'both',
+                'isRequired' => $rule['isRequired'] ?? false,
+            ];
+
+            FormFieldMeta::create($metaData);
+        }
     }
 
     /**
@@ -533,7 +708,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
         $value = $meta->value;
 
         // Check sub category
-        if (!empty($value['sub_category']) && $value['sub_category'] !== ($params['sub_category'] ?? null)) {
+        if (!empty($value['subCategory']) && $value['subCategory'] !== ($params['subCategory'] ?? null)) {
             return false;
         }
 
@@ -548,7 +723,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
         }
 
         // Check sub activity
-        if (!empty($value['sub_activity']) && $value['sub_activity'] !== ($params['sub_activity'] ?? null)) {
+        if (!empty($value['subActivity']) && $value['subActivity'] !== ($params['subActivity'] ?? null)) {
             return false;
         }
 
@@ -563,7 +738,7 @@ class GenericRepository extends CoreRepository implements GenericInterface
         }
 
         // Check onshore/offshore
-        if ($meta->onshoreOffShore !== 'both' && $meta->onshoreOffShore !== ($params['onshore_offshore'] ?? 'both')) {
+        if ($meta->onshoreOffShore !== 'both' && $meta->onshoreOffShore !== ($params['onshoreOffShore'] ?? 'both')) {
             return false;
         }
 
@@ -575,9 +750,14 @@ class GenericRepository extends CoreRepository implements GenericInterface
      */
     private function isFieldRequired($field, array $params): bool
     {
+        // If no params provided, return false
+        if (empty($params)) {
+            return false;
+        }
+
         foreach ($field->formMetas as $meta) {
             if ($this->ruleMatches($meta, $params)) {
-                return $meta->isRequired;
+                return (bool) $meta->isRequired;
             }
         }
 
@@ -616,15 +796,15 @@ class GenericRepository extends CoreRepository implements GenericInterface
     private function getSectionName(string $section): array
     {
         return match ($section) {
-            'personal-info' => [
+            'personalInfo' => [
                 'en' => 'Personal Information',
                 'ar' => 'المعلومات الشخصية'
             ],
-            'employment-education' => [
+            'employmentAndEducation' => [
                 'en' => 'Employment & Education',
                 'ar' => 'التوظيف والتعليم'
             ],
-            'residency-travel' => [
+            'ResidencyAndTravelAndFamily' => [
                 'en' => 'Residency, Travel & Family',
                 'ar' => 'الإقامة والسفر والعائلة'
             ],
@@ -645,53 +825,69 @@ class GenericRepository extends CoreRepository implements GenericInterface
     private function getGroupName(string $group): array
     {
         return match ($group) {
-            'identification-data' => [
+            'identificationData' => [
                 'en' => 'Identification Data',
                 'ar' => 'بيانات التعريف'
             ],
-            'applicant-info' => [
+            'applicantInfo' => [
                 'en' => 'Applicant Information',
                 'ar' => 'معلومات مقدم الطلب'
             ],
-            'contact-info' => [
+            'contactInfo' => [
                 'en' => 'Contact Information',
                 'ar' => 'معلومات الاتصال'
             ],
-            'passport-details' => [
+            'passportDetails' => [
                 'en' => 'Passport Details',
                 'ar' => 'تفاصيل جواز السفر'
             ],
-            'employment-details' => [
+            'employmentDetails' => [
                 'en' => 'Employment Details',
                 'ar' => 'تفاصيل التوظيف'
             ],
-            'previous-jobs' => [
+            'previousJobs' => [
                 'en' => 'Previous Jobs',
                 'ar' => 'الوظائف السابقة'
             ],
-            'education' => [
-                'en' => 'Education',
+            'educations' => [
+                'en' => 'Educations',
                 'ar' => 'التعليم'
             ],
             'residences' => [
                 'en' => 'Residences',
                 'ar' => 'الإقامات'
             ],
-            'other-nationalities' => [
+            'otherNationalities' => [
                 'en' => 'Other Nationalities',
                 'ar' => 'الجنسيات الأخرى'
             ],
-            'countries-visited' => [
+            'countriesVisitedLast10Years' => [
                 'en' => 'Countries Visited',
                 'ar' => 'الدول التي تمت زيارتها'
             ],
-            'family-members' => [
+            'familyMembers' => [
                 'en' => 'Family Members',
                 'ar' => 'أفراد العائلة'
             ],
-            'required-documents' => [
+            'requiredDocuments' => [
                 'en' => 'Required Documents',
                 'ar' => 'المستندات المطلوبة'
+            ],
+            'residencyDocuments' => [ // ADD THIS
+                'en' => 'Residency Documents',
+                'ar' => 'مستندات الإقامة'
+            ],
+            'investmentDocuments' => [ // ADD THIS if missing
+                'en' => 'Investment Documents',
+                'ar' => 'مستندات الاستثمار'
+            ],
+            'ictMinistryDocuments' => [ // ADD THIS if missing
+                'en' => 'ICT Ministry Documents',
+                'ar' => 'مستندات وزارة الاتصالات'
+            ],
+            'residencyDetails' => [ // ADD THIS
+                'en' => 'Residency Details',
+                'ar' => 'تفاصيل الإقامة'
             ],
             default => [
                 'en' => ucfirst(str_replace('-', ' ', $group)),
@@ -699,7 +895,6 @@ class GenericRepository extends CoreRepository implements GenericInterface
             ]
         };
     }
-
     /**
      * Clear form structure cache
      */
@@ -904,115 +1099,31 @@ class GenericRepository extends CoreRepository implements GenericInterface
         return $activityIds;
     }
 
-    public function getFormFields($request)
+    public function getFormFields($data)
     {
-        $category = isset($request['category']) ? $request['category'] : '';
-        $subCategory = isset($request['subCategory']) ? $request['subCategory'] : '';
-        $sector = isset($request['sector']) ? $request['sector'] : '';
-        $activity = isset($request['activity']) ? $request['activity'] : '';
-        $subActivity = isset($request['subActivity']) ? $request['subActivity'] : '';
-        $entity = isset($request['entity']) ? $request['entity'] : '';
-        $incubator = isset($request['incubator']) ? $request['incubator'] : '';
+        $category = $data['category'] ?? null;
 
-        $formFields = FormFields::with(['formMetas' => function ($q) use ($category) {
-            $q->where('key', $category);
-        }])->whereHas('formMetas', function ($q) use ($category, $subCategory, $sector, $activity, $subActivity, $entity) {
-            $q->where('key', $category)
-                ->where(function ($q) use ($category, $subCategory) {
-                    $q->where(function ($q1) use ($category, $subCategory) {
-                        $q1->where('value->categorySlug', $category)
-                            ->where('value->subCategorySlug', $subCategory);
-                    })->orWhere('value->categorySlug', $category);
-                })
-                ->where('value->sectorSlug', $sector)
-                ->where('value->activitySlug', $activity)
-                ->where('value->subActivitySlug', $subActivity)
-                ->where('value->entitySlug', $entity)
-                ->where('value->incubatorSlug', NULL);
-        })->orWhereHas('formMetas', function ($q) use ($category, $subCategory, $sector, $activity, $subActivity, $incubator) {
-            $q->where('key', $category)
-                ->where(function ($q) use ($category, $subCategory) {
-                    $q->where(function ($q1) use ($category, $subCategory) {
-                        $q1->where('value->categorySlug', $category)
-                            ->where('value->subCategorySlug', $subCategory);
-                    })->orWhere('value->categorySlug', $category);
-                })
-                ->where('value->sectorSlug', $sector)
-                ->where('value->activitySlug', $activity)
-                ->where('value->subActivitySlug', $subActivity)
-                ->where('value->entitySlug', NULL)
-                ->where('value->incubatorSlug', $incubator);
-        })->orWhereHas('formMetas', function ($q) use ($category, $subCategory, $sector, $activity, $subActivity) {
-            $q->where('key', $category)
-                ->where(function ($q) use ($category, $subCategory) {
-                    $q->where(function ($q1) use ($category, $subCategory) {
-                        $q1->where('value->categorySlug', $category)
-                            ->where('value->subCategorySlug', $subCategory);
-                    })->orWhere('value->categorySlug', $category);
-                })
-                ->where('value->sectorSlug', $sector)
-                ->where('value->activitySlug', $activity)
-                ->where('value->subActivitySlug', $subActivity)
-                ->where('value->entitySlug', NULL)
-                ->where('value->incubatorSlug', NULL);
-        })->orWhereHas('formMetas', function ($q) use ($category, $subCategory, $sector, $activity) {
-            $q->where('key', $category)
-                ->where(function ($q) use ($category, $subCategory) {
-                    $q->where(function ($q1) use ($category, $subCategory) {
-                        $q1->where('value->categorySlug', $category)
-                            ->where('value->subCategorySlug', $subCategory);
-                    })->orWhere('value->categorySlug', $category);
-                })
-                ->where('value->sectorSlug', $sector)
-                ->where('value->activitySlug', $activity)
-                ->where('value->subActivitySlug', NULL)
-                ->where('value->entitySlug', NULL)
-                ->where('value->incubatorSlug', NULL);
-        })->orWhereHas('formMetas', function ($q) use ($category, $subCategory, $sector) {
-            $q->where('key', $category)
-                ->where(function ($q) use ($category, $subCategory) {
-                    $q->where(function ($q1) use ($category, $subCategory) {
-                        $q1->where('value->categorySlug', $category)
-                            ->where('value->subCategorySlug', $subCategory);
-                    })->orWhere('value->categorySlug', $category);
-                })
-                ->where('value->sectorSlug', $sector)
-                ->where('value->activitySlug', NULL)
-                ->where('value->subActivitySlug', NULL)
-                ->where('value->entitySlug', NULL)
-                ->where('value->incubatorSlug', NULL);
-        })->orWhereHas('formMetas', function ($q) use ($category, $subCategory) {
-            $q->where('key', $category)
-                ->where(function ($q) use ($category, $subCategory) {
-                    $q->where(function ($q1) use ($category, $subCategory) {
-                        $q1->where('value->categorySlug', $category)
-                            ->where('value->subCategorySlug', $subCategory);
-                    })->orWhere('value->categorySlug', $category);
-                })
-                ->where('value->sectorSlug', NULL)
-                ->where('value->activitySlug', NULL)
-                ->where('value->subActivitySlug', NULL)
-                ->where('value->entitySlug', NULL)
-                ->where('value->incubatorSlug', NULL);
-        })->orWhereHas('formMetas', function ($q) use ($category) {
-            $q->where('key', $category)
-                ->where('value->subCategorySlug', NULL)
-                ->where('value->sectorSlug', NULL)
-                ->where('value->activitySlug', NULL)
-                ->where('value->subActivitySlug', NULL)
-                ->where('value->entitySlug', NULL)
-                ->where('value->incubatorSlug', NULL);
-        })->get();
+        if (!$category) {
+            return collect([]);
+        }
 
-        $formFields->map(function ($query) {
-            $query->meta = $query->meta ? json_decode($query->meta) : NULL;
-            $query->formMetas->value = $query->formMetas->value ? json_decode($query->formMetas->value) : NULL;
+        // Get form fields with their meta data
+        $query = $this->formFields->where('status', 1)
+            ->with(['formMetas' => function ($query) use ($data) {
+                $query->where('key', $data['category'] ?? null);
+            }]);
 
-            return $query;
-        });
+        // Apply additional filters if needed based on other identification data
+        $formFields = $query->orderBy('section')
+            ->orderBy('group')
+            ->orderBy('fieldOrder')
+            ->get();
 
         return $formFields;
     }
+
+    
+
 
     public function getSingleFormField($type, $category = null)
     {

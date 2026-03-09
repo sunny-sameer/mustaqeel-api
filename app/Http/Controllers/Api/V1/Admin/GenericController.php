@@ -295,13 +295,13 @@ class GenericController extends BaseController
         try {
             $validated = $request->validate([
                 'category' => 'required|string|exists:categories,slug',
-                'sub_category' => 'nullable|string|exists:sub_categories,slug',
+                'subCategory' => 'nullable|string|exists:sub_categories,slug',
                 'sector' => 'nullable|string|exists:sectors,slug',
                 'activity' => 'nullable|string|exists:activities,slug',
-                'sub_activity' => 'nullable|string|exists:sub_activities,slug',
+                'subActivity' => 'nullable|string|exists:sub_activities,slug',
                 'entity' => 'nullable|string|exists:entities,slug',
                 'incubator' => 'nullable|string|exists:incubators,slug',
-                'onshore_offshore' => 'nullable|in:onshore,offshore,both'
+                'onshoreOffshore' => 'nullable|in:onshore,offshore,both'
             ]);
 
             $structure = $this->service->getFormStructure($validated);
@@ -351,9 +351,9 @@ class GenericController extends BaseController
     public function sections(): JsonResponse
     {
         $sections = [
-            ['value' => 'personal-info', 'label' => 'Personal Information'],
-            ['value' => 'employment-education', 'label' => 'Employment & Education'],
-            ['value' => 'residency-travel', 'label' => 'Residency, Travel & Family'],
+            ['value' => 'personalInfo', 'label' => 'Personal Information'],
+            ['value' => 'employmentAndEducation', 'label' => 'Employment & Education'],
+            ['value' => 'ResidencyAndTravelAndFamily', 'label' => 'Residency, Travel & Family'],
             ['value' => 'documents', 'label' => 'Document Upload'],
         ];
         return response()->json(['success' => true, 'data' => $sections]);

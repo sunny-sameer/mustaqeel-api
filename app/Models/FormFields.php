@@ -127,6 +127,24 @@ class FormFields extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('field_order');
+        return $query->orderBy('fieldOrder');
+    }
+
+    public function getCategoryRulesAttribute()
+    {
+        return $this->formMetas->map(function ($meta) {
+            $value = $meta->value ? json_decode($meta->value, true) : [];
+            return [
+                'categorySlug' => $meta->key,
+                'subCategorySlug' => $value['sub_category'] ?? null,
+                'sectorSlug' => $value['sector'] ?? null,
+                'activitySlug' => $value['activity'] ?? null,
+                'subActivitySlug' => $value['sub_activity'] ?? null,
+                'entitySlug' => $value['entity'] ?? null,
+                'incubatorSlug' => $value['incubator'] ?? null,
+                'onshoreOffshore' => $meta->onshoreOffShore,
+                'isRequired' => $meta->isRequired,
+            ];
+        });
     }
 }

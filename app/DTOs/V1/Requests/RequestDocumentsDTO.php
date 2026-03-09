@@ -5,8 +5,7 @@ namespace App\DTOs\V1\Requests;
 use App\Models\Requests;
 use Illuminate\Http\Request;
 
-
-final readonly class RequestDTO
+final readonly class RequestDocumentDTO
 {
     public function __construct(
         public int $entityId,
@@ -17,17 +16,20 @@ final readonly class RequestDTO
         public bool $status = true,
     ) {}
 
-
     public static function fromArray(array $data, int $entityId): self
     {
         $meta = [
-            'extension'=>$data['extension']
+            'extension' => $data['extension'] ?? null,
+            'originalName' => $data['originalName'] ?? null,
+            'size' => $data['size'] ?? null,
+            'mimeType' => $data['mimeType'] ?? null,
         ];
+        
         return new self(
             entityId: $entityId,
             documentName: $data['documentName'],
             type: $data['key'],
-            meta: json_encode(array_filter($meta)),
+            meta: json_encode(array_filter($meta), JSON_UNESCAPED_UNICODE),
             entityType: Requests::class,
             status: true,
         );

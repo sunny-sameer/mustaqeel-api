@@ -18,17 +18,15 @@ final readonly class CommunicationDTO
 
     public static function fromArray(array $data): self
     {
-        $comm = Communications::where('userId',auth()->id())
-        ->where('key','profile')->first();
+        $comm = Communications::where('userId', auth()->id())
+            ->where('key', 'profile')->first();
 
-        $commData = isset($comm->value) ? json_decode($comm->value,true) : [];
+        $commData = isset($comm->value) ? json_decode($comm->value, true) : [];
 
         $map = [
             'email' => isset($data['personalInfo']['contactInfo']['email']) ? $data['personalInfo']['contactInfo']['email'] : ($commData['email'] ?? NULL),
             'mobileNumber' => isset($data['personalInfo']['contactInfo']['mobile']) ? $data['personalInfo']['contactInfo']['mobile'] : ($commData['mobileNumber'] ?? NULL),
             'phoneNumber' => isset($data['personalInfo']['contactInfo']['phone']) ? $data['personalInfo']['contactInfo']['phone'] : ($commData['phoneNumber'] ?? NULL),
-            'arabicLevel' => isset($data['personalInfo']['applicantInfo']['langProficiencyAr']) ? $data['personalInfo']['applicantInfo']['langProficiencyAr'] : ($commData['arabicLevel'] ?? NULL),
-            'englishLevel' => isset($data['personalInfo']['applicantInfo']['langProficiencyEn']) ? $data['personalInfo']['applicantInfo']['langProficiencyEn'] : ($commData['englishLevel'] ?? NULL),
         ];
 
         return new self(

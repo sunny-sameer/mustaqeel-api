@@ -1,5 +1,5 @@
 <?php
-// database/seeders/FormFieldSeeder.php
+// database/seeders/FormFieldSeeder.php (UPDATED - IDENTIFICATION FIELDS REMOVED)
 
 namespace Database\Seeders;
 
@@ -16,215 +16,18 @@ class FormFieldSeeder extends Seeder
     public function run(): void
     {
         $formFields = [
-            // ==================== SECTION 1: CATEGORY & BUSINESS STRUCTURE ====================
-            
-            // Group: Identification Data
-            [
-                'formFields' => [
-                    'nameEn' => 'Category',
-                    'nameAr' => 'الفئة',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'options' => [
-                            ['labelEn' => 'Talent', 'labelAr' => 'موهبة', 'value' => 'tal'],
-                            ['labelEn' => 'Entrepreneur', 'labelAr' => 'رائد أعمال', 'value' => 'ent'],
-                            ['labelEn' => 'Investor', 'labelAr' => 'مستثمر', 'value' => 'inv'],
-                            ['labelEn' => 'Executive', 'labelAr' => 'تنفيذي', 'value' => 'exe']
-                        ],
-                        'placeholderEn' => 'Select Category',
-                        'placeholderAr' => 'اختر الفئة',
-                        'validations' => ['required' => true]
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // No metas = visible to all categories
-            ],
-            
-            // Sub Category
-            [
-                'formFields' => [
-                    'nameEn' => 'Sub Category',
-                    'nameAr' => 'الفئة الفرعية',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Select Sub Category',
-                        'placeholderAr' => 'اختر الفئة الفرعية',
-                        'validations' => ['required' => false],
-                        'depends_on' => 'category'
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'notEmpty', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // Visible to all categories (but depends on category having sub-categories)
-            ],
-            
-            // Sector
-            [
-                'formFields' => [
-                    'nameEn' => 'Sector',
-                    'nameAr' => 'القطاع',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Select Sector',
-                        'placeholderAr' => 'اختر القطاع',
-                        'validations' => ['required' => false],
-                        'depends_on' => 'category'
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false],
-                    ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false],
-                    ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false]
-                ]
-            ],
-            
-            // Activity
-            [
-                'formFields' => [
-                    'nameEn' => 'Activity',
-                    'nameAr' => 'النشاط',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Select Activity',
-                        'placeholderAr' => 'اختر النشاط',
-                        'validations' => ['required' => false],
-                        'depends_on' => 'sector'
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show'],
-                        ['field' => 'sector', 'operator' => 'notEmpty', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false],
-                    ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false],
-                    ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false]
-                ]
-            ],
-            
-            // Sub Activity
-            [
-                'formFields' => [
-                    'nameEn' => 'Sub Activity',
-                    'nameAr' => 'النشاط الفرعي',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Select Sub Activity',
-                        'placeholderAr' => 'اختر النشاط الفرعي',
-                        'validations' => ['required' => false],
-                        'depends_on' => 'activity'
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show'],
-                        ['field' => 'activity', 'operator' => 'notEmpty', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false],
-                    ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false],
-                    ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false]
-                ]
-            ],
-            
-            // Entity - Show only for Talent
-            [
-                'formFields' => [
-                    'nameEn' => 'Entity',
-                    'nameAr' => 'الكيان',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 6,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Select Entity',
-                        'placeholderAr' => 'اختر الكيان',
-                        'validations' => ['required' => false],
-                        'depends_on' => 'activity'
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'tal', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false]
-                ]
-            ],
-            
-            // Incubator - Show only for Entrepreneur
-            [
-                'formFields' => [
-                    'nameEn' => 'Incubator',
-                    'nameAr' => 'الحاضنة',
-                    'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'identification-data',
-                    'field_order' => 7,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Select Incubator',
-                        'placeholderAr' => 'اختر الحاضنة',
-                        'validations' => ['required' => false],
-                        'depends_on' => 'category'
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'ent', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => false]
-                ]
-            ],
+            // ==================== SECTION 1: PERSONAL INFORMATION ====================
 
-            // ==================== SECTION 2: PERSONAL INFORMATION (All Categories) ====================
-            
             // Group: Applicant Information
             [
                 'formFields' => [
                     'nameEn' => 'Full Name (English)',
                     'nameAr' => 'الاسم الكامل (إنجليزي)',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter your full name',
@@ -247,10 +50,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Full Name (Arabic)',
                     'nameAr' => 'الاسم الكامل (عربي)',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter your name in Arabic',
@@ -273,10 +76,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Gender',
                     'nameAr' => 'الجنس',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'options' => [
@@ -296,10 +99,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Date of Birth',
                     'nameAr' => 'تاريخ الميلاد',
                     'type' => 'date',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select date of birth',
@@ -315,10 +118,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Religion',
                     'nameAr' => 'الديانة',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'options' => [
@@ -342,10 +145,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Marital Status',
                     'nameAr' => 'الحالة الاجتماعية',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 6,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 6,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'options' => [
@@ -367,10 +170,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Place of Birth',
                     'nameAr' => 'مكان الميلاد',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 7,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 7,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select country of birth',
@@ -387,10 +190,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Current Country of Residence',
                     'nameAr' => 'بلد الإقامة الحالي',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 8,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 8,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select country of residence',
@@ -407,10 +210,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Nationality',
                     'nameAr' => 'الجنسية',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 9,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 9,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select nationality',
@@ -427,10 +230,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Short Biography',
                     'nameAr' => 'السيرة الذاتية المختصرة',
                     'type' => 'textarea',
-                    'section' => 'personal-info',
-                    'group' => 'applicant-info',
-                    'field_order' => 10,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'applicantInfo',
+                    'fieldOrder' => 10,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Write a short biography',
@@ -455,10 +258,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Email Address',
                     'nameAr' => 'البريد الإلكتروني',
                     'type' => 'email',
-                    'section' => 'personal-info',
-                    'group' => 'contact-info',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'contactInfo',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter your email',
@@ -480,10 +283,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Mobile Number',
                     'nameAr' => 'رقم الجوال',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'contact-info',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'contactInfo',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter mobile number',
@@ -506,10 +309,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Phone Number',
                     'nameAr' => 'رقم الهاتف',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'contact-info',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'contactInfo',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter phone number',
@@ -531,10 +334,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Permanent Address in the country of origin',
                     'nameAr' => 'العنوان الدائم في بلد المنشأ',
                     'type' => 'textarea',
-                    'section' => 'personal-info',
-                    'group' => 'contact-info',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'contactInfo',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter your permanent address',
@@ -556,10 +359,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'PO Box',
                     'nameAr' => 'صندوق بريد',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'contact-info',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'contactInfo',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter PO Box',
@@ -583,10 +386,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Type of Passport',
                     'nameAr' => 'نوع جواز السفر',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'options' => [
@@ -608,10 +411,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Passport Number',
                     'nameAr' => 'رقم جواز السفر',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter passport number',
@@ -634,10 +437,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Passport Issue Date',
                     'nameAr' => 'تاريخ إصدار جواز السفر',
                     'type' => 'date',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select issue date',
@@ -653,10 +456,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Passport Expiry Date',
                     'nameAr' => 'تاريخ انتهاء جواز السفر',
                     'type' => 'date',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select expiry date',
@@ -675,10 +478,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Passport Issuing Country',
                     'nameAr' => 'بلد إصدار جواز السفر',
                     'type' => 'select',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select issuing country',
@@ -695,10 +498,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Passport Issue By',
                     'nameAr' => 'جهة الإصدار',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 6,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 6,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter issuing authority',
@@ -720,10 +523,10 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Passport Place Of Issue',
                     'nameAr' => 'مكان إصدار جواز السفر',
                     'type' => 'text',
-                    'section' => 'personal-info',
-                    'group' => 'passport-details',
-                    'field_order' => 7,
-                    'grid_columns' => 4,
+                    'section' => 'personalInfo',
+                    'group' => 'passportDetails',
+                    'fieldOrder' => 7,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter place of issue',
@@ -741,40 +544,42 @@ class FormFieldSeeder extends Seeder
                 'metas' => [] // All categories
             ],
 
+            // ==================== SECTION 2: EMPLOYMENT & EDUCATION ====================
+
             // Group: Previous Jobs (Repeatable)
             [
                 'formFields' => [
                     'nameEn' => 'Previous Jobs',
                     'nameAr' => 'الوظائف السابقة',
                     'type' => 'group',
-                    'section' => 'employment-education',
-                    'group' => 'previous-jobs',
-                    'field_order' => 10,
-                    'grid_columns' => 12,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'previousJobs',
+                    'fieldOrder' => 10,
+                    'gridColumns' => 12,
                     'repeatable' => true,
-                    'repeatable_label' => 'Add Previous Job',
-                    'repeatable_max' => 5,
+                    'repeatableLabel' => 'Add Previous Job',
+                    'repeatableMax' => 5,
                     'meta' => json_encode([
                         'fields' => [
                             [
                                 'nameEn' => 'Entity',
                                 'nameAr' => 'الجهة',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Job Title',
                                 'nameAr' => 'المسمى الوظيفي',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Job Duration',
                                 'nameAr' => 'المدة',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'Less than 1 year', 'labelAr' => 'أقل من سنة', 'value' => '<1'],
                                     ['labelEn' => '1-3 years', 'labelAr' => '1-3 سنوات', 'value' => '1-3'],
@@ -788,7 +593,7 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Job Country',
                                 'nameAr' => 'بلد العمل',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options_from' => 'nationalities',
                                 'validations' => ['required' => true]
                             ],
@@ -796,7 +601,7 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Current / Previous',
                                 'nameAr' => 'حالي / سابق',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'Current', 'labelAr' => 'حالي', 'value' => 'current'],
                                     ['labelEn' => 'Previous', 'labelAr' => 'سابق', 'value' => 'previous']
@@ -813,23 +618,23 @@ class FormFieldSeeder extends Seeder
             // Group: Education (Repeatable)
             [
                 'formFields' => [
-                    'nameEn' => 'Education',
+                    'nameEn' => 'Educations',
                     'nameAr' => 'التعليم',
                     'type' => 'group',
-                    'section' => 'employment-education',
-                    'group' => 'education',
-                    'field_order' => 20,
-                    'grid_columns' => 12,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'educations',
+                    'fieldOrder' => 20,
+                    'gridColumns' => 12,
                     'repeatable' => true,
-                    'repeatable_label' => 'Add Education',
-                    'repeatable_max' => 10,
+                    'repeatableLabel' => 'Add Education',
+                    'repeatableMax' => 10,
                     'meta' => json_encode([
                         'fields' => [
                             [
                                 'nameEn' => 'Qualification - Certificate',
                                 'nameAr' => 'المؤهل - الشهادة',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'High School', 'labelAr' => 'ثانوية عامة', 'value' => 'high_school'],
                                     ['labelEn' => 'Diploma', 'labelAr' => 'دبلوم', 'value' => 'diploma'],
@@ -844,14 +649,14 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'University/College',
                                 'nameAr' => 'الجامعة/الكلية',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Country',
                                 'nameAr' => 'البلد',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options_from' => 'nationalities',
                                 'validations' => ['required' => true]
                             ],
@@ -859,14 +664,14 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Specialization',
                                 'nameAr' => 'التخصص',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Period',
                                 'nameAr' => 'المدة',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => '1 year', 'labelAr' => 'سنة', 'value' => '1'],
                                     ['labelEn' => '2 years', 'labelAr' => 'سنتان', 'value' => '2'],
@@ -884,216 +689,16 @@ class FormFieldSeeder extends Seeder
                 'metas' => [] // All categories
             ],
 
-            // ==================== SECTION 3: RESIDENCY INFORMATION ====================
-            
-            // Group: Residency Details
-            [
-                'formFields' => [
-                    'nameEn' => 'Are you Qatar Resident?',
-                    'nameAr' => 'هل أنت مقيم في قطر؟',
-                    'type' => 'checkbox',
-                    'section' => 'residency-travel',
-                    'group' => 'residency-details',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'options' => [
-                            ['labelEn' => 'Yes, I am a Qatar resident', 'labelAr' => 'نعم، أنا مقيم في قطر', 'value' => 'yes']
-                        ],
-                        'validations' => ['required' => false]
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // All categories
-            ],
-            
-            // QID Type (conditional on Qatar Resident)
-            [
-                'formFields' => [
-                    'nameEn' => 'QID Type',
-                    'nameAr' => 'نوع البطاقة القطرية',
-                    'type' => 'select',
-                    'section' => 'residency-travel',
-                    'group' => 'residency-details',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'options' => [
-                            ['labelEn' => 'Qatari', 'labelAr' => 'قطري', 'value' => 'qatari'],
-                            ['labelEn' => 'Resident', 'labelAr' => 'مقيم', 'value' => 'resident'],
-                            ['labelEn' => 'GCC', 'labelAr' => 'خليجي', 'value' => 'gcc']
-                        ],
-                        'placeholderEn' => 'Select QID Type',
-                        'placeholderAr' => 'اختر نوع البطاقة',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // All categories (but conditional on checkbox)
-            ],
-            
-            // QID Number
-            [
-                'formFields' => [
-                    'nameEn' => 'QID Number',
-                    'nameAr' => 'رقم البطاقة القطرية',
-                    'type' => 'text',
-                    'section' => 'residency-travel',
-                    'group' => 'residency-details',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Enter QID number',
-                        'placeholderAr' => 'أدخل رقم البطاقة',
-                        'tooltipEn' => '• QID is required • only numeric characters are allowed',
-                        'tooltipAr' => '• رقم البطاقة مطلوب • يُسمح فقط بالأرقام',
-                        'validations' => [
-                            'required' => true,
-                            'pattern' => '^[0-9]+$',
-                            'minLength' => 9,
-                            'maxLength' => 11
-                        ]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // All categories (but conditional)
-            ],
-            
-            // Work Permit Options
-            [
-                'formFields' => [
-                    'nameEn' => 'Work Permit Options',
-                    'nameAr' => 'خيارات تصريح العمل',
-                    'type' => 'radio',
-                    'section' => 'residency-travel',
-                    'group' => 'residency-details',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'options' => [
-                            ['labelEn' => 'I will not continue work with my current employer', 'labelAr' => 'لن أواصل العمل مع صاحب العمل الحالي', 'value' => 'no'],
-                            ['labelEn' => 'I will continue work with my current employer', 'labelAr' => 'سأواصل العمل مع صاحب العمل الحالي', 'value' => 'yes']
-                        ],
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // All categories (but conditional)
-            ],
-            
-            // Maintain Work Permit (conditional on Work Permit Options = yes)
-            [
-                'formFields' => [
-                    'nameEn' => 'Maintain Work Permit',
-                    'nameAr' => 'الحفاظ على تصريح العمل',
-                    'type' => 'radio',
-                    'section' => 'residency-travel',
-                    'group' => 'residency-details',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'options' => [
-                            ['labelEn' => 'Proceed with Mustaqel residency', 'labelAr' => 'المتابعة مع إقامة مستقل', 'value' => 'proceed'],
-                            ['labelEn' => 'Maintain current residency', 'labelAr' => 'الحفاظ على الإقامة الحالية', 'value' => 'maintain']
-                        ],
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show'],
-                        ['field' => 'work-permit-options', 'operator' => 'equals', 'value' => 'yes', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // All categories (but conditional)
-            ],
-            
-            // Address In Qatar
-            [
-                'formFields' => [
-                    'nameEn' => 'Address In Qatar',
-                    'nameAr' => 'العنوان في قطر',
-                    'type' => 'textarea',
-                    'section' => 'residency-travel',
-                    'group' => 'residency-details',
-                    'field_order' => 6,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'placeholderEn' => 'Enter your address in Qatar',
-                        'placeholderAr' => 'أدخل عنوانك في قطر',
-                        'tooltipEn' => '• Qatar Address is required • Only those Special Characters are allowed',
-                        'tooltipAr' => '• العنوان في قطر مطلوب • يُسمح فقط بهذه الأحرف الخاصة',
-                        'validations' => [
-                            'required' => true,
-                            'maxLength' => 500
-                        ],
-                        'rows' => 3
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [] // All categories (but conditional)
-            ],
-            
-            // Police Clearance (for Non-Residents)
-            [
-                'formFields' => [
-                    'nameEn' => 'Police Clearance/Good Behavior Certificate',
-                    'nameAr' => 'شهادة براءة ذمة من الشرطة / شهادة حسن السيرة والسلوك',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'required-documents',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Upload police clearance certificate',
-                        'helpTextAr' => 'قم بتحميل شهادة براءة الذمة',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'notChecked', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
-                    ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
-                    ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
-                    ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
-                ]
-            ],
-
-            // ==================== SECTION 4: EMPLOYMENT INFORMATION ====================
-            
-            // Group: Employment Details (Only for tal, ent, exe AND Qatar Resident = TRUE)
+            // Group: Employment Details (Conditional on Qatar Resident)
             [
                 'formFields' => [
                     'nameEn' => 'Current Job Title',
                     'nameAr' => 'المسمى الوظيفي الحالي',
                     'type' => 'select',
-                    'section' => 'employment-education',
-                    'group' => 'employment-details',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'employmentDetails',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'options' => [
@@ -1110,28 +715,28 @@ class FormFieldSeeder extends Seeder
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show'],
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
                 'metas' => [
+                    // Only show for Talent, Entrepreneur, Executive categories
                     ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true],
                     ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true],
                     ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true]
                 ]
             ],
-            
+
             // Other Current Job Title (conditional)
             [
                 'formFields' => [
                     'nameEn' => 'Other Current Job Title',
                     'nameAr' => 'المسمى الوظيفي الحالي (أخرى)',
                     'type' => 'text',
-                    'section' => 'employment-education',
-                    'group' => 'employment-details',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'employmentDetails',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Please specify job title',
@@ -1143,9 +748,8 @@ class FormFieldSeeder extends Seeder
                         ]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'current-job-title', 'operator' => 'equals', 'value' => 'other', 'action' => 'show'],
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show'],
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show']
+                        ['field' => 'currentJobTitle', 'operator' => 'equals', 'value' => 'other', 'action' => 'show'],
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1155,16 +759,16 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true]
                 ]
             ],
-            
+
             [
                 'formFields' => [
                     'nameEn' => 'Date of Joining',
                     'nameAr' => 'تاريخ الالتحاق',
                     'type' => 'date',
-                    'section' => 'employment-education',
-                    'group' => 'employment-details',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'employmentDetails',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Select joining date',
@@ -1172,8 +776,7 @@ class FormFieldSeeder extends Seeder
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show'],
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1183,16 +786,16 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true]
                 ]
             ],
-            
+
             [
                 'formFields' => [
                     'nameEn' => 'Monthly Salary',
                     'nameAr' => 'الراتب الشهري',
                     'type' => 'text',
-                    'section' => 'employment-education',
-                    'group' => 'employment-details',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'employmentDetails',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter monthly salary',
@@ -1205,8 +808,7 @@ class FormFieldSeeder extends Seeder
                         ]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show'],
-                        ['field' => 'category', 'operator' => 'in', 'value' => ['tal', 'ent', 'exe'], 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1217,18 +819,16 @@ class FormFieldSeeder extends Seeder
                 ]
             ],
 
-            // ==================== SECTION 5: INVESTMENT INFORMATION ====================
-            
             // Group: Investment Details (Only for Investor category)
             [
                 'formFields' => [
                     'nameEn' => 'Share of the Capital',
                     'nameAr' => 'حصة رأس المال',
                     'type' => 'text',
-                    'section' => 'employment-education',
-                    'group' => 'investment-details',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'investmentDetails',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter share percentage',
@@ -1239,25 +839,22 @@ class FormFieldSeeder extends Seeder
                             'maxLength' => 10
                         ]
                     ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show']
-                    ]),
                     'status' => 1
                 ],
                 'metas' => [
                     ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => true]
                 ]
             ],
-            
+
             [
                 'formFields' => [
                     'nameEn' => 'Amount of Capital',
                     'nameAr' => 'قيمة رأس المال',
                     'type' => 'text',
-                    'section' => 'employment-education',
-                    'group' => 'investment-details',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'investmentDetails',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter amount',
@@ -1268,26 +865,23 @@ class FormFieldSeeder extends Seeder
                             'maxLength' => 20
                         ]
                     ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show']
-                    ]),
                     'status' => 1
                 ],
                 'metas' => [
                     ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => true]
                 ]
             ],
-            
+
             // Company Name (Investor + Qatar Resident)
             [
                 'formFields' => [
                     'nameEn' => 'Company Name',
                     'nameAr' => 'اسم الشركة',
                     'type' => 'text',
-                    'section' => 'employment-education',
-                    'group' => 'investment-details',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'investmentDetails',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Enter company name',
@@ -1299,8 +893,7 @@ class FormFieldSeeder extends Seeder
                         ]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show'],
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1308,17 +901,17 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true]
                 ]
             ],
-            
+
             // Company Classification
             [
                 'formFields' => [
                     'nameEn' => 'Company Classification',
                     'nameAr' => 'تصنيف الشركة',
                     'type' => 'select',
-                    'section' => 'employment-education',
-                    'group' => 'investment-details',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'investmentDetails',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'options' => [
@@ -1334,8 +927,7 @@ class FormFieldSeeder extends Seeder
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show'],
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1343,17 +935,17 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true]
                 ]
             ],
-            
+
             // Other Company Classification
             [
                 'formFields' => [
                     'nameEn' => 'Other Company Classification',
                     'nameAr' => 'تصنيف الشركة (أخرى)',
                     'type' => 'text',
-                    'section' => 'employment-education',
-                    'group' => 'investment-details',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
+                    'section' => 'employmentAndEducation',
+                    'group' => 'investmentDetails',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'placeholderEn' => 'Please specify classification',
@@ -1365,9 +957,8 @@ class FormFieldSeeder extends Seeder
                         ]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show'],
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show'],
-                        ['field' => 'company-classification', 'operator' => 'equals', 'value' => 'other', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show'],
+                        ['field' => 'companyClassification', 'operator' => 'equals', 'value' => 'other', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1375,210 +966,176 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'onshore', 'isRequired' => true]
                 ]
             ],
-            
-            // Tax Report (for Tax Based sub-category)
+
+            // ==================== SECTION 3: RESIDENCY INFORMATION ====================
+
+            // Group: Residency Details
             [
                 'formFields' => [
-                    'nameEn' => 'Tax report for the last three years',
-                    'nameAr' => 'تقرير ضريبي لآخر ثلاث سنوات',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'investment-documents',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'nameEn' => 'Are you Qatar Resident?',
+                    'nameAr' => 'هل أنت مقيم في قطر؟',
+                    'type' => 'checkbox',
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'residencyDetails',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Upload tax reports for last 3 years',
-                        'helpTextAr' => 'قم بتحميل التقارير الضريبية لآخر 3 سنوات',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show'],
-                        ['field' => 'sub-category', 'operator' => 'equals', 'value' => 'tax-based', 'action' => 'show']
+                        'options' => [
+                            ['labelEn' => 'Yes, I am a Qatar resident', 'labelAr' => 'نعم، أنا مقيم في قطر', 'value' => 'yes']
+                        ],
+                        'validations' => ['required' => false]
                     ]),
                     'status' => 1
                 ],
-                'metas' => [
-                    ['key' => 'inv', 'value' => json_encode(['sub_category' => 'tax-based']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
-            ],
-            
-            // Asset-Based Audit Report (for Assets Based sub-category)
-            [
-                'formFields' => [
-                    'nameEn' => 'Asset-Based Audit Report',
-                    'nameAr' => 'تقرير التدقيق القائم على الأصول',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'investment-documents',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'extensions' => ['xlsx', 'xlsb', 'xls', 'xltx', 'xlsm', 'csv'],
-                        'maxSize' => 10240,
-                        'helpTextEn' => 'Upload asset-based audit report',
-                        'helpTextAr' => 'قم بتحميل تقرير التدقيق القائم على الأصول',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'category', 'operator' => 'equals', 'value' => 'inv', 'action' => 'show'],
-                        ['field' => 'sub-category', 'operator' => 'equals', 'value' => 'assets-based', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'inv', 'value' => json_encode(['sub_category' => 'assets-based']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
+                'metas' => [] // All categories
             ],
 
-            // ==================== SECTION 6: SPECIAL ENTITY-BASED REQUIREMENTS ====================
-            
-            // Group: ICT Ministry Documents (for specific entity)
+            // QID Type (conditional on Qatar Resident)
             [
                 'formFields' => [
-                    'nameEn' => 'Patent Certificate or International Award Certificate',
-                    'nameAr' => 'شهادة براءة الاختراع أو شهادة جائزة دولية',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'ict-ministry-documents',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'nameEn' => 'QID Type',
+                    'nameAr' => 'نوع البطاقة القطرية',
+                    'type' => 'select',
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'residencyDetails',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Must be attested',
-                        'helpTextAr' => 'يجب أن تكون موثقة',
+                        'options' => [
+                            ['labelEn' => 'Qatari', 'labelAr' => 'قطري', 'value' => 'qatari'],
+                            ['labelEn' => 'Resident', 'labelAr' => 'مقيم', 'value' => 'resident'],
+                            ['labelEn' => 'GCC', 'labelAr' => 'خليجي', 'value' => 'gcc']
+                        ],
+                        'placeholderEn' => 'Select QID Type',
+                        'placeholderAr' => 'اختر نوع البطاقة',
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'entity', 'operator' => 'equals', 'value' => 'ict-ministry', 'action' => 'show'],
-                        ['field' => 'activity', 'operator' => 'equals', 'value' => 'inventors', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ict-ministry', 'activity' => 'inventors']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
-            ],
-            
-            [
-                'formFields' => [
-                    'nameEn' => 'Summary of the Invention (1–2 pages)',
-                    'nameAr' => 'نبذة عن الإختراع (من صفحة إلى صفحتين)',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'ict-ministry-documents',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Upload summary of invention',
-                        'helpTextAr' => 'قم بتحميل نبذة عن الاختراع',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'entity', 'operator' => 'equals', 'value' => 'ict-ministry', 'action' => 'show'],
-                        ['field' => 'activity', 'operator' => 'equals', 'value' => 'inventors', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ict-ministry', 'activity' => 'inventors']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
-            ],
-            
-            [
-                'formFields' => [
-                    'nameEn' => 'Recommendation Letter from ICT Authority',
-                    'nameAr' => 'توصية من جهة مختصة في تكنولوجيا المعلومات والاتصالات',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'ict-ministry-documents',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Upload recommendation letter',
-                        'helpTextAr' => 'قم بتحميل خطاب التوصية',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'entity', 'operator' => 'equals', 'value' => 'ict-ministry', 'action' => 'show'],
-                        ['field' => 'activity', 'operator' => 'equals', 'value' => 'specialized-experts', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ict-ministry', 'activity' => 'specialized-experts']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
-            ],
-            
-            [
-                'formFields' => [
-                    'nameEn' => 'Proof of University Ranking',
-                    'nameAr' => 'إثبات تصنيف الجامعة',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'ict-ministry-documents',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Screenshot or official document',
-                        'helpTextAr' => 'لقطة شاشة أو مستند رسمي',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'entity', 'operator' => 'equals', 'value' => 'ict-ministry', 'action' => 'show'],
-                        ['field' => 'activity', 'operator' => 'equals', 'value' => 'digital-industry-leaders', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ict-ministry', 'activity' => 'digital-industry-leaders']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
-            ],
-            
-            [
-                'formFields' => [
-                    'nameEn' => 'Valid Employment Contract',
-                    'nameAr' => 'عقد عمل ساري المفعول',
-                    'type' => 'file',
-                    'section' => 'documents',
-                    'group' => 'ict-ministry-documents',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
-                    'repeatable' => false,
-                    'meta' => json_encode([
-                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-                        'maxSize' => 5120,
-                        'helpTextEn' => 'Must show role & salary and be attested',
-                        'helpTextAr' => 'يجب أن يوضح الوظيفة والراتب وأن يكون موثقًا',
-                        'validations' => ['required' => true]
-                    ]),
-                    'conditions' => json_encode([
-                        ['field' => 'entity', 'operator' => 'equals', 'value' => 'ict-ministry', 'action' => 'show'],
-                        ['field' => 'activity', 'operator' => 'equals', 'value' => 'digital-industry-leaders', 'action' => 'show']
-                    ]),
-                    'status' => 1
-                ],
-                'metas' => [
-                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ict-ministry', 'activity' => 'digital-industry-leaders']), 'onshoreOffShore' => 'both', 'isRequired' => true]
-                ]
+                'metas' => [] // All categories (but conditional on checkbox)
             ],
 
-            // ==================== SECTION 7: CATEGORY-BASED DOCUMENTS ====================
-            
+            // QID Number
+            [
+                'formFields' => [
+                    'nameEn' => 'QID Number',
+                    'nameAr' => 'رقم البطاقة القطرية',
+                    'type' => 'text',
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'residencyDetails',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'placeholderEn' => 'Enter QID number',
+                        'placeholderAr' => 'أدخل رقم البطاقة',
+                        'tooltipEn' => '• QID is required • only numeric characters are allowed',
+                        'tooltipAr' => '• رقم البطاقة مطلوب • يُسمح فقط بالأرقام',
+                        'validations' => [
+                            'required' => true,
+                            'pattern' => '^[0-9]+$',
+                            'minLength' => 9,
+                            'maxLength' => 11
+                        ]
+                    ]),
+                    'conditions' => json_encode([
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [] // All categories (but conditional)
+            ],
+
+            // Work Permit Options
+            [
+                'formFields' => [
+                    'nameEn' => 'Work Permit Options',
+                    'nameAr' => 'خيارات تصريح العمل',
+                    'type' => 'radio',
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'residencyDetails',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'options' => [
+                            ['labelEn' => 'I will not continue work with my current employer', 'labelAr' => 'لن أواصل العمل مع صاحب العمل الحالي', 'value' => 'no'],
+                            ['labelEn' => 'I will continue work with my current employer', 'labelAr' => 'سأواصل العمل مع صاحب العمل الحالي', 'value' => 'yes']
+                        ],
+                        'validations' => ['required' => true]
+                    ]),
+                    'conditions' => json_encode([
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [] // All categories (but conditional)
+            ],
+
+            // Maintain Work Permit (conditional on Work Permit Options = yes)
+            [
+                'formFields' => [
+                    'nameEn' => 'Maintain Work Permit',
+                    'nameAr' => 'الحفاظ على تصريح العمل',
+                    'type' => 'radio',
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'residencyDetails',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'options' => [
+                            ['labelEn' => 'Proceed with Mustaqel residency', 'labelAr' => 'المتابعة مع إقامة مستقل', 'value' => 'proceed'],
+                            ['labelEn' => 'Maintain current residency', 'labelAr' => 'الحفاظ على الإقامة الحالية', 'value' => 'maintain']
+                        ],
+                        'validations' => ['required' => true]
+                    ]),
+                    'conditions' => json_encode([
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show'],
+                        ['field' => 'workPermitOptions', 'operator' => 'equals', 'value' => 'yes', 'action' => 'show']
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [] // All categories (but conditional)
+            ],
+
+            // Address In Qatar
+            [
+                'formFields' => [
+                    'nameEn' => 'Address In Qatar',
+                    'nameAr' => 'العنوان في قطر',
+                    'type' => 'textarea',
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'residencyDetails',
+                    'fieldOrder' => 6,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'placeholderEn' => 'Enter your address in Qatar',
+                        'placeholderAr' => 'أدخل عنوانك في قطر',
+                        'tooltipEn' => '• Qatar Address is required • Only those Special Characters are allowed',
+                        'tooltipAr' => '• العنوان في قطر مطلوب • يُسمح فقط بهذه الأحرف الخاصة',
+                        'validations' => [
+                            'required' => true,
+                            'maxLength' => 500
+                        ],
+                        'rows' => 3
+                    ]),
+                    'conditions' => json_encode([
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [] // All categories (but conditional)
+            ],
+
+            // ==================== SECTION 4: DOCUMENTS ====================
+
             // Group: Required Documents
             // Personal Photo (All categories)
             [
@@ -1587,9 +1144,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'صورة شخصية',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'required-documents',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'group' => 'requiredDocuments',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png'],
@@ -1602,7 +1159,7 @@ class FormFieldSeeder extends Seeder
                 ],
                 'metas' => [] // All categories
             ],
-            
+
             // Passport Copy (All categories)
             [
                 'formFields' => [
@@ -1610,9 +1167,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'نسخة من جواز السفر',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'required-documents',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'group' => 'requiredDocuments',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1625,7 +1182,7 @@ class FormFieldSeeder extends Seeder
                 ],
                 'metas' => [] // All categories
             ],
-            
+
             // CV with Experience Letter (All categories)
             [
                 'formFields' => [
@@ -1633,9 +1190,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'السيرة الذاتية مع شهادة الخبرة',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'required-documents',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'group' => 'requiredDocuments',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1648,7 +1205,38 @@ class FormFieldSeeder extends Seeder
                 ],
                 'metas' => [] // All categories
             ],
-            
+
+            // Police Clearance (for Non-Residents)
+            [
+                'formFields' => [
+                    'nameEn' => 'Police Clearance/Good Behavior Certificate',
+                    'nameAr' => 'شهادة براءة ذمة من الشرطة / شهادة حسن السيرة والسلوك',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'requiredDocuments',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Upload police clearance certificate',
+                        'helpTextAr' => 'قم بتحميل شهادة براءة الذمة',
+                        'validations' => ['required' => true]
+                    ]),
+                    'conditions' => json_encode([
+                        ['field' => 'areYouQatarResident', 'operator' => 'notChecked', 'action' => 'show']
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'tal', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
+                    ['key' => 'ent', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
+                    ['key' => 'inv', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
+                    ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'offshore', 'isRequired' => true],
+                ]
+            ],
+
             // Certified Academic Degree (Talent and Executive only)
             [
                 'formFields' => [
@@ -1656,9 +1244,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'الشهادة أو الشهادات التعليمية',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'required-documents',
-                    'field_order' => 4,
-                    'grid_columns' => 4,
+                    'group' => 'requiredDocuments',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1674,7 +1262,7 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => true]
                 ]
             ],
-            
+
             // 3 Months Bank Statement (Entrepreneur, Investor, Executive)
             [
                 'formFields' => [
@@ -1682,9 +1270,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'كشف حساب بنكي شخصي',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'required-documents',
-                    'field_order' => 5,
-                    'grid_columns' => 4,
+                    'group' => 'requiredDocuments',
+                    'fieldOrder' => 6,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1701,7 +1289,57 @@ class FormFieldSeeder extends Seeder
                     ['key' => 'exe', 'value' => '{}', 'onshoreOffShore' => 'both', 'isRequired' => true]
                 ]
             ],
-            
+
+            // Tax Report (for Tax Based sub-category)
+            [
+                'formFields' => [
+                    'nameEn' => 'Tax report for the last three years',
+                    'nameAr' => 'تقرير ضريبي لآخر ثلاث سنوات',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'investmentDocuments',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Upload tax reports for last 3 years',
+                        'helpTextAr' => 'قم بتحميل التقارير الضريبية لآخر 3 سنوات',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'inv', 'value' => json_encode(['subCategory' => 'tb']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
+            ],
+
+            // Asset-Based Audit Report (for Assets Based sub-category)
+            [
+                'formFields' => [
+                    'nameEn' => 'Asset-Based Audit Report',
+                    'nameAr' => 'تقرير التدقيق القائم على الأصول',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'investmentDocuments',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['xlsx', 'xlsb', 'xls', 'xltx', 'xlsm', 'csv'],
+                        'maxSize' => 10240,
+                        'helpTextEn' => 'Upload asset-based audit report',
+                        'helpTextAr' => 'قم بتحميل تقرير التدقيق القائم على الأصول',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'inv', 'value' => json_encode(['subCategory' => 'ab']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
+            ],
+
             // QID Copy (for Qatar residents - all categories)
             [
                 'formFields' => [
@@ -1709,9 +1347,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'نسخة من البطاقة القطرية',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'residency-documents',
-                    'field_order' => 1,
-                    'grid_columns' => 4,
+                    'group' => 'residencyDocuments',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1721,13 +1359,13 @@ class FormFieldSeeder extends Seeder
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
                 'metas' => [] // All categories (but conditional)
             ],
-            
+
             // Establishment Card/QID of Sponsor
             [
                 'formFields' => [
@@ -1735,9 +1373,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'بطاقة قيد المنشأة / البطاقة الشخصية للكفيل',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'residency-documents',
-                    'field_order' => 2,
-                    'grid_columns' => 4,
+                    'group' => 'residencyDocuments',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1747,13 +1385,13 @@ class FormFieldSeeder extends Seeder
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
                 'metas' => [] // All categories (but conditional)
             ],
-            
+
             // Valid Commercial Registration (CR)
             [
                 'formFields' => [
@@ -1761,9 +1399,9 @@ class FormFieldSeeder extends Seeder
                     'nameAr' => 'سجل تجاري ساري المفعول',
                     'type' => 'file',
                     'section' => 'documents',
-                    'group' => 'residency-documents',
-                    'field_order' => 3,
-                    'grid_columns' => 4,
+                    'group' => 'residencyDocuments',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
                     'repeatable' => false,
                     'meta' => json_encode([
                         'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
@@ -1773,7 +1411,7 @@ class FormFieldSeeder extends Seeder
                         'validations' => ['required' => true]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'are-you-qatar-resident', 'operator' => 'checked', 'action' => 'show']
+                        ['field' => 'areYouQatarResident', 'operator' => 'checked', 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
@@ -1783,27 +1421,27 @@ class FormFieldSeeder extends Seeder
             ],
 
             // ==================== REPEATABLE GROUPS ====================
-            
+
             // Group: Residences (Repeatable)
             [
                 'formFields' => [
                     'nameEn' => 'Active Residencies in Other Countries',
                     'nameAr' => 'الإقامات النشطة في دول أخرى',
                     'type' => 'group',
-                    'section' => 'residency-travel',
+                    'section' => 'ResidencyAndTravelAndFamily',
                     'group' => 'residences',
-                    'field_order' => 1,
-                    'grid_columns' => 12,
+                    'fieldOrder' => 1,
+                    'gridColumns' => 12,
                     'repeatable' => true,
-                    'repeatable_label' => 'Add Residence',
-                    'repeatable_max' => 10,
+                    'repeatableLabel' => 'Add Residence',
+                    'repeatableMax' => 10,
                     'meta' => json_encode([
                         'fields' => [
                             [
                                 'nameEn' => 'Country',
                                 'nameAr' => 'البلد',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options_from' => 'nationalities',
                                 'validations' => ['required' => true]
                             ],
@@ -1811,21 +1449,21 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Type Of Residency',
                                 'nameAr' => 'نوع الإقامة',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Issue Date',
                                 'nameAr' => 'تاريخ الإصدار',
                                 'type' => 'date',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Expiry Date',
                                 'nameAr' => 'تاريخ الانتهاء',
                                 'type' => 'date',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ]
                         ]
@@ -1841,20 +1479,20 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Other Nationalities',
                     'nameAr' => 'الجنسيات الأخرى',
                     'type' => 'group',
-                    'section' => 'residency-travel',
-                    'group' => 'other-nationalities',
-                    'field_order' => 2,
-                    'grid_columns' => 12,
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'otherNationalities',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 12,
                     'repeatable' => true,
-                    'repeatable_label' => 'Add Nationality',
-                    'repeatable_max' => 5,
+                    'repeatableLabel' => 'Add Nationality',
+                    'repeatableMax' => 5,
                     'meta' => json_encode([
                         'fields' => [
                             [
                                 'nameEn' => 'Country',
                                 'nameAr' => 'البلد',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options_from' => 'nationalities',
                                 'validations' => ['required' => true]
                             ],
@@ -1862,35 +1500,35 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Passport Number',
                                 'nameAr' => 'رقم جواز السفر',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Date Of Issue',
                                 'nameAr' => 'تاريخ الإصدار',
                                 'type' => 'date',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Expiry Date',
                                 'nameAr' => 'تاريخ الانتهاء',
                                 'type' => 'date',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Place Of Issue',
                                 'nameAr' => 'مكان الإصدار',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Active / Previous',
                                 'nameAr' => 'نشط / سابق',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'Active', 'labelAr' => 'نشط', 'value' => 'active'],
                                     ['labelEn' => 'Previous', 'labelAr' => 'سابق', 'value' => 'previous']
@@ -1910,20 +1548,20 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Countries Visited In The Last 10 Years',
                     'nameAr' => 'الدول التي تمت زيارتها في آخر 10 سنوات',
                     'type' => 'group',
-                    'section' => 'residency-travel',
-                    'group' => 'countries-visited',
-                    'field_order' => 3,
-                    'grid_columns' => 12,
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'countriesVisitedLast10Years',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 12,
                     'repeatable' => true,
-                    'repeatable_label' => 'Add Country',
-                    'repeatable_max' => 20,
+                    'repeatableLabel' => 'Add Country',
+                    'repeatableMax' => 20,
                     'meta' => json_encode([
                         'fields' => [
                             [
                                 'nameEn' => 'Country',
                                 'nameAr' => 'البلد',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options_from' => 'nationalities',
                                 'validations' => ['required' => true]
                             ],
@@ -1931,7 +1569,7 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Period',
                                 'nameAr' => 'المدة',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'Less than 1 week', 'labelAr' => 'أقل من أسبوع', 'value' => '<1w'],
                                     ['labelEn' => '1-2 weeks', 'labelAr' => '1-2 أسبوع', 'value' => '1-2w'],
@@ -1947,7 +1585,7 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Reason of Visit',
                                 'nameAr' => 'سبب الزيارة',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'Tourism', 'labelAr' => 'سياحة', 'value' => 'tourism'],
                                     ['labelEn' => 'Business', 'labelAr' => 'أعمال', 'value' => 'business'],
@@ -1973,27 +1611,27 @@ class FormFieldSeeder extends Seeder
                     'nameEn' => 'Family Members',
                     'nameAr' => 'أفراد العائلة',
                     'type' => 'group',
-                    'section' => 'residency-travel',
-                    'group' => 'family-members',
-                    'field_order' => 4,
-                    'grid_columns' => 12,
+                    'section' => 'ResidencyAndTravelAndFamily',
+                    'group' => 'familyMembers',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 12,
                     'repeatable' => true,
-                    'repeatable_label' => 'Add Family Member',
-                    'repeatable_max' => 20,
+                    'repeatableLabel' => 'Add Family Member',
+                    'repeatableMax' => 20,
                     'meta' => json_encode([
                         'fields' => [
                             [
                                 'nameEn' => 'Name',
                                 'nameAr' => 'الاسم',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Relationship',
                                 'nameAr' => 'العلاقة',
                                 'type' => 'select',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'options' => [
                                     ['labelEn' => 'Spouse', 'labelAr' => 'زوج/زوجة', 'value' => 'spouse'],
                                     ['labelEn' => 'Son', 'labelAr' => 'ابن', 'value' => 'son'],
@@ -2009,14 +1647,14 @@ class FormFieldSeeder extends Seeder
                                 'nameEn' => 'Date of Birth',
                                 'nameAr' => 'تاريخ الميلاد',
                                 'type' => 'date',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'validations' => ['required' => true]
                             ],
                             [
                                 'nameEn' => 'Occupation',
                                 'nameAr' => 'المهنة',
                                 'type' => 'text',
-                                'grid_columns' => 4,
+                                'gridColumns' => 4,
                                 'placeholderEn' => 'Current occupation',
                                 'placeholderAr' => 'المهنة الحالية',
                                 'validations' => ['required' => false]
@@ -2024,42 +1662,164 @@ class FormFieldSeeder extends Seeder
                         ]
                     ]),
                     'conditions' => json_encode([
-                        ['field' => 'marital-status', 'operator' => 'notIn', 'value' => ['single'], 'action' => 'show']
+                        ['field' => 'maritalStatus', 'operator' => 'notIn', 'value' => ['single'], 'action' => 'show']
                     ]),
                     'status' => 1
                 ],
                 'metas' => [] // All categories
+            ],
+
+            // Group: ICT Ministry Documents (for specific entity)
+            [
+                'formFields' => [
+                    'nameEn' => 'Patent Certificate or International Award Certificate',
+                    'nameAr' => 'شهادة براءة الاختراع أو شهادة جائزة دولية',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'ictMinistryDocuments',
+                    'fieldOrder' => 1,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Must be attested',
+                        'helpTextAr' => 'يجب أن تكون موثقة',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ictMinistry', 'activity' => 'inventors']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
+            ],
+
+            [
+                'formFields' => [
+                    'nameEn' => 'Summary of the Invention (1–2 pages)',
+                    'nameAr' => 'نبذة عن الإختراع (من صفحة إلى صفحتين)',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'ictMinistryDocuments',
+                    'fieldOrder' => 2,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Upload summary of invention',
+                        'helpTextAr' => 'قم بتحميل نبذة عن الاختراع',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ictMinistry', 'activity' => 'inventors']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
+            ],
+
+            [
+                'formFields' => [
+                    'nameEn' => 'Recommendation Letter from ICT Authority',
+                    'nameAr' => 'توصية من جهة مختصة في تكنولوجيا المعلومات والاتصالات',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'ictMinistryDocuments',
+                    'fieldOrder' => 3,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Upload recommendation letter',
+                        'helpTextAr' => 'قم بتحميل خطاب التوصية',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ictMinistry', 'activity' => 'specializedExperts']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
+            ],
+
+            [
+                'formFields' => [
+                    'nameEn' => 'Proof of University Ranking',
+                    'nameAr' => 'إثبات تصنيف الجامعة',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'ictMinistryDocuments',
+                    'fieldOrder' => 4,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Screenshot or official document',
+                        'helpTextAr' => 'لقطة شاشة أو مستند رسمي',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ictMinistry', 'activity' => 'digitalIndustryLeaders']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
+            ],
+
+            [
+                'formFields' => [
+                    'nameEn' => 'Valid Employment Contract',
+                    'nameAr' => 'عقد عمل ساري المفعول',
+                    'type' => 'file',
+                    'section' => 'documents',
+                    'group' => 'ictMinistryDocuments',
+                    'fieldOrder' => 5,
+                    'gridColumns' => 4,
+                    'repeatable' => false,
+                    'meta' => json_encode([
+                        'extensions' => ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+                        'maxSize' => 5120,
+                        'helpTextEn' => 'Must show role & salary and be attested',
+                        'helpTextAr' => 'يجب أن يوضح الوظيفة والراتب وأن يكون موثقًا',
+                        'validations' => ['required' => true]
+                    ]),
+                    'status' => 1
+                ],
+                'metas' => [
+                    ['key' => 'tal', 'value' => json_encode(['entity' => 'ictMinistry', 'activity' => 'digitalIndustryLeaders']), 'onshoreOffShore' => 'both', 'isRequired' => true]
+                ]
             ],
         ];
 
         foreach ($formFields as $data) {
             // Create or update form field
             $fieldData = $data['formFields'];
-            
-            // Generate slug if not present
+
+            // If slug is not set, generate it (fallback)
             if (!isset($fieldData['slug'])) {
-                $fieldData['slug'] = Str::slug($fieldData['nameEn']);
+                // Instead of using nameEn, map to backend field names
+                $fieldData['slug'] = $this->generateBackendSlug($fieldData);
             }
-            
-            // Check if field exists by slug or nameEn
+
+            // Create or update form field
             $field = FormFields::withTrashed()->updateOrCreate(
                 ['slug' => $fieldData['slug']],
                 $fieldData
             );
-            
+
             // Restore if trashed
             if ($field->trashed()) {
                 $field->restore();
             }
-            
+
             // Handle metas
-            if (isset($data['metas'])) {
+            if (isset($data['metas']) && !empty($data['metas'])) {
                 foreach ($data['metas'] as $metaData) {
                     // Ensure value is JSON string
                     if (is_array($metaData['value'])) {
                         $metaData['value'] = json_encode($metaData['value'], JSON_UNESCAPED_UNICODE);
                     }
-                    
+
                     $meta = FormFieldMeta::withTrashed()->updateOrCreate(
                         [
                             'ffId' => $field->id,
@@ -2071,17 +1831,128 @@ class FormFieldSeeder extends Seeder
                             'isRequired' => $metaData['isRequired']
                         ]
                     );
-                    
+
                     if ($meta->trashed()) {
                         $meta->restore();
                     }
                 }
             } else {
-                // If no metas, ensure any existing metas are deleted
+                // If no metas, delete any existing metas for this field
                 FormFieldMeta::where('ffId', $field->id)->delete();
             }
         }
-        
+
         $this->command->info('Form fields seeded successfully!');
+    }
+
+    private function generateBackendSlug($fieldData): string
+    {
+        $section = $fieldData['section'] ?? '';
+        $group = $fieldData['group'] ?? '';
+        $nameEn = $fieldData['nameEn'] ?? '';
+
+        // Mapping logic based on section and group
+        $slugMap = [
+            // Applicant Info
+            'personalInfo.applicantInfo.Full Name (English)' => 'nameEn',
+            'personalInfo.applicantInfo.Full Name (Arabic)' => 'nameAr',
+            'personalInfo.applicantInfo.Gender' => 'gender',
+            'personalInfo.applicantInfo.Date of Birth' => 'dob',
+            'personalInfo.applicantInfo.Religion' => 'religion',
+            'personalInfo.applicantInfo.Marital Status' => 'maritalStatus',
+            'personalInfo.applicantInfo.Place of Birth' => 'placeOfBirth',
+            'personalInfo.applicantInfo.Current Country of Residence' => 'currentCountry',
+            'personalInfo.applicantInfo.Nationality' => 'nationality',
+            'personalInfo.applicantInfo.Short Biography' => 'shortBio',
+            'personalInfo.applicantInfo.Are you Qatar Resident?' => 'areYouQatarResident',
+            'personalInfo.applicantInfo.QID Type' => 'qidType',
+            'personalInfo.applicantInfo.QID Number' => 'qidNumber',
+            'personalInfo.applicantInfo.Work Permit' => 'workPermit',
+            'personalInfo.applicantInfo.Maintain Work Permit' => 'maintainWorkPermit',
+
+            // Contact Info
+            'personalInfo.contactInfo.Email Address' => 'email',
+            'personalInfo.contactInfo.Mobile Number' => 'mobile',
+            'personalInfo.contactInfo.Phone Number' => 'phone',
+            'personalInfo.contactInfo.Permanent Address in the country of origin' => 'permanentAddress',
+            'personalInfo.contactInfo.PO Box' => 'poBox',
+            'personalInfo.contactInfo.Address In Qatar' => 'qatarAddress',
+
+            // Passport Details
+            'personalInfo.passportDetails.Type of Passport' => 'type',
+            'personalInfo.passportDetails.Passport Number' => 'number',
+            'personalInfo.passportDetails.Passport Issue Date' => 'issueDate',
+            'personalInfo.passportDetails.Passport Expiry Date' => 'expiryDate',
+            'personalInfo.passportDetails.Passport Issuing Country' => 'issueCountry',
+            'personalInfo.passportDetails.Passport Issue By' => 'issueBy',
+            'personalInfo.passportDetails.Passport Place Of Issue' => 'issuePlace',
+
+            // Employment Details
+            'employmentAndEducation.employmentDetails.Company Name' => 'companyName',
+            'employmentAndEducation.employmentDetails.Share of the Capital' => 'shareOfTheCapital',
+            'employmentAndEducation.employmentDetails.Amount of Capital' => 'amountOfCapital',
+            'employmentAndEducation.employmentDetails.Profession' => 'profession',
+            'employmentAndEducation.employmentDetails.Name Of Sponsor In Qatar' => 'nameOfSponsor',
+            'employmentAndEducation.employmentDetails.Address Of Sponsor In Qatar' => 'addressOfSponsor',
+            'employmentAndEducation.employmentDetails.Current Job Title' => 'currentJobTitle',
+            'employmentAndEducation.employmentDetails.Other Current Job Title' => 'otherCurrentJobTitle',
+            'employmentAndEducation.employmentDetails.Date Of Joining' => 'dateOfJoining',
+            'employmentAndEducation.employmentDetails.Company Classification' => 'companyClassification',
+            'employmentAndEducation.employmentDetails.Other Company Classification' => 'otherCompanyClassification',
+            'employmentAndEducation.employmentDetails.Monthly Salary' => 'monthlySalary',
+
+            // Previous Jobs
+            'employmentAndEducation.previousJobs.Entity' => 'entity',
+            'employmentAndEducation.previousJobs.Job Title' => 'jobTitle',
+            'employmentAndEducation.previousJobs.Job Country' => 'jobCountry',
+            'employmentAndEducation.previousJobs.Job Duration' => 'jobDuration',
+            'employmentAndEducation.previousJobs.Current / Previous' => 'currentPrevious',
+
+            // Educations
+            'employmentAndEducation.educations.Qualification - Certificate' => 'qualificationCertificate',
+            'employmentAndEducation.educations.Other Qualification' => 'otherQualification',
+            'employmentAndEducation.educations.University/College' => 'universityCollege',
+            'employmentAndEducation.educations.Period' => 'eduPeriod',
+            'employmentAndEducation.educations.Country' => 'eduCountry',
+            'employmentAndEducation.educations.Specialization' => 'specialization',
+
+            // Residency Details
+            'ResidencyAndTravelAndFamily.residencyDetails.Are you Qatar Resident?' => 'areYouQatarResident?',
+            'ResidencyAndTravelAndFamily.residencyDetails.QID Type' => 'qIDType',
+            'ResidencyAndTravelAndFamily.residencyDetails.QID Number' => 'qIDNumber',
+            'ResidencyAndTravelAndFamily.residencyDetails.Work Permit Options' => 'workPermitOptions',
+            'ResidencyAndTravelAndFamily.residencyDetails.Maintain Work Permit' => 'maintainWorkPermit',
+            'ResidencyAndTravelAndFamily.residencyDetails.Address In Qatar' => 'addressInQatar',
+
+            // Residences
+            'ResidencyAndTravelAndFamily.residences.Country' => 'country',
+            'ResidencyAndTravelAndFamily.residences.Type Of Residency' => 'typeOfResidency',
+            'ResidencyAndTravelAndFamily.residences.Issue Date' => 'issueDate',
+            'ResidencyAndTravelAndFamily.residences.Expiry Date' => 'expiryDate',
+
+            // Other Nationalities
+            'ResidencyAndTravelAndFamily.otherNationalities.Country' => 'country',
+            'ResidencyAndTravelAndFamily.otherNationalities.Passport Number' => 'passportNumber',
+            'ResidencyAndTravelAndFamily.otherNationalities.Date Of Issue' => 'dateOfIssue',
+            'ResidencyAndTravelAndFamily.otherNationalities.Expiry Date' => 'expiryDate',
+            'ResidencyAndTravelAndFamily.otherNationalities.Place Of Issue' => 'placeOfIssue',
+            'ResidencyAndTravelAndFamily.otherNationalities.Active / Previous' => 'activePrevious',
+
+            // Countries Visited
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.Country' => 'country',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.Period' => 'period',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.Reason of Visit' => 'reasonOfVisit',
+            'ResidencyAndTravelAndFamily.countriesVisitedLast10Years.Other Reason' => 'otherReasonOfVisit',
+
+            // Family Members
+            'ResidencyAndTravelAndFamily.familyMembers.Name' => 'name',
+            'ResidencyAndTravelAndFamily.familyMembers.Relationship' => 'relationship',
+            'ResidencyAndTravelAndFamily.familyMembers.Date of Birth' => 'dateOfBirth',
+            'ResidencyAndTravelAndFamily.familyMembers.Occupation' => 'occupation',
+        ];
+
+        $key = $section . '.' . $group . '.' . $nameEn;
+
+        return $slugMap[$key] ?? Str::camel($nameEn);
     }
 }

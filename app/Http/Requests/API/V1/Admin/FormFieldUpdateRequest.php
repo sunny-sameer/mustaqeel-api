@@ -31,13 +31,13 @@ class FormFieldUpdateRequest extends FormRequest
             'formFields.nameEn' => 'required|min:3|max:255|regex:/^[a-zA-Z0-9.,، ]+$/u',
             'formFields.nameAr' => 'required|min:3|max:255|regex:/^[\p{Arabic}0-9.,، ]+$/u',
             'formFields.type' => 'required|in:text,textarea,select,radio,checkbox,file,date,email,number,group',
-            'formFields.section' => 'required|string|in:personal-info,employment-education,residency-travel,documents,general',
+            'formFields.section' => 'required|string|in:personalInfo,employmentAndEducation,ResidencyAndTravelAndFamily,documents,general',
             'formFields.group' => 'required|string',
-            'formFields.field_order' => 'integer|min:0',
-            'formFields.grid_columns' => 'integer|in:1,2,3,4,5,6,12',
+            'formFields.fieldOrder' => 'integer|min:0',
+            'formFields.gridColumns' => 'integer|in:1,2,3,4,5,6,12',
             'formFields.repeatable' => 'boolean',
-            'formFields.repeatable_label' => 'required_if:formFields.repeatable,true|string|nullable',
-            'formFields.repeatable_max' => 'nullable|integer|min:1|max:20',
+            'formFields.repeatableLabel' => 'required_if:formFields.repeatable,true|string|nullable',
+            'formFields.repeatableMax' => 'nullable|integer|min:1|max:20',
             'formFields.conditions' => 'nullable|array',
             'formFields.status' => 'boolean',
 
@@ -79,20 +79,20 @@ class FormFieldUpdateRequest extends FormRequest
             'metaFields.fields.*.nameEn' => 'required_with:metaFields.fields|string',
             'metaFields.fields.*.nameAr' => 'required_with:metaFields.fields|string',
             'metaFields.fields.*.type' => 'required_with:metaFields.fields|string',
-            'metaFields.fields.*.grid_columns' => 'nullable|integer|in:1,2,3,4,5,6,12',
+            'metaFields.fields.*.gridColumns' => 'nullable|integer|in:1,2,3,4,5,6,12',
             'metaFields.fields.*.options' => 'nullable|array',
 
             // Category Rules (for visibility) - UPDATED to match CreateRequest
             'categoryRules' => 'required|array|min:1',
-            'categoryRules.*.category_slug' => 'required|string|exists:categories,slug',
-            'categoryRules.*.sub_category_slug' => 'nullable|string|exists:sub_categories,slug',
-            'categoryRules.*.sector_slug' => 'nullable|string|exists:sectors,slug',
-            'categoryRules.*.activity_slug' => 'nullable|string|exists:activities,slug',
-            'categoryRules.*.sub_activity_slug' => 'nullable|string|exists:sub_activities,slug',
-            'categoryRules.*.entity_slug' => 'nullable|string|exists:entities,slug',
-            'categoryRules.*.incubator_slug' => 'nullable|string|exists:incubators,slug',
-            'categoryRules.*.onshore_offshore' => 'nullable|in:onshore,offshore,both',
-            'categoryRules.*.is_required' => 'boolean',
+            'categoryRules.*.categorySlug' => 'required|string|exists:categories,slug',
+            'categoryRules.*.subCategorySlug' => 'nullable|string|exists:sub_categories,slug',
+            'categoryRules.*.sectorSlug' => 'nullable|string|exists:sectors,slug',
+            'categoryRules.*.activitySlug' => 'nullable|string|exists:activities,slug',
+            'categoryRules.*.subActivitySlug' => 'nullable|string|exists:sub_activities,slug',
+            'categoryRules.*.entitySlug' => 'nullable|string|exists:entities,slug',
+            'categoryRules.*.incubatorSlug' => 'nullable|string|exists:incubators,slug',
+            'categoryRules.*.onshoreOffshore' => 'nullable|in:onshore,offshore,both',
+            'categoryRules.*.isRequired' => 'boolean',
         ];
     }
 
@@ -116,14 +116,14 @@ class FormFieldUpdateRequest extends FormRequest
 
             // Category Rules
             'categoryRules.required' => 'At least one category rule is required.',
-            'categoryRules.*.category_slug.required' => 'Category slug is required for each rule.',
-            'categoryRules.*.category_slug.exists' => 'The selected category does not exist.',
-            'categoryRules.*.sub_category_slug.exists' => 'The selected sub category does not exist.',
-            'categoryRules.*.sector_slug.exists' => 'The selected sector does not exist.',
-            'categoryRules.*.activity_slug.exists' => 'The selected activity does not exist.',
-            'categoryRules.*.sub_activity_slug.exists' => 'The selected sub activity does not exist.',
-            'categoryRules.*.entity_slug.exists' => 'The selected entity does not exist.',
-            'categoryRules.*.incubator_slug.exists' => 'The selected incubator does not exist.',
+            'categoryRules.*.categorySlug.required' => 'Category slug is required for each rule.',
+            'categoryRules.*.categorySlug.exists' => 'The selected category does not exist.',
+            'categoryRules.*.subCategorySlug.exists' => 'The selected sub category does not exist.',
+            'categoryRules.*.sectorSlug.exists' => 'The selected sector does not exist.',
+            'categoryRules.*.activitySlug.exists' => 'The selected activity does not exist.',
+            'categoryRules.*.subActivitySlug.exists' => 'The selected sub activity does not exist.',
+            'categoryRules.*.entitySlug.exists' => 'The selected entity does not exist.',
+            'categoryRules.*.incubatorSlug.exists' => 'The selected incubator does not exist.',
         ];
     }
 
