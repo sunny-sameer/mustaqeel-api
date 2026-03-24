@@ -57,12 +57,15 @@ class AuthService
 
     public function userExist(): self
     {
-        $user = $this->userService->getUserByEmail($this->userEmail);
-
-        if (!$user) {
+        if (!$this->userEmail) {
             throw new UserNotFoundException();
         }
 
+        $user = $this->userService->getUserByEmail($this->userEmail);
+
+        if (!$user || $user->isEmpty()) {
+            throw new UserNotFoundException();
+        }
 
         // BeforeLogin::new(true)
         //     ->setModel($user)

@@ -46,6 +46,7 @@ class UserService extends BaseService
         return  $this->userInterface->getUserByEmail($userEmail);
     }
 
+
     private function validateUserData(array $userData): void
     {
         $rules = [
@@ -122,14 +123,13 @@ class UserService extends BaseService
 
     public function checkUserResolver()
     {
-        $this->user = User::with('profile','communication','passport','address','qatarInfo')->find(auth()->id());
+        $this->user = User::with('profile', 'communication', 'passport', 'address', 'qatarInfo')->find(auth()->id());
 
         if (!$this->user) {
             throw new UserNotFoundException();
         }
 
         return $this;
-
     }
 
     public function resolver()
@@ -152,16 +152,16 @@ class UserService extends BaseService
             $qatarInfoData = QatarInfoDTO::fromRequest($requests)->toArray();
 
 
-            $profile = $this->userInterface->createUpdateProfile($profileData,auth()->id());
-            $passport = $this->userInterface->createUpdatePassport($passportData,auth()->id());
-            $comms = $this->userInterface->createUpdateComms($commsData,auth()->id());
-            $address = $this->userInterface->createUpdateAddress($addressData,auth()->id());
-            $qatarInfo = $this->userInterface->createUpdateQatarInfo($qatarInfoData,auth()->id());
+            $profile = $this->userInterface->createUpdateProfile($profileData, auth()->id());
+            $passport = $this->userInterface->createUpdatePassport($passportData, auth()->id());
+            $comms = $this->userInterface->createUpdateComms($commsData, auth()->id());
+            $address = $this->userInterface->createUpdateAddress($addressData, auth()->id());
+            $qatarInfo = $this->userInterface->createUpdateQatarInfo($qatarInfoData, auth()->id());
 
             DB::commit();
 
             return $this->success(
-                data: ['profile'=>$profile,'passport'=>$passport,'comms'=>$comms,'address'=>$address,'qatarInfo'=>$qatarInfo],
+                data: ['profile' => $profile, 'passport' => $passport, 'comms' => $comms, 'address' => $address, 'qatarInfo' => $qatarInfo],
                 message: 'Profile created or updated successfully'
             );
         } catch (BadRequestException $e) {
