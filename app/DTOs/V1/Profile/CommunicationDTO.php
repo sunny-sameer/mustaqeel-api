@@ -27,8 +27,8 @@ final readonly class CommunicationDTO
             'email' => isset($data['personalInfo']['contactInfo']['email']) ? $data['personalInfo']['contactInfo']['email'] : ($commData['email'] ?? NULL),
             'mobileNumber' => isset($data['personalInfo']['contactInfo']['mobile']) ? $data['personalInfo']['contactInfo']['mobile'] : ($commData['mobileNumber'] ?? NULL),
             'phoneNumber' => isset($data['personalInfo']['contactInfo']['phone']) ? $data['personalInfo']['contactInfo']['phone'] : ($commData['phoneNumber'] ?? NULL),
-            'arabicLevel' => isset($data['personalInfo']['applicantInfo']['langProficiencyAr']) ? $data['personalInfo']['applicantInfo']['langProficiencyAr'] : ($commData['arabicLevel'] ?? NULL),
-            'englishLevel' => isset($data['personalInfo']['applicantInfo']['langProficiencyEn']) ? $data['personalInfo']['applicantInfo']['langProficiencyEn'] : ($commData['englishLevel'] ?? NULL),
+            // 'arabicLevel' => isset($data['personalInfo']['applicantInfo']['langProficiencyAr']) ? $data['personalInfo']['applicantInfo']['langProficiencyAr'] : ($commData['arabicLevel'] ?? NULL),
+            // 'englishLevel' => isset($data['personalInfo']['applicantInfo']['langProficiencyEn']) ? $data['personalInfo']['applicantInfo']['langProficiencyEn'] : ($commData['englishLevel'] ?? NULL),
         ];
 
         return new self(

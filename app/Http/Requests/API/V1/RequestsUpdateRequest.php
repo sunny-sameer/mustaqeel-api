@@ -84,8 +84,8 @@ class RequestsUpdateRequest extends FormRequest
             'personalInfo.contactInfo.email' => 'nullable|email|min:5|max:100',
             'personalInfo.contactInfo.mobile' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
             'personalInfo.contactInfo.phone' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
-            'personalInfo.applicantInfo.langProficiencyAr' => 'nullable|in:fluent,intermediate,basic,no proficiency',
-            'personalInfo.applicantInfo.langProficiencyEn' => 'nullable|in:fluent,intermediate,basic,no proficiency',
+            // 'personalInfo.applicantInfo.langProficiencyAr' => 'nullable|in:fluent,intermediate,basic,no proficiency',
+            // 'personalInfo.applicantInfo.langProficiencyEn' => 'nullable|in:fluent,intermediate,basic,no proficiency',
 
             'personalInfo.applicantInfo.areYouQatarResident'=>'nullable|boolean',
             'employmentAndEducation.employmentDetails.nameOfSponsor' => 'nullable|string|min:3|max:100|regex:/^[\p{Arabic}a-zA-Z0-9.,، ]+$/u',
@@ -194,8 +194,8 @@ class RequestsUpdateRequest extends FormRequest
             'personalInfo.applicantInfo.shortBio.max' => 'The short biography may not exceed 400 characters.',
             'personalInfo.applicantInfo.shortBio.regex' => 'The short biography may only contain Arabic, English letters, numbers, commas, and full stop.',
 
-            'personalInfo.applicantInfo.langProficiencyAr.in' => 'The arabic language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
-            'personalInfo.applicantInfo.langProficiencyEn.in' => 'The english language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
+            // 'personalInfo.applicantInfo.langProficiencyAr.in' => 'The arabic language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
+            // 'personalInfo.applicantInfo.langProficiencyEn.in' => 'The english language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
 
             'personalInfo.applicantInfo.areYouQatarResident.boolean' => 'The qatar resident field must be true or false.',
 

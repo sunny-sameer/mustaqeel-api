@@ -126,8 +126,8 @@ class RequestsStoreRequest extends FormRequest
             'personalInfo.contactInfo.email' => 'required|email|min:5|max:100',
             'personalInfo.contactInfo.mobile' => 'required|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
             'personalInfo.contactInfo.phone' => 'nullable|string|min:6|max:18|regex:/^[0-9+\- ]+$/u',
-            'personalInfo.applicantInfo.langProficiencyAr' => 'required|in:fluent,intermediate,basic,no proficiency',
-            'personalInfo.applicantInfo.langProficiencyEn' => 'required|in:fluent,intermediate,basic,no proficiency',
+            // 'personalInfo.applicantInfo.langProficiencyAr' => 'required|in:fluent,intermediate,basic,no proficiency',
+            // 'personalInfo.applicantInfo.langProficiencyEn' => 'required|in:fluent,intermediate,basic,no proficiency',
 
             'personalInfo.applicantInfo.areYouQatarResident'=>'nullable|boolean',
 
@@ -305,10 +305,10 @@ class RequestsStoreRequest extends FormRequest
             'personalInfo.applicantInfo.shortBio.max' => 'The short biography may not exceed 400 characters.',
             'personalInfo.applicantInfo.shortBio.regex' => 'The short biography may only contain Arabic, English letters, numbers, commas, and full stop.',
 
-            'personalInfo.applicantInfo.langProficiencyAr.required' => 'The arabic language proficiency is required.',
-            'personalInfo.applicantInfo.langProficiencyAr.in' => 'The arabic language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
-            'personalInfo.applicantInfo.langProficiencyEn.required' => 'The english language proficiency is required.',
-            'personalInfo.applicantInfo.langProficiencyEn.in' => 'The english language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
+            // 'personalInfo.applicantInfo.langProficiencyAr.required' => 'The arabic language proficiency is required.',
+            // 'personalInfo.applicantInfo.langProficiencyAr.in' => 'The arabic language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
+            // 'personalInfo.applicantInfo.langProficiencyEn.required' => 'The english language proficiency is required.',
+            // 'personalInfo.applicantInfo.langProficiencyEn.in' => 'The english language proficiency must be one of the following: fluent,intermediate,basic,no proficiency.',
 
             'personalInfo.applicantInfo.areYouQatarResident.boolean' => 'The qatar resident must be true or false.',
 
