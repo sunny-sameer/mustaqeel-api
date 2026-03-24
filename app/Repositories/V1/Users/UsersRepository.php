@@ -181,7 +181,7 @@ class UsersRepository extends CoreRepository implements UsersInterface
     public function getAllRoles($request)
     {
         $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
-        return $this->role->paginate($paginate);
+        return $this->role->with('permissions')->paginate($paginate);
     }
 
     public function getRole($id)
