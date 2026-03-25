@@ -125,7 +125,7 @@ class UserService extends BaseService
                 $response->metaData()->create($metaData);
             }
 
-            if(isset($this->requests->permissions) && $this->role == 'jusour'){
+            if(isset($this->requests->permissions)){
                 $response->givePermissionTo($this->requests->permissions);
             }
 
@@ -163,10 +163,11 @@ class UserService extends BaseService
             foreach ($this->requests->level as $key => $value) {
                 array_push($roles,$value['role']);
             }
-
-            $response->syncRoles($roles);
+            $response->assignRole([]);
+            $response->assignRole($roles);
 
             if(isset($this->requests->level) && !in_array('applicant',$roles)){
+                $response->assignMultiLevel([]);
                 $response->assignMultiLevel($this->requests->level);
             }
 
@@ -176,6 +177,7 @@ class UserService extends BaseService
             }
 
             if(isset($this->requests->permissions) && $this->role == 'jusour'){
+                $response->syncPermissions([]);
                 $response->syncPermissions($this->requests->permissions);
             }
 

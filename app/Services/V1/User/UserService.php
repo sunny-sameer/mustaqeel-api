@@ -135,7 +135,7 @@ class UserService extends BaseService
     public function resolver()
     {
         return $this->success(
-            data: ['user' => $this->user, 'role' => $this->user->roles->pluck('name')->first()],
+            data: ['user' => $this->user, 'role' => $this->user->roles->pluck('name')->first(),'permissions'=>$this->user->getAllPermissions()->pluck('name')],
             message: 'User resolver triggered successfully'
         );
     }
