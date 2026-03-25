@@ -15,13 +15,17 @@ class UserAdminSeeder extends Seeder
     public function run(): void
     {
         // Creating Super Admin User
-        $superAdmin = User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $superAdmin->assignRole('admin');
-        $superAdmin->assignRoleLevel('admin','super-admin');
+        $superAdmin = User::where(['email' => 'superadmin@yopmail.com'])->first();
+        if(empty($superAdmin)){
+            $superAdmin = User::create([
+                'name' => 'Super Admin',
+                'email' => 'superadmin@yopmail.com',
+                'password' => Hash::make('Jusour@2025')
+            ]);
+            $superAdmin->assignRole('admin');
+            $superAdmin->assignRoleLevel('admin','super-admin');
+        }
+        $superAdmin->givePermissionTo([]);
         $superAdmin->givePermissionTo([
             'view-talent-applications',
             'show-talent-applications',
@@ -172,16 +176,33 @@ class UserAdminSeeder extends Seeder
             'view-audit-roles',
             'view-audit-promotional-emails',
             'view-deleted-audit',
+            'view-talent-application-statistacs',
+            'view-entrepreneur-application-statistacs',
+            'view-investor-application-statistacs',
+            'view-executive-application-statistacs',
+            'view-talent-category-statistacs',
+            'view-entrepreneur-category-statistacs',
+            'view-investor-category-statistacs',
+            'view-executive-category-statistacs',
+            'view-talent-entities-performance-statistacs',
+            'view-entrepreneur-entities-performance-statistacs',
+            'view-investor-entities-performance-statistacs',
+            'view-executive-entities-performance-statistacs',
+            'view-monthly-statistacs',
         ]);
 
         // Creating Admin User
-        $junior = User::create([
-            'name' => 'Junior Admin',
-            'email' => 'junioradmin@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $junior->assignRole('admin');
-        $junior->assignRoleLevel('admin','junior');
+        $junior = User::where(['email' => 'junioradmin@yopmail.com'])->first();
+        if(empty($junior)){
+            $junior = User::create([
+                'name' => 'Junior Admin',
+                'email' => 'junioradmin@yopmail.com',
+                'password' => Hash::make('Jusour@2025')
+            ]);
+            $junior->assignRole('admin');
+            $junior->assignRoleLevel('admin','junior');
+        }
+        $junior->givePermissionTo([]);
         $junior->givePermissionTo([
             'view-talent-applications',
             'show-talent-applications',
@@ -332,16 +353,33 @@ class UserAdminSeeder extends Seeder
             'view-audit-roles',
             'view-audit-promotional-emails',
             'view-deleted-audit',
+            'view-talent-application-statistacs',
+            'view-entrepreneur-application-statistacs',
+            'view-investor-application-statistacs',
+            'view-executive-application-statistacs',
+            'view-talent-category-statistacs',
+            'view-entrepreneur-category-statistacs',
+            'view-investor-category-statistacs',
+            'view-executive-category-statistacs',
+            'view-talent-entities-performance-statistacs',
+            'view-entrepreneur-entities-performance-statistacs',
+            'view-investor-entities-performance-statistacs',
+            'view-executive-entities-performance-statistacs',
+            'view-monthly-statistacs',
         ]);
 
         // Creating Admin User
-        $admin = User::create([
-            'name' => 'admin',
-            'email' => 'admin@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $admin->assignRole('admin');
-        $admin->assignRoleLevel('admin','manager');
+        $admin = User::where(['email' => 'admin@yopmail.com'])->first();
+        if(empty($admin)){
+            $admin = User::create([
+                'name' => 'admin',
+                'email' => 'admin@yopmail.com',
+                'password' => Hash::make('Jusour@2025')
+            ]);
+            $admin->assignRole('admin');
+            $admin->assignRoleLevel('admin','manager');
+        }
+        $admin->givePermissionTo([]);
         $admin->givePermissionTo([
             'view-talent-applications',
             'show-talent-applications',
@@ -492,14 +530,30 @@ class UserAdminSeeder extends Seeder
             'view-audit-roles',
             'view-audit-promotional-emails',
             'view-deleted-audit',
+            'view-talent-application-statistacs',
+            'view-entrepreneur-application-statistacs',
+            'view-investor-application-statistacs',
+            'view-executive-application-statistacs',
+            'view-talent-category-statistacs',
+            'view-entrepreneur-category-statistacs',
+            'view-investor-category-statistacs',
+            'view-executive-category-statistacs',
+            'view-talent-entities-performance-statistacs',
+            'view-entrepreneur-entities-performance-statistacs',
+            'view-investor-entities-performance-statistacs',
+            'view-executive-entities-performance-statistacs',
+            'view-monthly-statistacs',
         ]);
 
         // Creating Applicant User
-        $applicant = User::create([
-            'name' => 'Applicant',
-            'email' => 'caspertalks@yopmail.com',
-            'password' => Hash::make('Jusour@2025')
-        ]);
-        $applicant->assignRole('applicant');
+        $usr = User::where(['email' => 'caspertalks@yopmail.com'])->first();
+        if(empty($usr)){
+            $applicant = User::create([
+                'name' => 'Applicant',
+                'email' => 'caspertalks@yopmail.com',
+                'password' => Hash::make('Jusour@2025')
+            ]);
+            $applicant->assignRole('applicant');
+        }
     }
 }

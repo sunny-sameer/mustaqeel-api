@@ -25,7 +25,7 @@ class UsersRepository extends CoreRepository implements UsersInterface
     private $addresses;
     private $qatarInfo;
     private $role;
-
+    private $userStatus = ['active', 'inactive', 'disable'];
     public function __construct(User $model, Profiles $profiles, PassportDetails $passportDetails, Communications $communications, Addresses $addresses, QatarInfo $qatarInfo, Role $role)
     {
         parent::__construct($model);
@@ -43,20 +43,26 @@ class UsersRepository extends CoreRepository implements UsersInterface
         return response()->json(['users' => 'From Repo']);
     }
 
-    public function getUserByEmail($email)
+    public function getUserByEmail($email, $status = 0)
     {
-        return $this->model->where('email', $email)->get();
+
+        $userStatus = $this->userStatus[$status];
+
+        return $this->model
+            ->where('status', $userStatus)
+            ->where('email', $email)
+            ->get();
     }
 
     public function getUserById($id)
     {
-        return $this->model->with('roles','levels')->where('id', $id)->first();
+        return $this->model->with('roles', 'levels')->where('id', $id)->first();
     }
 
-    public function getUserByEmailForAuth($email)
-    {
-        return $this->model->where('email', $email)->get();
-    }
+    // public function getUserByEmailForAuth($email, $active)
+    // {
+    //     return $this->model->where('email', $email)->get();
+    // }
 
     public function createUser($signUpData): User
     {
@@ -82,57 +88,57 @@ class UsersRepository extends CoreRepository implements UsersInterface
 
     public function createUpdateProfile($request, $id)
     {
-        return $this->profiles->updateOrCreate(['userId'=>$id],$request);
+        return $this->profiles->updateOrCreate(['userId' => $id], $request);
     }
 
     public function createUpdatePassport($request, $id)
     {
-        return $this->passportDetails->updateOrCreate(['userId'=>$id],$request);
+        return $this->passportDetails->updateOrCreate(['userId' => $id], $request);
     }
 
     public function createUpdateComms($request, $id)
     {
-        return $this->communications->updateOrCreate(['userId'=>$id],$request);
+        return $this->communications->updateOrCreate(['userId' => $id], $request);
     }
 
     public function createUpdateAddress($request, $id)
     {
-        return $this->addresses->updateOrCreate(['userId'=>$id],$request);
+        return $this->addresses->updateOrCreate(['userId' => $id], $request);
     }
 
     public function createUpdateQatarInfo($request, $id)
     {
-        return $this->qatarInfo->updateOrCreate(['userId'=>$id],$request);
+        return $this->qatarInfo->updateOrCreate(['userId' => $id], $request);
     }
 
-    public function getUsersByRoleAndLevel($role,$levelColumn,$levelOperator,$levelValue)
+    public function getUsersByRoleAndLevel($role, $levelColumn, $levelOperator, $levelValue)
     {
-        return $this->model->whereHas('roles',function ($query) use ($role){
-            $query->where('type',$role);
-        })->whereHas('levels',function ($query) use ($levelColumn,$levelOperator,$levelValue){
-            $query->where($levelColumn,$levelOperator,(int) $levelValue);
+        return $this->model->whereHas('roles', function ($query) use ($role) {
+            $query->where('type', $role);
+        })->whereHas('levels', function ($query) use ($levelColumn, $levelOperator, $levelValue) {
+            $query->where($levelColumn, $levelOperator, (int) $levelValue);
         })->get();
     }
 
     // start CRUD operation for admin portal
 
-    public function getUsersByRole($request,$role)
+    public function getUsersByRole($request, $role)
     {
         $paginate = isset($request['perPage']) ? $request['perPage'] : 10;
         $model = $this->model->query();
-        if($role == 'entity'){
-            $model = $model->with('levels.role','metaData');
-        }else if($role == 'jusour'){
+        if ($role == 'entity') {
+            $model = $model->with('levels.role', 'metaData');
+        } else if ($role == 'jusour') {
             $model = $model->with('levels.role');
         }
-        $model = $model->whereHas('roles',function ($query) use ($role){
-            $query->where('type',$role);
+        $model = $model->whereHas('roles', function ($query) use ($role) {
+            $query->where('type', $role);
         })
-        ->paginate($paginate);
+            ->paginate($paginate);
 
-        $model->map(function ($query){
-            if(isset($query->metaData)){
-                $query->metaData->meta = json_decode($query->metaData->meta,true);
+        $model->map(function ($query) {
+            if (isset($query->metaData)) {
+                $query->metaData->meta = json_decode($query->metaData->meta, true);
             }
             return $query;
         });
@@ -140,34 +146,34 @@ class UsersRepository extends CoreRepository implements UsersInterface
         return $model;
     }
 
-    public function showUserByRole($role,$id)
+    public function showUserByRole($role, $id)
     {
         $model = $this->model->query();
-        if($role == 'jusour'){
+        if ($role == 'jusour') {
             $model = $model->with('levels.role');
-        }else if($role == 'entity'){
-            $model = $model->with('levels.role','metaData');
-        }else if($role == 'applicant'){
-            $model = $model->with('profile','communication','passport','address','qatarInfo');
+        } else if ($role == 'entity') {
+            $model = $model->with('levels.role', 'metaData');
+        } else if ($role == 'applicant') {
+            $model = $model->with('profile', 'communication', 'passport', 'address', 'qatarInfo');
         }
-        $model = $model->whereHas('roles',function ($query) use ($role){
-            $query->where('type',$role);
+        $model = $model->whereHas('roles', function ($query) use ($role) {
+            $query->where('type', $role);
         })
-        ->where('id',$id)->first();
+            ->where('id', $id)->first();
 
-        if($role == 'jusour'){
+        if ($role == 'jusour') {
             $model->permissions = $model->permissions() ? $model->permissions()->pluck('name') : [];
-        }else if($role == 'entity'){
-            if(isset($model->metaData->meta)){
-                $model->metaData->meta = json_decode($model->metaData->meta,true);
+        } else if ($role == 'entity') {
+            if (isset($model->metaData->meta)) {
+                $model->metaData->meta = json_decode($model->metaData->meta, true);
             }
-        } else if($role == 'applicant'){
-            if(isset($model->qatarInfo->value)){
-                $model->qatarInfo->value = json_decode($model->qatarInfo->value,true);
+        } else if ($role == 'applicant') {
+            if (isset($model->qatarInfo->value)) {
+                $model->qatarInfo->value = json_decode($model->qatarInfo->value, true);
             }
 
-            if(isset($model->communication->value)){
-                $model->communication->value = json_decode($model->communication->value,true);
+            if (isset($model->communication->value)) {
+                $model->communication->value = json_decode($model->communication->value, true);
             }
         }
 
@@ -191,7 +197,7 @@ class UsersRepository extends CoreRepository implements UsersInterface
         return $role;
     }
 
-    public function createRole($request,$permissions)
+    public function createRole($request, $permissions)
     {
         $role = $this->role->create($request);
         $role->givePermissionTo($permissions);
@@ -199,7 +205,7 @@ class UsersRepository extends CoreRepository implements UsersInterface
         return $this->getRole($role->id);
     }
 
-    public function updateRole($request,$permissions,$id)
+    public function updateRole($request, $permissions, $id)
     {
         $role = $this->role->find($id);
         $role->update($request);
@@ -220,11 +226,11 @@ class UsersRepository extends CoreRepository implements UsersInterface
     public function getRolesByType($type)
     {
         $roles = $this->role
-        ->where('type',$type)
-        ->get();
+            ->where('type', $type)
+            ->get();
 
-        $roles->map(function($query){
-            $query->levels = RoleLevel::where('role_id',$query->id)->get();
+        $roles->map(function ($query) {
+            $query->levels = RoleLevel::where('role_id', $query->id)->get();
             return $query;
         });
 

@@ -9,9 +9,9 @@ use App\Models\User;
 interface UsersInterface extends CoreInterface
 {
     public function getUsers();
-    public function getUserByEmail($email);
+    public function getUserByEmail($email, $status = 0);
     public function getUserById($id);
-    public function getUserByEmailForAuth($email);
+    // public function getUserByEmailForAuth($email);
     public function createUser($signUpData);
     public function assignRole(User $user, $role);
     public function activateUser(User $user);
@@ -20,12 +20,12 @@ interface UsersInterface extends CoreInterface
     public function createUpdateComms($request, $id);
     public function createUpdateAddress($request, $id);
     public function createUpdateQatarInfo($request, $id);
-    public function getUsersByRoleAndLevel($role,$levelColumn,$levelOperator,$levelValue);
+    public function getUsersByRoleAndLevel($role, $levelColumn, $levelOperator, $levelValue);
 
     // start user CRUD operation for admin portal
 
-    public function getUsersByRole($request,$role);
-    public function showUserByRole($role,$id);
+    public function getUsersByRole($request, $role);
+    public function showUserByRole($role, $id);
 
     // end user CRUD operation for admin portal
 
@@ -33,8 +33,8 @@ interface UsersInterface extends CoreInterface
 
     public function getAllRoles($request);
     public function getRole($id);
-    public function createRole($request,$permissions);
-    public function updateRole($request,$permissions,$id);
+    public function createRole($request, $permissions);
+    public function updateRole($request, $permissions, $id);
     public function deleteRole($id);
     public function getRolesByType($type);
 

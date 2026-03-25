@@ -93,16 +93,19 @@ class RoleSeeder extends Seeder
                 'type'=>$role['type'],
                 'approval_levels'=>$role['approval_levels'],
             ];
-            $roleData = Role::create($data);
-
-            if(isset($role['level'])){
-                foreach ($role['level'] as $key => $value) {
-                    $value['role_id'] = $roleData->id;
-                    RoleLevel::create($value);
+            $roleData = Role::where(['name'=>$data['name'],'guard_name'=>'web','type'=>$data['type'],'approval_levels'=>$data['approval_levels']])->first();
+            if(empty($roleData)){
+                $roleData = Role::create($data);
+                if(isset($role['level'])){
+                    foreach ($role['level'] as $key => $value) {
+                        $value['role_id'] = $roleData->id;
+                        RoleLevel::create($value);
+                    }
                 }
-            }
 
+            }
             if($roleData->name == 'admin'){
+                $roleData->givePermissionTo([]);
                 $roleData->givePermissionTo([
                     'view-talent-applications',
                     'show-talent-applications',
@@ -253,6 +256,19 @@ class RoleSeeder extends Seeder
                     'view-audit-roles',
                     'view-audit-promotional-emails',
                     'view-deleted-audit',
+                    'view-talent-application-statistacs',
+                    'view-entrepreneur-application-statistacs',
+                    'view-investor-application-statistacs',
+                    'view-executive-application-statistacs',
+                    'view-talent-category-statistacs',
+                    'view-entrepreneur-category-statistacs',
+                    'view-investor-category-statistacs',
+                    'view-executive-category-statistacs',
+                    'view-talent-entities-performance-statistacs',
+                    'view-entrepreneur-entities-performance-statistacs',
+                    'view-investor-entities-performance-statistacs',
+                    'view-executive-entities-performance-statistacs',
+                    'view-monthly-statistacs',
                 ]);
             }
         }

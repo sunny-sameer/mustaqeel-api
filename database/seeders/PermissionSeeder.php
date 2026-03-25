@@ -759,10 +759,78 @@ class PermissionSeeder extends Seeder
                 'guard_name'=>'web',
                 'type'=>'audit',
             ],
+            [
+                'name'=>'view-talent-application-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-entrepreneur-application-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-investor-application-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-executive-application-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-talent-category-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-entrepreneur-category-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-investor-category-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-executive-category-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-talent-entities-performance-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-entrepreneur-entities-performance-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-investor-entities-performance-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-executive-entities-performance-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
+            [
+                'name'=>'view-monthly-statistacs',
+                'guard_name'=>'web',
+                'type'=>'dashboard',
+            ],
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create($permission);
+            $per = Permission::where(['name'=>$permission['name'],'guard_name'=>'web','type'=>$permission['type']])->first();
+            if(empty($per)){
+                Permission::create($permission);
+            }
         }
     }
 }
