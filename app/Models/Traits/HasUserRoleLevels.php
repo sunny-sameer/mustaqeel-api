@@ -19,7 +19,7 @@ trait HasUserRoleLevels
             return;
         }
 
-        $this->levels()->syncWithoutDetaching($roleLevelId);
+        $this->levels()->sync($roleLevelId);
     }
 
     public function assignMultiLevel(array $levels)
@@ -34,7 +34,7 @@ trait HasUserRoleLevels
                 $roleLevel = RoleLevel::create(['role_id'=>$role->id,'name'=>$value['name'],'level'=>$value['position']]);
             }
 
-            $this->levels()->syncWithoutDetaching($roleLevel->id);
+            $this->levels()->sync($roleLevel->id);
         }
     }
 }

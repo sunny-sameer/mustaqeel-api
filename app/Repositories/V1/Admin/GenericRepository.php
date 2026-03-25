@@ -272,8 +272,12 @@ class GenericRepository extends CoreRepository implements GenericInterface
 
 
         $ff->map(function ($query){
-            $query->meta = $query->meta ? json_decode($query->meta) : NULL;
-            $query->formMetas->value = $query->formMetas->value ? json_decode($query->formMetas->value) : NULL ;
+            if(isset($query->meta) && $query->meta <> "{}"){
+                $query->meta = $query->meta ? json_decode($query->meta) : NULL;
+            }
+            if(isset($query->formMetas->value) && $query->formMetas->value <> "{}"){
+                $query->formMetas->value = $query->formMetas->value ? json_decode($query->formMetas->value) : NULL ;
+            }
             return $query;
         });
 
