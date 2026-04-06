@@ -27,7 +27,7 @@ class RoleCreateRequest extends FormRequest
     {
         return [
             'name' => 'required|min:3|max:50|unique:roles,name|regex:/^[a-z0-9.,، ]+$/u',
-            'type' => 'required|in:admin,applicant,entity',
+            'type' => 'required|in:jusour,applicant,entity',
             'approvalLevels' => 'required|regex:/^[0-9]+$/u',
             'permissions' => 'nullable|array',
             'permissions.*' => 'nullable|exists:permissions,name',
@@ -46,7 +46,7 @@ class RoleCreateRequest extends FormRequest
             'name.regex' => 'The name may only contain small letters, numbers, commas, full stop, and spaces.',
 
             'type.required' => 'The type is required.',
-            'type.in' => 'The type must be one of the following: admin, applicant or entity.',
+            'type.in' => 'The type must be one of the following: jusour, applicant or entity.',
 
             'approvalLevels.required' => 'The approval levels is required.',
             'approvalLevels.regex' => 'The approval levels may only contain numbers.',
