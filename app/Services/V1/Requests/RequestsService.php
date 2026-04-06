@@ -244,14 +244,14 @@ class RequestsService extends BaseService
     public function requestInvalid()
     {
         $request = $this->requestsInterface->getRequest($this->requestId);
-
+        
         $type = $this->user->roles->pluck('type')->first();
 
         if($type == 'entity'){
-            if((isset($request->status['jusour'][0]['slug']) && $request->status['jusour'][0]['slug'] == 'app'))
+            if((isset($request->status['jusour'][0]['slug']) && getSlug($request->status['jusour'][0]['slug']) == 'app'))
             {
                 if((isset($request->status['entity'][0]['slug']) &&
-                ($request->status['entity'][0]['slug'] == 'app' || $request->status['entity'][0]['slug'] == 'rej'))){
+                (getSlug($request->status['entity'][0]['slug']) == 'app' || getSlug($request->status['entity'][0]['slug']) == 'rej'))){
                     throw new RequestInvalidException('Request status has already '.$request->status['entity'][0]['status']);
                 }
             } else {
@@ -259,7 +259,7 @@ class RequestsService extends BaseService
             }
         }else if($type == 'jusour'){
             if((isset($request->status['jusour'][0]['slug']) &&
-                ($request->status['jusour'][0]['slug'] == 'app' || $request->status['jusour'][0]['slug'] == 'rej')))
+                (getSlug($request->status['jusour'][0]['slug']) == 'app' || getSlug($request->status['jusour'][0]['slug']) == 'rej')))
             {
                 throw new RequestInvalidException('Request status has already '.$request->status['jusour'][0]['status']);
             }
