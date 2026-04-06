@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::get('documents/{docId}/preview', [RequestsController::class, 'previewDocument']);
 
             Route::post('can-submit/{entitySlug}', [RequestsController::class, 'canSubmitApplication']);
+            Route::put('{reqId}/update-status', [RequestsController::class, 'updateStatus']);
         });
 
         Route::prefix('classifications')->group(function () {
@@ -151,7 +152,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::post('requests/reupload-documents/{reqId}', [RequestsController::class, 'reuploadDocumentRequest']);
             Route::post('requests/qc', [RequestsController::class, 'submitQC']);
             Route::post('requests/qc/approved', [RequestsController::class, 'approveQC']);
-            Route::put('requests/{reqId}/update-status', [RequestsController::class, 'updateStatus']);
             Route::get('requests/count', [RequestsController::class, 'requestsCount']);
 
             // Users
