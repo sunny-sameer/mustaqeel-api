@@ -33,7 +33,7 @@ use OpenApi\Annotations as OA;
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
- *                 example="superadmin@yopmail.com",
+ *                 example="caspertalks@yopmail.com",
  *             ),
  *             @OA\Property(
  *                 property="password",
@@ -75,7 +75,7 @@ use OpenApi\Annotations as OA;
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
- *                 example="superadmin@yopmail.com",
+ *                 example="caspertalks@yopmail.com",
  *             ),
  *             @OA\Property(
  *                 property="otp",
@@ -176,7 +176,7 @@ use OpenApi\Annotations as OA;
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
- *                 example="superadmin@yopmail.com",
+ *                 example="caspertalks@yopmail.com",
  *             ),
  *         )
  *     ),
@@ -212,7 +212,7 @@ use OpenApi\Annotations as OA;
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
- *                 example="talha@yopmail.com",
+ *                 example="caspertalks@yopmail.com",
  *             ),
  *             @OA\Property(
  *                 property="oldPassword",
