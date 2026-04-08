@@ -75,6 +75,13 @@ class UsersRepository extends CoreRepository implements UsersInterface
         ]);
     }
 
+    public function updateUser($requestData, $id)
+    {
+        $user = $this->getUserById($id);
+        $user->update($requestData);
+        return $user;
+    }
+
     public function assignRole(User $user, $role): void
     {
         $user->assignRole($role);

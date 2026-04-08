@@ -15,7 +15,7 @@ class UserAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = Permission::orderBy('id','ASC')->get()->pluck('name')->toArray();
+        // $permissions = Permission::orderBy('id','ASC')->get()->pluck('name')->toArray();
         // Creating Super Admin User
         $superAdmin = User::where(['email' => 'superadmin@yopmail.com'])->first();
         if(empty($superAdmin)){
@@ -27,8 +27,9 @@ class UserAdminSeeder extends Seeder
             $superAdmin->assignRole('admin');
             $superAdmin->assignRoleLevel('admin','super-admin');
         }
-        $superAdmin->givePermissionTo([]);
-        $superAdmin->givePermissionTo($permissions);
+            // no need for user permissions it is running on behalf of role
+        // $superAdmin->givePermissionTo([]);
+        // $superAdmin->givePermissionTo($permissions);
 
         // Creating Admin User
         $junior = User::where(['email' => 'junioradmin@yopmail.com'])->first();
@@ -41,8 +42,8 @@ class UserAdminSeeder extends Seeder
             $junior->assignRole('admin');
             $junior->assignRoleLevel('admin','junior');
         }
-        $junior->givePermissionTo([]);
-        $junior->givePermissionTo($permissions);
+        // $junior->givePermissionTo([]);
+        // $junior->givePermissionTo($permissions);
 
         // Creating Admin User
         $admin = User::where(['email' => 'admin@yopmail.com'])->first();
@@ -55,8 +56,8 @@ class UserAdminSeeder extends Seeder
             $admin->assignRole('admin');
             $admin->assignRoleLevel('admin','manager');
         }
-        $admin->givePermissionTo([]);
-        $admin->givePermissionTo($permissions);
+        // $admin->givePermissionTo([]);
+        // $admin->givePermissionTo($permissions);
 
         // Creating Applicant User
         $usr = User::where(['email' => 'caspertalks@yopmail.com'])->first();

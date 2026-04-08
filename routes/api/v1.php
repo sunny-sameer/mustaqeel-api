@@ -20,11 +20,24 @@ use App\Http\Controllers\Api\V1\Admin\UserController as AdminUserController;
 Route::prefix('auth')->group(function () {
     Route::post('/login', [ApiAuthenticateController::class, 'userLogin']);
     Route::post('/signup', [ApiAuthenticateController::class, 'userSignUp']);
+    Route::post('/reset', [ApiAuthenticateController::class, 'userReset']);
+    Route::post('/reset/password', [ApiAuthenticateController::class, 'userPasswordReset']);
     Route::post('/2fa/verify', [TwoFactorController::class, 'verify']);
+
+    Route::prefix('admin')->group(function () {
+        Route::post('/login', [ApiAuthenticateController::class, 'userLogin']);
+        Route::post('/2fa/verify', [TwoFactorController::class, 'verify']);
+    });
 });
 
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('/logout', [ApiAuthenticateController::class, 'userLogout']);
+        Route::prefix('admin')->group(function () {
+            Route::post('/logout', [ApiAuthenticateController::class, 'userLogout']);
+        });
+    });
+
     Route::prefix('user')->group(function () {
         Route::get('resolve', [UserController::class, 'userResolver']);
 

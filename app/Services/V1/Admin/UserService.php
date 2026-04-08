@@ -125,9 +125,10 @@ class UserService extends BaseService
                 $response->metaData()->create($metaData);
             }
 
-            if(isset($this->requests->permissions)){
-                $response->givePermissionTo($this->requests->permissions);
-            }
+            // no need for user permissions it is running on behalf of role
+            // if(isset($this->requests->permissions)){
+            //     $response->givePermissionTo($this->requests->permissions);
+            // }
 
             DB::commit();
 
@@ -176,10 +177,11 @@ class UserService extends BaseService
                 $response->metaData()->update($metaData);
             }
 
-            if(isset($this->requests->permissions) && $this->role == 'jusour'){
-                $response->syncPermissions([]);
-                $response->syncPermissions($this->requests->permissions);
-            }
+            // no need for user permissions it is running on behalf of role
+            // if(isset($this->requests->permissions) && $this->role == 'jusour'){
+            //     $response->syncPermissions([]);
+            //     $response->syncPermissions($this->requests->permissions);
+            // }
 
             DB::commit();
 

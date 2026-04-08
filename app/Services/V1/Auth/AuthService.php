@@ -24,9 +24,10 @@ use App\Exceptions\UserFoundException;
 use App\Exceptions\AuthenticationFailedException;
 use App\Exceptions\TooManyLoginAttemptsException;
 use App\Http\Requests\API\V1\LoginRequest;
+use App\Http\Requests\API\V1\PasswordResetRequest;
+use App\Http\Requests\API\V1\ResetRequest;
 use App\Http\Requests\API\V1\SignUpRequest;
-
-
+use App\Models\User;
 use App\Services\V1\Auth\TwoFactorService;
 use App\Services\V1\User\UserService;
 
@@ -45,12 +46,31 @@ class AuthService
     private ?object $request;
     private string $userPassword;
     private ?string $userToken = null;
+    private ?string $identifier = null;
     private ?array $twoFactorTokens = null;
 
     public function setInputs(LoginRequest $request): self
     {
         $this->userEmail = $request->email;
         $this->userPassword = $request->password;
+        $this->identifier = $request->header('identifier');
+        $this->request = $request;
+        return $this;
+    }
+
+    public function setResetInput(ResetRequest $request): self
+    {
+        $this->userEmail = $request->email;
+        $this->identifier = $request->header('identifier');
+        $this->request = $request;
+        return $this;
+    }
+
+    public function setPasswordResetInput(PasswordResetRequest $request): self
+    {
+        $this->userEmail = $request->email;
+        $this->userPassword = $request->password;
+        $this->identifier = $request->header('identifier');
         $this->request = $request;
         return $this;
     }
@@ -63,7 +83,7 @@ class AuthService
 
         $user = $this->userService->getUserByEmail($this->userEmail);
 
-        if (!$user || $user->isEmpty()) {
+        if (!$user || $user->isEmpty() || $user->first()->roles->pluck('type')->first() !== $this->identifier) {
             throw new UserNotFoundException();
         }
 
@@ -92,7 +112,7 @@ class AuthService
     public function rateLimiter(): self
     {
 
-        $key = sprintf('loginSignUp:%s|%s', strtolower($this->userEmail), $this->request->ip());
+        $key = sprintf('loginSignUpReset:%s|%s', strtolower($this->userEmail), $this->request->ip());
 
         if (RateLimiter::tooManyAttempts($key, 2)) {
             throw new TooManyLoginAttemptsException();
@@ -112,6 +132,12 @@ class AuthService
         $user = Auth::user();
 
         $this->twoFactorTokens = [$pendingToken, $expiresIn] = $this->twoFactor->startLogin($user, $this->request->ip(), $this->request->userAgent());
+        return $this;
+    }
+
+    public function resetAuth(): self
+    {
+        $this->twoFactorTokens = [$pendingToken, $expiresIn] = $this->twoFactor->startReset($this->user, $this->request->ip(), $this->request->userAgent());
         return $this;
     }
 
@@ -201,6 +227,23 @@ class AuthService
     {
         return response()->json([
             'twoFactorTokens' => $this->twoFactorTokens[0],
+        ]);
+    }
+
+    public function getSignOutResponse(): \Illuminate\Http\JsonResponse
+    {
+        auth()->user()->tokens()->delete();
+        return response()->json([
+            'message' => "User logged out successfully.",
+        ]);
+    }
+
+    public function passwordResetAuthResponse()
+    {
+        $response = $this->userService->updateUser(['password'=>$this->userPassword],$this->user->id);
+        return response()->json([
+            'message'=> "User password reset successfully",
+            "data" => ['user' => $response['data']]
         ]);
     }
 }

@@ -17,10 +17,9 @@ use App\Exceptions\UserNotFoundException;
 use App\Exceptions\UserFoundException;
 use App\Exceptions\AuthenticationFailedException;
 use App\Exceptions\TooManyLoginAttemptsException;
-
-
-
-
+use App\Http\Requests\API\V1\PasswordResetRequest;
+use App\Http\Requests\API\V1\ResetRequest;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiAuthenticateController extends BaseController
 {
@@ -34,7 +33,6 @@ class ApiAuthenticateController extends BaseController
 
     public function __construct(
         AuthService $authService,
-        private UserService $UserService
     ) {
 
         $this->authService = $authService;
@@ -61,7 +59,6 @@ class ApiAuthenticateController extends BaseController
         }
     }
 
-
     public function userSignUp(SignUpRequest $request): JsonResponse
     {
         try {
@@ -74,6 +71,52 @@ class ApiAuthenticateController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (TooManyLoginAttemptsException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 420);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function userReset(ResetRequest $request): JsonResponse
+    {
+        try {
+            return $this->authService
+                ->setResetInput($request)
+                ->rateLimiter()
+                ->userExist()
+                ->resetAuth()
+                ->getAuthResponse();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (TooManyLoginAttemptsException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 420);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function userPasswordReset(PasswordResetRequest $request): JsonResponse
+    {
+        try {
+            return $this->authService
+                ->setPasswordResetInput($request)
+                ->rateLimiter()
+                ->userExist()
+                ->passwordResetAuthResponse();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (TooManyLoginAttemptsException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 420);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function userLogout(Request $request): JsonResponse
+    {
+        try {
+            return $this->authService->getSignOutResponse();
+        } catch (UserFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }

@@ -111,6 +111,34 @@ class TwoFactorService
         return [$pendingToken, $this->ttl];
     }
 
+    public function startReset(User $user, string $ip, ?string $ua): array
+    {
+        $pendingToken = bin2hex(random_bytes(32));
+
+        $otpCreate = $this->createOtp($user->email);
+        // $otp = $this->generateOtp();
+        $otp = $otpCreate->token;
+        $otpHash = $this->hashOtp($otp);
+
+        $payload = [
+            'type'      => 'reset',
+            'user_id'   => $user->id,
+            'otp_hash'  => $otpHash,
+            'attempts'  => 0,
+            'ip'        => $ip,
+            'ua'        => (string)$ua,
+            'issued_at' => now()->unix(),
+        ];
+
+        Cache::put($this->key($pendingToken), $payload, $this->ttl);
+
+        $this->sendOtpEmail($user, $otp);
+
+        Log::info("Reset OTP: {$otp} sent to {$user->email}");
+
+        return [$pendingToken, $this->ttl];
+    }
+
     /**
      * Verify OTP (used for both signup & login)
      */
@@ -153,13 +181,13 @@ class TwoFactorService
             return (object)['ok' => true, 'status' => 201, 'flow' => 'signup', 'suUser' => $data];
         }
 
-        if ($data['type'] === 'login') {
+        if ($data['type'] === 'login' || $data['type'] === 'reset') {
             $user = User::find($data['user_id']);
             if (!$user) {
                 return (object)['ok' => false, 'status' => 400, 'message' => 'Invalid session.'];
             }
 
-            return (object)['ok' => true, 'status' => 200, 'flow' => 'login', 'user' => $user];
+            return (object)['ok' => true, 'status' => 200, 'flow' => $data['type'], 'user' => $user];
         }
 
         return (object)['ok' => false, 'status' => 400, 'message' => 'Unknown flow.'];
