@@ -25,6 +25,7 @@ class ApiAuthenticateController extends BaseController
 {
     /**
      * See Swagger annotations in \App\Swaggers\V1\Auth\AuthSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Auth\AdminAuthSwagger
     */
 
 

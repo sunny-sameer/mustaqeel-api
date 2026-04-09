@@ -138,6 +138,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
         $req->map(function ($query) {
             $query->statuses = $this->getRequestStatus($query->id);
+            $query->allStatuses = $this->getRequestStatuses($query->id);
 
             $query->metas->map(function ($query1) use ($query) {
                 $query->{$query1->key} = $query1?->related;

@@ -40,7 +40,7 @@ use App\Http\Requests\API\V1\Admin\StageStatusUpdateRequest;
 class GenericController extends BaseController
 {
     /**
-     * See Swagger annotations in \App\Swaggers\V1\Admin\GenericSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Admin\ClassificationSwagger
     */
 
     public function __construct(private GenericService $service) {}
