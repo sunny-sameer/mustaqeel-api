@@ -109,7 +109,7 @@ class UserService extends BaseService
     public function createToken(User $user, $identifier): self
     {
         $this->user = $user;
-        if($this->user->first()->roles->pluck('type')->first() !== $identifier){
+        if($this->user->roles->pluck('type')->first() !== $identifier){
             throw new UserNotFoundException();
         }
         $this->token =  $user->createToken($user->name . '-AuthToken')->plainTextToken;
@@ -120,7 +120,7 @@ class UserService extends BaseService
     public function checkUser(User $user, $identifier): self
     {
         $this->user = $user;
-        if($this->user->first()->roles->pluck('type')->first() !== $identifier){
+        if($this->user->roles->pluck('type')->first() !== $identifier){
             throw new UserNotFoundException();
         }
 
