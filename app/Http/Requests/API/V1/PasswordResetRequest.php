@@ -26,7 +26,6 @@ class PasswordResetRequest extends BaseRequest
     {
         return [
             'email' => 'required|min:5|max:255|email|exists:users,email',
-            'oldPassword' => 'required|different:password',
             'password' => [
                 'required',
                 Password::min(8)

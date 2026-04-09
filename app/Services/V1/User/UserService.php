@@ -87,7 +87,7 @@ class UserService extends BaseService
 
             $this->userInterface->activateUser($user);
 
-            $this->createToken($user);
+            $this->createToken($user, $role);
 
             DB::commit();
 

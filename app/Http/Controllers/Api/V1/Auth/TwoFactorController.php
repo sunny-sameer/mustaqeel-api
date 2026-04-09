@@ -30,7 +30,7 @@ class TwoFactorController extends BaseController
             $request->otp,
             $request->email,
             $request->ip(),
-            $request->userAgent()
+            $request->userAgent(),
         );
 
         if (!$result->ok) {
