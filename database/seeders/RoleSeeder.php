@@ -19,11 +19,11 @@ class RoleSeeder extends Seeder
             [
                 'name'=>'admin',
                 'type'=>'jusour',
-                'approval_levels'=>2,
+                'approval_levels'=>3,
                 'level' => [
                     [
                         'name' => 'super-admin',
-                        'level' => 2
+                        'level' => 3
                     ],
                     [
                         'name' => 'manager',

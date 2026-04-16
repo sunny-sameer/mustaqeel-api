@@ -32,20 +32,6 @@ class UserAdminSeeder extends Seeder
         // $superAdmin->givePermissionTo($permissions);
 
         // Creating Admin User
-        $junior = User::where(['email' => 'junioradmin@yopmail.com'])->first();
-        if(empty($junior)){
-            $junior = User::create([
-                'name' => 'Junior Admin',
-                'email' => 'junioradmin@yopmail.com',
-                'password' => Hash::make('Jusour@2025')
-            ]);
-            $junior->assignRole('admin');
-            $junior->assignRoleLevel('admin','junior');
-        }
-        // $junior->givePermissionTo([]);
-        // $junior->givePermissionTo($permissions);
-
-        // Creating Admin User
         $admin = User::where(['email' => 'admin@yopmail.com'])->first();
         if(empty($admin)){
             $admin = User::create([
@@ -58,6 +44,20 @@ class UserAdminSeeder extends Seeder
         }
         // $admin->givePermissionTo([]);
         // $admin->givePermissionTo($permissions);
+
+        // Creating Admin User
+        $junior = User::where(['email' => 'junioradmin@yopmail.com'])->first();
+        if(empty($junior)){
+            $junior = User::create([
+                'name' => 'Junior Admin',
+                'email' => 'junioradmin@yopmail.com',
+                'password' => Hash::make('Jusour@2025')
+            ]);
+            $junior->assignRole('admin');
+            $junior->assignRoleLevel('admin','junior');
+        }
+        // $junior->givePermissionTo([]);
+        // $junior->givePermissionTo($permissions);
 
         // Creating Applicant User
         $usr = User::where(['email' => 'caspertalks@yopmail.com'])->first();

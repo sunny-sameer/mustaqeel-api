@@ -13,6 +13,11 @@ class Requests extends Model
     protected $table = 'requests';
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId','id');
+    }
+
     public function metas()
     {
         return $this->hasMany(RequestMetaData::class, 'reqId');
@@ -75,5 +80,8 @@ class Requests extends Model
         ->orderBy('created_at','DESC');
     }
 
-
+    public function secureCode()
+    {
+        return $this->hasOne(RequestTypeCodes::class,'reqId','id');
+    }
 }

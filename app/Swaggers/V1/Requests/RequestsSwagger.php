@@ -715,7 +715,7 @@ use OpenApi\Annotations as OA;
  * // Update Request Status
  *
  *
- * @OA\Post(
+ * @OA\Put(
  *     path="/api/v1/user/requests/{reqId}/update-status",
  *     tags={"Requests"},
  *     summary="Update Request Status",

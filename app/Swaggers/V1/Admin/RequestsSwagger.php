@@ -209,6 +209,35 @@ use OpenApi\Annotations as OA;
  *         description="Requests found",
  *     )
  * )
+ *
+ * // Self Assign Request
+ *
+ * * @OA\Post(
+ *     path="/api/v1/admin/requests/self-assign",
+ *     tags={"Admin Requests"},
+ *     summary="Self Assign Request",
+ *     description="Self Assign Request.",
+ *     security={{"bearerAuth": {}}},
+ *
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"requestId"},
+ *
+ *             @OA\Property(
+ *                 property="requestId",
+ *                 type="integer",
+ *                 example=7,
+ *                 description="Request ID must exist in requests table"
+ *             )
+ *         )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=200,
+ *         description="Request assigned successfully"
+ *     )
+ * )
  */
 
 class RequestsSwagger

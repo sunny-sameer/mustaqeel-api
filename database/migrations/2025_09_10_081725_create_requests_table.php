@@ -48,7 +48,8 @@ return new class extends Migration
             $table->foreignId('reqId')->constrained('requests')->onDelete('cascade');
 
             $table->bigInteger('key');
-            $table->bigInteger('secureCode');
+            $table->string('secureCode');
+            $table->date('expiryDate');
             $table->tinyInteger('expiry')->default(1);
 
             $table->timestamps();
@@ -61,7 +62,7 @@ return new class extends Migration
             $table->foreignId('reqTypeCodeId')->constrained('request_type_codes')->onDelete('cascade');
 
             $table->bigInteger('key');
-            $table->bigInteger('documentName');
+            $table->string('documentName');
 
             $table->timestamps();
             $table->softDeletes();

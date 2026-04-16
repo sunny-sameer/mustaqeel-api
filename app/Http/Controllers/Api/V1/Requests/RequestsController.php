@@ -13,8 +13,7 @@ use App\Exceptions\StageStatusNotFoundException;
 
 
 use App\Http\Controllers\Api\BaseController;
-
-
+use App\Http\Requests\API\V1\RequestAdditionalRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\V1\RequestsStoreRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
@@ -247,6 +246,30 @@ class RequestsController extends BaseController
         }
     }
 
+    public function additionalRequest(RequestAdditionalRequest $request, $id)
+    {
+        try {
+            return $this->requests
+                ->setInputsAdditionalRequest($request, $id)
+                ->userExists()
+                ->requestNotFound()
+                ->requestInvalid()
+                ->updateRequestStatus();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (StageStatusNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        }  catch (RequestInvalidException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
     public function reuploadDocumentRequest(ReuploadDocumentRequest $request, $id)
     {
         try {
@@ -323,12 +346,14 @@ class RequestsController extends BaseController
         }
     }
 
-    public function selfAssignRequest()
+    public function selfAssignRequest(Request $request)
     {
         try {
             return $this->requests
+                ->setRequestIdInputs($request)
                 ->userExists()
-                ->getAllRequestsCount();
+                ->alreadySelfAssigned()
+                ->selfAssignRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {

@@ -54,6 +54,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
             Route::post('/can-submit/{entitySlug}', [RequestsController::class, 'canSubmitApplication']);
             Route::put('/{reqId}/update-status', [RequestsController::class, 'updateStatus']);
+
+            Route::group(['middleware' => 'entity'], function () {
+                Route::post('/{reqId}/additional-request', [RequestsController::class, 'additionalRequest']);
+            });
         });
 
         Route::prefix('classifications')->group(function () {
@@ -187,7 +191,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
                 Route::post('/qc', [RequestsController::class, 'submitQC']);
                 Route::post('/qc/approved', [RequestsController::class, 'approveQC']);
                 Route::get('/count', [RequestsController::class, 'requestsCount']);
-                Route::post('/{reqId}/self-assign', [RequestsController::class, 'selfAssignRequest']);
+                Route::post('/self-assign', [RequestsController::class, 'selfAssignRequest']);
             });
 
             // Users

@@ -5,10 +5,13 @@ namespace App\Repositories\V1\Requests;
 use App\Models\Categories;
 use App\Models\QualityCheck;
 use App\Models\RequestAttribute;
+use App\Models\RequestCodesDocuments;
 use App\Models\RequestMetaData;
 use App\Models\Requests;
 use App\Models\RequestStages;
 use App\Models\RequestStatuses;
+use App\Models\RequestTypeCodes;
+use App\Models\RoleLevel;
 use App\Models\Stages;
 use App\Models\StagesStatuses;
 use App\Models\User;
@@ -28,10 +31,23 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     protected $requestStages;
     protected $stagesStatuses;
     protected $requestStatuses;
+    protected $requestTypeCodes;
+    protected $requestCodesDocuments;
     protected $qualityCheck;
 
 
-    public function __construct(Requests $model, RequestMetaData $requestMetaData, RequestAttribute $requestAttribute, Stages $stages, RequestStages $requestStages, StagesStatuses $stagesStatuses, RequestStatuses $requestStatuses, QualityCheck $qualityCheck)
+    public function __construct(
+        Requests $model,
+        RequestMetaData $requestMetaData,
+        RequestAttribute $requestAttribute,
+        Stages $stages,
+        RequestStages $requestStages,
+        StagesStatuses $stagesStatuses,
+        RequestStatuses $requestStatuses,
+        RequestTypeCodes $requestTypeCodes,
+        RequestCodesDocuments $requestCodesDocuments,
+        QualityCheck $qualityCheck
+    )
     {
         parent::__construct($model);
 
@@ -41,6 +57,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $this->requestStages = $requestStages;
         $this->stagesStatuses = $stagesStatuses;
         $this->requestStatuses = $requestStatuses;
+        $this->requestTypeCodes = $requestTypeCodes;
+        $this->requestCodesDocuments = $requestCodesDocuments;
         $this->qualityCheck = $qualityCheck;
     }
 
@@ -237,10 +255,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $role = $user->roles->pluck('type')->first();
 
         $req = $this->model->with([
+            'user',
             'metas:reqId,key,value',
             'documents',
             'qualityCheck',
-            'qualityChecks'
+            'qualityChecks',
+            'secureCode.document'
         ])->withCount('qualityChecks');
 
         if ($role == 'applicant') {
@@ -325,6 +345,10 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $req->{$query->key} = $query?->related;
                 return $query;
             });
+
+            if(isset($req->secureCode->document->documentName)){
+                $req->secureCode->document['path'] = 'storage/requests/endorsementLetters/'.$req->secureCode->document->documentName;
+            }
         }
 
         return $req;
@@ -592,5 +616,27 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         }
 
         return ['submitted'=>$submitted,'rejected'=>$rejected,'qcCompleted'=>$qcCompleted,'endorsed'=>$endorsed,'molApproved'=>$molApproved,'hayyaApproved'=>$hayyaApproved,'visaQidIssue'=>$visaQidIssue];
+    }
+
+    public function checkSelfAssignedRequest($requestId)
+    {
+        $level = auth()->user()->levels->first();
+
+        return $this->model->whereHas('requestStage', function ($q) use ($level) {
+            $q->where('stageSlug', 'jus')
+            ->whereHas('lastRequestStatus.user.levels',function ($q) use ($level){
+                $q->where('level',$level->level);
+            });
+        })->where('id', $requestId)->first();
+    }
+
+    public function createSecureCode($request)
+    {
+        return $this->requestTypeCodes->create($request);
+    }
+
+    public function createSecureCodeDocument($request)
+    {
+        return $this->requestCodesDocuments->create($request);
     }
 }

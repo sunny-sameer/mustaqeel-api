@@ -71,8 +71,9 @@ if(!function_exists('getUserMetas')){
     }
 }
 
-if(!function_exists('getSlug')){
-    function getSlug($slug){
-        return substr($slug, 0, 3);
+if(!function_exists('getSlugStatus')){
+    function getSlugStatus($slug){
+        $explodeSlug = explode('-',$slug);
+        return $explodeSlug[0];
     }
 }
