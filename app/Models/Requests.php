@@ -65,7 +65,14 @@ class Requests extends Model
 
     public function documents()
     {
-        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId');
+        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId')
+        ->where('type','<>','additionalRequest');
+    }
+
+    public function additionalRequest()
+    {
+        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId')
+        ->where('type','additionalRequest');
     }
 
     public function qualityCheck()

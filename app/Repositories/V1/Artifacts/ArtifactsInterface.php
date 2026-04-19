@@ -9,4 +9,5 @@ interface ArtifactsInterface  extends CoreInterface {
     public function updateDocuments($request, $reqId, $type);
     public function deleteDocuments($request, $type);
     public function deleteDocumentById($id);
+    public function createAdditionalRequest($request);
 }

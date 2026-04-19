@@ -258,6 +258,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             'user',
             'metas:reqId,key,value',
             'documents',
+            'additionalRequest',
             'qualityCheck',
             'qualityChecks',
             'secureCode.document'
@@ -321,6 +322,10 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->meta = json_decode($query->meta);
                 return $query;
             });
+            $req->additionalRequest->map(function ($query) {
+                $query->meta = json_decode($query->meta);
+                return $query;
+            });
 
             $req['status'] = $this->getRequestStatuses($requestId);
 
@@ -349,6 +354,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             if(isset($req->secureCode->document->documentName)){
                 $req->secureCode->document['path'] = 'storage/requests/endorsementLetters/'.$req->secureCode->document->documentName;
             }
+
+            unset($req->metas);
         }
 
         return $req;
@@ -392,12 +399,13 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             }
             $requestStatus = $requestStatus->orderBy('id', 'DESC')->first();
 
-            $key = Str::lower($stage->name);
+            $key = strtolower($stage->name);
             $data[$key] = [
                 'status' => $requestStatus?->stageStatus?->name ?? 'Under Review',
                 'slug' => $requestStatus?->stageStatus?->slug ?? 'ur',
                 'stage' => $requestStatus?->requestStage?->stage?->name ?? $stage->name,
                 'username' => $requestStatus?->user?->name ?? null,
+                'userId' => $requestStatus?->user?->id ?? null,
                 'levels' => $requestStatus?->user?->levels?->map(fn ($level) => [
                     'name' => $level->name,
                     'level' => $level->level,
@@ -425,7 +433,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 ->orderByRaw('userId = ? DESC', [auth()->id()])
                 ->orderBy('id', 'DESC')->get()->unique('userId');
 
-            $key = Str::lower($stage->name);
+            $key = strtolower($stage->name);
             if (isset($requestStatus) && count($requestStatus) > 0) {
                 foreach ($requestStatus as $value) {
                     $data[$key][] = [
@@ -433,6 +441,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         'slug' => $value?->stageStatus?->slug ?? 'ur',
                         'stage' => $value?->requestStage?->stage?->name ?? $stage->name,
                         'username' => $value?->user?->name,
+                        'userId' => $value?->user?->id,
                         'levels' => $value?->user?->levels?->map(fn ($level) => [
                             'name' => $level->name,
                             'level' => $level->level,
@@ -448,6 +457,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     'slug' => 'ur',
                     'stage' => $stage->name,
                     'username' => null,
+                    'userId' => null,
                     'levels' => null,
                     'meta' => [],
                 ];

@@ -40,6 +40,7 @@ use App\Exceptions\RequestQcNotExistException;
 use App\Exceptions\StageStatusNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use App\Http\Requests\API\V1\RequestAdditionalRequest;
+use App\Http\Requests\API\V1\RequestAdditionalSubmissionRequest;
 use App\Repositories\V1\Admin\GenericInterface;
 use App\Repositories\V1\Artifacts\ArtifactsInterface;
 use App\Repositories\V1\Requests\RequestsInterface;
@@ -69,6 +70,7 @@ class RequestsService extends BaseService
     private ?object $requests = null;
     private ?object $requestsQc = null;
     private ?string $requestId = null;
+    private ?int $addReqId = null;
     private ?string $referenceNumber = null;
     private ?string $status = 'ur';
 
@@ -131,6 +133,16 @@ class RequestsService extends BaseService
     {
         $this->requests = $request;
         $this->requestId = $id;
+        $this->status = 'adr';
+        return $this;
+    }
+
+    public function setInputsAdditionalRequestSubmission(RequestAdditionalSubmissionRequest $request, $id, $addReqId): self
+    {
+        $this->requests = $request;
+        $this->requestId = $id;
+        $this->addReqId = $addReqId;
+        $this->status = 'ads';
         return $this;
     }
 
@@ -233,6 +245,22 @@ class RequestsService extends BaseService
         return $this;
     }
 
+    public function requestNotFoundWithUser()
+    {
+        $request = $this->getRequestData();
+
+        if (!$request) {
+            throw new RequestNotExistException();
+        }
+
+        if($request->userId <> $this->user->id){
+            throw new RequestNotExistException();
+        }
+
+        $this->referenceNumber = $request->reqReferenceNumber;
+        return $this;
+    }
+
     public function requestQcAlreadyExists($status)
     {
         $this->requestsQc = $this->requestsInterface->getQc($this->requestId,$status);
@@ -275,6 +303,44 @@ class RequestsService extends BaseService
                 throw new RequestInvalidException('Request status has already been '.$request->status['jusour'][0]['status']);
             }
         }
+
+        return $this;
+    }
+
+    public function requestAdditionalInvalid()
+    {
+        $request = $this->getRequestData();
+
+        $type = $this->user->roles->pluck('type')->first();
+
+        if($type == 'entity'){
+            if((isset($request->status['jusour'][0]['slug']) && getSlugStatus($request->status['jusour'][0]['slug']) == 'app'))
+            {
+                if((isset($request->status['entity'][0]['slug']) &&
+                (getSlugStatus($request->status['entity'][0]['slug']) == 'app' || getSlugStatus($request->status['entity'][0]['slug']) == 'rej' || getSlugStatus($request->status['entity'][0]['slug']) == 'adr'))){
+                    throw new RequestInvalidException('Request status has already been '.$request->status['entity'][0]['status']);
+                }
+            }else{
+                throw new RequestInvalidException();
+            }
+        } else if($type == 'jusour'){
+            if((isset($request->status['jusour'][0]['slug']) && (getSlugStatus($request->status['jusour'][0]['slug']) == 'app' || getSlugStatus($request->status['jusour'][0]['slug']) == 'rej' || getSlugStatus($request->status['jusour'][0]['slug']) == 'adr'))){
+                throw new RequestInvalidException('Request status has already been '.$request->status['jusour'][0]['status']);
+            }
+        }
+
+        return $this;
+    }
+
+    public function requestAdditionalSubmissionInvalid()
+    {
+        $request = $this->getRequestData();
+
+        if((isset($request->status['application'][0]['slug']) &&
+        (getSlugStatus($request->status['application'][0]['slug']) == 'app' || getSlugStatus($request->status['application'][0]['slug']) == 'rej' || getSlugStatus($request->status['application'][0]['slug']) == 'ads'))){
+            throw new RequestInvalidException('Request status has already been '.$request->status['application'][0]['status']);
+        }
+
 
         return $this;
     }
@@ -364,7 +430,8 @@ class RequestsService extends BaseService
 
             DB::commit();
 
-            $response =  $this->requestsInterface->getRequest($request->id);
+            $this->requestId = $request->id;
+            $response =  $this->getRequestData();
             $message = $this->status = 'dra' ? 'Request partially created successfully' : 'Request created successfully';
             return $this->success(
                 data: ['request' => $response],
@@ -413,7 +480,9 @@ class RequestsService extends BaseService
 
             DB::commit();
 
-            $response =  $this->requestsInterface->getRequest($request->id);
+            $this->requestId = $request->id;
+            $response =  $this->getRequestData();
+
             return $this->success(
                 data: ['request' => $response],
                 message: 'Request updated successfully'
@@ -511,7 +580,8 @@ class RequestsService extends BaseService
 
             }
 
-            $request = $this->requestsInterface->getRequest($request->id);
+            $this->requestId = $request->id;
+            $response =  $this->getRequestData();
 
             if (!$response->ok) {
                 DB::rollBack();
@@ -542,7 +612,8 @@ class RequestsService extends BaseService
 
     public function getRequest($id)
     {
-        $request = $this->requestsInterface->getRequest($id);
+        $this->requestId = $id;
+        $request =  $this->getRequestData();
 
         return $this->success(
             data: ['request' => $request],
@@ -618,7 +689,104 @@ class RequestsService extends BaseService
             DB::rollBack();
 
             return $this->error(
-                message: 'Reupload document creation failed',
+                message: 'Request status updation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+
+    }
+
+    public function createAdditionalRequest()
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->requests['entityId'] = $this->requestId;
+            $this->requests['entityType'] = Requests::class;
+            $response = $this->artifactsService->createAdditionalRequest($this->requests);
+
+            if (!$response->ok) {
+                DB::rollBack();
+
+                return $this->error(
+                    message: $response->message,
+                    errors: $response->ok,
+                    statusCode: $response->status
+                );
+            }
+
+            $this->createOrUpdateStageStatus('app', $this->requestId);
+            $type = $this->user->roles->pluck('type')->first();
+            $stage = substr($type, 0, 3);
+            $this->createOrUpdateStageStatus($stage, $this->requestId);
+
+            $request =  $this->getRequestData();
+
+            DB::commit();
+
+            return $this->success(
+                data: ['request' => $request],
+                message: 'Additional request created successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Additional request creation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+
+    }
+
+    public function submitAdditionalRequest()
+    {
+        DB::beginTransaction();
+
+        try {
+            $request =  $this->getRequestData();
+
+            $this->requests['addReqId'] = $this->addReqId;
+            $response = $this->artifactsService->submitAdditionalRequest($this->requests);
+
+            if (!$response->ok) {
+                DB::rollBack();
+
+                return $this->error(
+                    message: $response->message,
+                    errors: $response->ok,
+                    statusCode: $response->status
+                );
+            }
+
+            if($response->additionalRequestSubmission->status){
+                $this->createOrUpdateStageStatus('app', $this->requestId);
+                if(isset($request->status['jusour'][0]['slug']) && getSlugStatus($request->status['jusour'][0]['slug']) == 'adr'){
+                    $stage = strtolower(substr($request->status['jusour'][0]['stage'], 0, 3));
+                    $userId = $request->status['jusour'][0]['userId'];
+                    $this->createOrUpdateStageStatus($stage, $this->requestId,[],$userId);
+                }else if(isset($request->status['entity'][0]['slug']) && getSlugStatus($request->status['entity'][0]['slug']) == 'adr'){
+                    $stage = strtolower(substr($request->status['entity'][0]['stage'], 0, 3));
+                    $userId = $request->status['entity'][0]['userId'];
+                    $this->createOrUpdateStageStatus($stage, $this->requestId,[],$userId);
+                }
+            }
+
+            $request =  $this->getRequestData();
+
+            DB::commit();
+
+            return $this->success(
+                data: ['request' => $request],
+                message: 'Additional request submitted successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'Additional request submission failed',
                 errors: $e->getMessage(),
                 statusCode: 500
             );

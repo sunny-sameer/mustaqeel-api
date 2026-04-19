@@ -14,6 +14,7 @@ use App\Exceptions\StageStatusNotFoundException;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\API\V1\RequestAdditionalRequest;
+use App\Http\Requests\API\V1\RequestAdditionalSubmissionRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\V1\RequestsStoreRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
@@ -253,12 +254,32 @@ class RequestsController extends BaseController
                 ->setInputsAdditionalRequest($request, $id)
                 ->userExists()
                 ->requestNotFound()
-                ->requestInvalid()
-                ->updateRequestStatus();
+                ->requestAdditionalInvalid()
+                ->createAdditionalRequest();
         } catch (UserNotFoundException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (StageStatusNotFoundException $e) {
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        }  catch (RequestInvalidException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function additionalRequestSubmission(RequestAdditionalSubmissionRequest $request, $id, $addReqId)
+    {
+        try {
+            return $this->requests
+                ->setInputsAdditionalRequestSubmission($request, $id, $addReqId)
+                ->userExists()
+                ->requestNotFoundWithUser()
+                ->requestAdditionalSubmissionInvalid()
+                ->submitAdditionalRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (RequestNotExistException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         }  catch (RequestInvalidException $e) {

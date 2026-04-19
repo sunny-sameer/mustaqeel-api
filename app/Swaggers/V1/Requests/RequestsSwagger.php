@@ -745,6 +745,107 @@ use OpenApi\Annotations as OA;
  *         description="Validation error"
  *     )
  * )
+ *
+ *
+ * // Create Additional Request
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/user/requests/{reqId}/additional-request",
+ *     tags={"Requests"},
+ *     summary="Create Additional Request",
+ *     description="Create an additional request.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="reqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"additional"},
+ *             @OA\Property(
+ *                 property="additional",
+ *                 type="object",
+ *                 required={"questions"},
+ *                 @OA\Property(
+ *                     property="questions",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="string"
+ *                     )
+ *                 ),
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Addiional request created successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ *
+ * // Submit Additional Request
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/user/requests/{reqId}/additional-request-submission/{addReqId}",
+ *     tags={"Requests"},
+ *     summary="Submit Additional Request",
+ *     description="Submit an Additional Request.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="reqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="addReqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"quesId", "answer"},
+ *                 @OA\Property(
+ *                     property="quesId",
+ *                     type="integer",
+ *                     example="1"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="answer",
+ *                     type="string",
+ *                     example="This is test"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="document",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="The file to upload"
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Additional request submitted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
  */
 
 class RequestsSwagger

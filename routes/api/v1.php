@@ -53,11 +53,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::get('/documents/{docId}/preview', [RequestsController::class, 'previewDocument']);
 
             Route::post('/can-submit/{entitySlug}', [RequestsController::class, 'canSubmitApplication']);
-            Route::put('/{reqId}/update-status', [RequestsController::class, 'updateStatus']);
-
-            Route::group(['middleware' => 'entity'], function () {
+            Route::group(['middleware' => 'except-applicant'], function () {
+                Route::put('/{reqId}/update-status', [RequestsController::class, 'updateStatus']);
                 Route::post('/{reqId}/additional-request', [RequestsController::class, 'additionalRequest']);
             });
+            Route::post('/{reqId}/additional-request-submission/{addReqId}', [RequestsController::class, 'additionalRequestSubmission']);
         });
 
         Route::prefix('classifications')->group(function () {
