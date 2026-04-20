@@ -15,6 +15,7 @@ use App\DTOs\V1\Profile\QatarInfoDTO;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UserNotFoundException;
+use App\Http\Resources\API\V1\User\UserResource;
 use Illuminate\Validation\ValidationException;
 
 
@@ -86,7 +87,7 @@ class UserService extends BaseService
 
             $this->userInterface->activateUser($user);
 
-            $this->createToken($user);
+            $this->createToken($user, $role);
 
             DB::commit();
 
@@ -105,10 +106,23 @@ class UserService extends BaseService
         }
     }
 
-    public function createToken(User $user): self
+    public function createToken(User $user, $identifier): self
     {
         $this->user = $user;
+        if($this->user->roles->pluck('type')->first() !== $identifier){
+            throw new UserNotFoundException();
+        }
         $this->token =  $user->createToken($user->name . '-AuthToken')->plainTextToken;
+
+        return $this;
+    }
+
+    public function checkUser(User $user, $identifier): self
+    {
+        $this->user = $user;
+        if($this->user->roles->pluck('type')->first() !== $identifier){
+            throw new UserNotFoundException();
+        }
 
         return $this;
     }
@@ -116,8 +130,16 @@ class UserService extends BaseService
     public function loginResponse(): array
     {
         return $this->success(
-            data: ['user' => $this->user, 'token' => $this->token, 'role' => $this->user->roles->pluck('name')->first()],
+            data: ['user' => new UserResource($this->user), 'token' => $this->token],
             message: 'Login Successful'
+        );
+    }
+
+    public function resetResponse(): array
+    {
+        return $this->success(
+            data: null,
+            message: "Please create new password"
         );
     }
 
@@ -135,7 +157,7 @@ class UserService extends BaseService
     public function resolver()
     {
         return $this->success(
-            data: ['user' => $this->user, 'role' => $this->user->roles->pluck('name')->first(),'permissions'=>$this->user->getAllPermissions()->pluck('name')],
+            data: ['user' => new UserResource($this->user)],
             message: 'User resolver triggered successfully'
         );
     }
@@ -169,6 +191,28 @@ class UserService extends BaseService
 
             return $this->error(
                 message: 'Profile creation or updation failed',
+                errors: $e->getMessage(),
+                statusCode: 500
+            );
+        }
+    }
+
+    public function updateUser($requests,$id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = $this->userInterface->updateUser($requests,$id);
+            DB::commit();
+            return $this->success(
+                data: ['user' => $user],
+                message: 'User updated successfully'
+            );
+        } catch (BadRequestException $e) {
+            DB::rollBack();
+
+            return $this->error(
+                message: 'User updation failed',
                 errors: $e->getMessage(),
                 statusCode: 500
             );

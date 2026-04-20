@@ -9,13 +9,23 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Tag(
  *     name="Auth",
- *     description="All Auth-related APIs (Login, Verify Token, Signup)"
+ *     description="All Auth-related APIs except Admin users (Login, Verify Token, Signup, Reset, Logout)"
  * )
  *
  * @OA\Post(
  *     path="/api/v1/auth/login",
  *     summary="Login a user",
  *     tags={"Auth"},
+ *     @OA\Parameter(
+ *         name="identifier",
+ *         in="header",
+ *         required=true,
+ *         description="User identifier",
+ *         @OA\Schema(
+ *             type="string",
+ *             example="applicant"
+ *         )
+ *     ),
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -23,7 +33,7 @@ use OpenApi\Annotations as OA;
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
- *                 example="superadmin@yopmail.com",
+ *                 example="caspertalks@yopmail.com",
  *             ),
  *             @OA\Property(
  *                 property="password",
@@ -48,6 +58,16 @@ use OpenApi\Annotations as OA;
  *     tags={"Auth"},
  *     summary="Verify OTP for login or validation",
  *     description="Verifies the 6-digit OTP sent to the user's email with the pending token.",
+ *     @OA\Parameter(
+ *         name="identifier",
+ *         in="header",
+ *         required=true,
+ *         description="User identifier",
+ *         @OA\Schema(
+ *             type="string",
+ *             example="applicant"
+ *         )
+ *     ),
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -55,7 +75,7 @@ use OpenApi\Annotations as OA;
  *             @OA\Property(
  *                 property="email",
  *                 type="string",
- *                 example="superadmin@yopmail.com",
+ *                 example="caspertalks@yopmail.com",
  *             ),
  *             @OA\Property(
  *                 property="otp",
@@ -133,6 +153,104 @@ use OpenApi\Annotations as OA;
  *         response=422,
  *         description="Validation error"
  *     )
+ * )
+ *
+ * @OA\Post(
+ *     path="/api/v1/auth/reset",
+ *     summary="Reset a user",
+ *     tags={"Auth"},
+ *     @OA\Parameter(
+ *         name="identifier",
+ *         in="header",
+ *         required=true,
+ *         description="User identifier",
+ *         @OA\Schema(
+ *             type="string",
+ *             example="applicant"
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"email"},
+ *             @OA\Property(
+ *                 property="email",
+ *                 type="string",
+ *                 example="caspertalks@yopmail.com",
+ *             ),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Verification Token",
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *     )
+ * )
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/auth/reset/password",
+ *     tags={"Auth"},
+ *     summary="Reset a user password",
+ *     @OA\Parameter(
+ *         name="identifier",
+ *         in="header",
+ *         required=true,
+ *         description="User identifier",
+ *         @OA\Schema(
+ *             type="string",
+ *             example="applicant"
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"email", "oldPassword", "password", "confirmPassword"},
+ *             @OA\Property(
+ *                 property="email",
+ *                 type="string",
+ *                 example="caspertalks@yopmail.com",
+ *             ),
+ *             @OA\Property(
+ *                 property="oldPassword",
+ *                 type="string",
+ *                 example="Xyz@123123",
+ *             ),
+ *             @OA\Property(
+ *                 property="password",
+ *                 type="string",
+ *                 example="Abc@123123",
+ *             ),
+ *             @OA\Property(
+ *                 property="confirmPassword",
+ *                 type="string",
+ *                 example="Abc@123123",
+ *             ),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="User password reset successfully",
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/auth/logout",
+ *     summary="Logout a user",
+ *     tags={"Auth"},
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Logout",
+ *     ),
  * )
  */
 

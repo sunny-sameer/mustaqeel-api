@@ -21,9 +21,12 @@ return [
 
     'allowed_origins' => [
         'http://localhost:4200',
+        'http://localhost:58700',
         'http://127.0.0.1:4200',
+        'http://127.0.0.1:58700',
         'http://192.168.201.3:86',
         'http://localhost:5000',
+        'http://localhost:5300',
         'http://192.168.201.5:8068',
         'http://192.168.201.5:8067',
         'http://192.168.201.5:8069'

@@ -17,4 +17,9 @@ class RoleLevel extends Model
     public function role() {
         return $this->belongsTo(Role::class,'role_id','id');
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_role_levels');
+    }
 }

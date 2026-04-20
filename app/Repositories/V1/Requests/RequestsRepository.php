@@ -5,10 +5,13 @@ namespace App\Repositories\V1\Requests;
 use App\Models\Categories;
 use App\Models\QualityCheck;
 use App\Models\RequestAttribute;
+use App\Models\RequestCodesDocuments;
 use App\Models\RequestMetaData;
 use App\Models\Requests;
 use App\Models\RequestStages;
 use App\Models\RequestStatuses;
+use App\Models\RequestTypeCodes;
+use App\Models\RoleLevel;
 use App\Models\Stages;
 use App\Models\StagesStatuses;
 use App\Models\User;
@@ -28,10 +31,23 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
     protected $requestStages;
     protected $stagesStatuses;
     protected $requestStatuses;
+    protected $requestTypeCodes;
+    protected $requestCodesDocuments;
     protected $qualityCheck;
 
 
-    public function __construct(Requests $model, RequestMetaData $requestMetaData, RequestAttribute $requestAttribute, Stages $stages, RequestStages $requestStages, StagesStatuses $stagesStatuses, RequestStatuses $requestStatuses, QualityCheck $qualityCheck)
+    public function __construct(
+        Requests $model,
+        RequestMetaData $requestMetaData,
+        RequestAttribute $requestAttribute,
+        Stages $stages,
+        RequestStages $requestStages,
+        StagesStatuses $stagesStatuses,
+        RequestStatuses $requestStatuses,
+        RequestTypeCodes $requestTypeCodes,
+        RequestCodesDocuments $requestCodesDocuments,
+        QualityCheck $qualityCheck
+    )
     {
         parent::__construct($model);
 
@@ -41,6 +57,8 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $this->requestStages = $requestStages;
         $this->stagesStatuses = $stagesStatuses;
         $this->requestStatuses = $requestStatuses;
+        $this->requestTypeCodes = $requestTypeCodes;
+        $this->requestCodesDocuments = $requestCodesDocuments;
         $this->qualityCheck = $qualityCheck;
     }
 
@@ -138,6 +156,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
 
         $req->map(function ($query) {
             $query->statuses = $this->getRequestStatus($query->id);
+            $query->allStatuses = $this->getRequestStatuses($query->id);
 
             $query->metas->map(function ($query1) use ($query) {
                 $query->{$query1->key} = $query1?->related;
@@ -236,10 +255,13 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         $role = $user->roles->pluck('type')->first();
 
         $req = $this->model->with([
+            'user',
             'metas:reqId,key,value',
             'documents',
+            'additionalRequest',
             'qualityCheck',
-            'qualityChecks'
+            'qualityChecks',
+            'secureCode.document'
         ])->withCount('qualityChecks');
 
         if ($role == 'applicant') {
@@ -300,6 +322,10 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $query->meta = json_decode($query->meta);
                 return $query;
             });
+            $req->additionalRequest->map(function ($query) {
+                $query->meta = json_decode($query->meta);
+                return $query;
+            });
 
             $req['status'] = $this->getRequestStatuses($requestId);
 
@@ -324,6 +350,12 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 $req->{$query->key} = $query?->related;
                 return $query;
             });
+
+            if(isset($req->secureCode->document->documentName)){
+                $req->secureCode->document['path'] = 'storage/requests/endorsementLetters/'.$req->secureCode->document->documentName;
+            }
+
+            unset($req->metas);
         }
 
         return $req;
@@ -367,12 +399,13 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
             }
             $requestStatus = $requestStatus->orderBy('id', 'DESC')->first();
 
-            $key = Str::lower($stage->name);
+            $key = strtolower($stage->name);
             $data[$key] = [
                 'status' => $requestStatus?->stageStatus?->name ?? 'Under Review',
                 'slug' => $requestStatus?->stageStatus?->slug ?? 'ur',
                 'stage' => $requestStatus?->requestStage?->stage?->name ?? $stage->name,
                 'username' => $requestStatus?->user?->name ?? null,
+                'userId' => $requestStatus?->user?->id ?? null,
                 'levels' => $requestStatus?->user?->levels?->map(fn ($level) => [
                     'name' => $level->name,
                     'level' => $level->level,
@@ -400,7 +433,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                 ->orderByRaw('userId = ? DESC', [auth()->id()])
                 ->orderBy('id', 'DESC')->get()->unique('userId');
 
-            $key = Str::lower($stage->name);
+            $key = strtolower($stage->name);
             if (isset($requestStatus) && count($requestStatus) > 0) {
                 foreach ($requestStatus as $value) {
                     $data[$key][] = [
@@ -408,6 +441,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                         'slug' => $value?->stageStatus?->slug ?? 'ur',
                         'stage' => $value?->requestStage?->stage?->name ?? $stage->name,
                         'username' => $value?->user?->name,
+                        'userId' => $value?->user?->id,
                         'levels' => $value?->user?->levels?->map(fn ($level) => [
                             'name' => $level->name,
                             'level' => $level->level,
@@ -423,6 +457,7 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
                     'slug' => 'ur',
                     'stage' => $stage->name,
                     'username' => null,
+                    'userId' => null,
                     'levels' => null,
                     'meta' => [],
                 ];
@@ -591,5 +626,27 @@ class RequestsRepository extends CoreRepository implements RequestsInterface
         }
 
         return ['submitted'=>$submitted,'rejected'=>$rejected,'qcCompleted'=>$qcCompleted,'endorsed'=>$endorsed,'molApproved'=>$molApproved,'hayyaApproved'=>$hayyaApproved,'visaQidIssue'=>$visaQidIssue];
+    }
+
+    public function checkSelfAssignedRequest($requestId)
+    {
+        $level = auth()->user()->levels->first();
+
+        return $this->model->whereHas('requestStage', function ($q) use ($level) {
+            $q->where('stageSlug', 'jus')
+            ->whereHas('lastRequestStatus.user.levels',function ($q) use ($level){
+                $q->where('level',$level->level);
+            });
+        })->where('id', $requestId)->first();
+    }
+
+    public function createSecureCode($request)
+    {
+        return $this->requestTypeCodes->create($request);
+    }
+
+    public function createSecureCodeDocument($request)
+    {
+        return $this->requestCodesDocuments->create($request);
     }
 }

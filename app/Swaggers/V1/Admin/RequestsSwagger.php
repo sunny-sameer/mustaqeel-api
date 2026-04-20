@@ -195,35 +195,6 @@ use OpenApi\Annotations as OA;
  *     )
  * )
  *
- *
- * // Update Request Status
- *
- *
- * @OA\Post(
- *     path="/api/v1/admin/requests/{reqId}/update-status",
- *     tags={"Admin Requests"},
- *     summary="Update Request Status",
- *     description="Update a request status.",
- *     security={{ "bearerAuth": {} }},
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"status"},
- *             @OA\Property(property="status", type="string", example="On Hold"),
- *             @OA\Property(property="commentsEn", type="string", example="Hello World", description="required_if:status,On Hold,Rejected"),
- *             @OA\Property(property="commentsAr", type="string", example="ثممخ صخقمي", description="required_if:status,On Hold,Rejected"),
- *         )
- *     ),
- *     @OA\Response(
- *         response=201,
- *         description="Request status updated successfully"
- *     ),
- *     @OA\Response(
- *         response=422,
- *         description="Validation error"
- *     )
- * )
- *
  * // Get Requests count
  *
  *
@@ -238,8 +209,37 @@ use OpenApi\Annotations as OA;
  *         description="Requests found",
  *     )
  * )
+ *
+ * // Self Assign Request
+ *
+ * * @OA\Post(
+ *     path="/api/v1/admin/requests/self-assign",
+ *     tags={"Admin Requests"},
+ *     summary="Self Assign Request",
+ *     description="Self Assign Request.",
+ *     security={{"bearerAuth": {}}},
+ *
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"requestId"},
+ *
+ *             @OA\Property(
+ *                 property="requestId",
+ *                 type="integer",
+ *                 example=7,
+ *                 description="Request ID must exist in requests table"
+ *             )
+ *         )
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=200,
+ *         description="Request assigned successfully"
+ *     )
+ * )
  */
 
-class AdminRequestsSwagger
+class RequestsSwagger
 {
 }

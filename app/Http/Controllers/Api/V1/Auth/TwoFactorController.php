@@ -16,6 +16,7 @@ class TwoFactorController extends BaseController
 {
     /**
      * See Swagger annotations in \App\Swaggers\V1\Auth\AuthSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Auth\AdminAuthSwagger
     */
 
 
@@ -29,7 +30,7 @@ class TwoFactorController extends BaseController
             $request->otp,
             $request->email,
             $request->ip(),
-            $request->userAgent()
+            $request->userAgent(),
         );
 
         if (!$result->ok) {
@@ -51,10 +52,15 @@ class TwoFactorController extends BaseController
         }
 
 
-        if (isset($result->user) && $result->flow  == 'login') {
-            $result = $this->UserService->createToken($result->user)->loginResponse();
+        if (isset($result->user)) {
+            $identifier = $request->header('identifier');
+            if($result->flow  == 'login'){
+                $result = $this->UserService->createToken($result->user,$identifier)->loginResponse();
+            }else if($result->flow  == 'reset'){
+                $result = $this->UserService->checkUser($result->user,$identifier)->resetResponse();
+            }
 
-            if ($result['success']) {
+            if (isset($result['success'])) {
                 return $this->sendSuccessResponse($result['data'], $result['message']);
             }
 

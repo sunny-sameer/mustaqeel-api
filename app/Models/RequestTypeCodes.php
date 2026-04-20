@@ -12,5 +12,8 @@ class RequestTypeCodes extends Model
     protected $table = 'request_type_codes';
     protected $guarded = [];
 
-
+    public function document()
+    {
+        return $this->hasOne(RequestCodesDocuments::class,'reqTypeCodeId','id');
+    }
 }

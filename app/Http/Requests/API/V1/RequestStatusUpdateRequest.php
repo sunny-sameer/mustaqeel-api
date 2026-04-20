@@ -11,14 +11,16 @@ class RequestStatusUpdateRequest extends FormRequest
     use FailedValidationTrait;
 
     protected $role;
-    protected $statuses = [];
+    protected $statuses = '';
     public function __construct(StagesStatuses $statuses)
     {
         $this->role = auth()->user()->roles->pluck('type')->first();
         $statusArr = $statuses->whereHas('stage',function ($query){
             $query->where('name',ucfirst($this->role));
-        })->select('name')->get()->pluck('name');
-        $this->statuses = implode(',',$statusArr);
+        })->select('name')->get()->pluck('name')->toArray();
+        if(count($statusArr) > 0){
+            $this->statuses = implode(',',$statusArr);
+        }
     }
 
     /**

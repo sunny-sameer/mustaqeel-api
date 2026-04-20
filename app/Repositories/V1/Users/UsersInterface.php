@@ -13,6 +13,7 @@ interface UsersInterface extends CoreInterface
     public function getUserById($id);
     // public function getUserByEmailForAuth($email);
     public function createUser($signUpData);
+    public function updateUser($requestData, $id);
     public function assignRole(User $user, $role);
     public function activateUser(User $user);
     public function createUpdateProfile($request, $id);

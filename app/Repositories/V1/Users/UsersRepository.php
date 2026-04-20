@@ -75,6 +75,13 @@ class UsersRepository extends CoreRepository implements UsersInterface
         ]);
     }
 
+    public function updateUser($requestData, $id)
+    {
+        $user = $this->getUserById($id);
+        $user->update($requestData);
+        return $user;
+    }
+
     public function assignRole(User $user, $role): void
     {
         $user->assignRole($role);
@@ -113,7 +120,10 @@ class UsersRepository extends CoreRepository implements UsersInterface
 
     public function getUsersByRoleAndLevel($role, $levelColumn, $levelOperator, $levelValue)
     {
-        return $this->model->whereHas('roles', function ($query) use ($role) {
+        return $this->model->with(['levels'=>function ($query) use ($levelColumn){
+            $query->orderBy($levelColumn,'ASC');
+        }])
+        ->whereHas('roles', function ($query) use ($role) {
             $query->where('type', $role);
         })->whereHas('levels', function ($query) use ($levelColumn, $levelOperator, $levelValue) {
             $query->where($levelColumn, $levelOperator, (int) $levelValue);

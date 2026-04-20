@@ -13,6 +13,11 @@ class Requests extends Model
     protected $table = 'requests';
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId','id');
+    }
+
     public function metas()
     {
         return $this->hasMany(RequestMetaData::class, 'reqId');
@@ -60,7 +65,14 @@ class Requests extends Model
 
     public function documents()
     {
-        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId');
+        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId')
+        ->where('type','<>','additionalRequest');
+    }
+
+    public function additionalRequest()
+    {
+        return $this->morphMany(Documents::class, 'entity', 'entityType', 'entityId')
+        ->where('type','additionalRequest');
     }
 
     public function qualityCheck()
@@ -75,5 +87,8 @@ class Requests extends Model
         ->orderBy('created_at','DESC');
     }
 
-
+    public function secureCode()
+    {
+        return $this->hasOne(RequestTypeCodes::class,'reqId','id');
+    }
 }

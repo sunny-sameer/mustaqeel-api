@@ -24,4 +24,7 @@ interface RequestsInterface  extends CoreInterface {
     public function createQc($request);
     public function updateQc($request, $qcId);
     public function getRequestsCount();
+    public function checkSelfAssignedRequest($requestId);
+    public function createSecureCode($request);
+    public function createSecureCodeDocument($request);
 }

@@ -7,8 +7,8 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Tag(
- *     name="Admin",
- *     description="All Admin-related APIs (Categories, Sub Categories, Sectors, Activities, Sub Activities, Entities, Incubators and Form Fields.)"
+ *     name="Admin Classifications",
+ *     description="All Admin-related APIs (Categories, Sub Categories, Sectors, Activities, Sub Activities, Entities, Incubators, Form Fields, Stages and Stage Statuses.)"
  * )
  *
  *
@@ -17,7 +17,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/categories",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Categories",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -26,7 +26,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/categories/{catId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Category by ID",
  *     description="Returns Category details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -45,7 +45,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/categories",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Category",
  *     description="Creates a new Category with given data",
  *     security={{ "bearerAuth": {} }},
@@ -70,7 +70,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/categories/{catId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Category by ID",
  *     description="Updates an existing Category",
  *     security={{ "bearerAuth": {} }},
@@ -106,7 +106,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/categories/{catId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Category by ID",
  *     description="Deletes the Category identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -133,7 +133,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/sub-categories",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Sub Categories",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -142,7 +142,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/sub-categories/{subCatId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Sub Category by ID",
  *     description="Returns Sub Category details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -161,7 +161,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/sub-categories",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Sub Category",
  *     description="Creates a new Sub Category with given data",
  *     security={{ "bearerAuth": {} }},
@@ -187,7 +187,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/sub-categories/{subCatId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Sub Category by ID",
  *     description="Updates an existing Sub Category",
  *     security={{ "bearerAuth": {} }},
@@ -224,7 +224,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/sub-categories/{subCatId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Sub Category by ID",
  *     description="Deletes the Sub Category identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -251,7 +251,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/sectors",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Sectors",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -260,7 +260,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/sectors/{secId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Sector by ID",
  *     description="Returns Sector details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -279,7 +279,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/sectors",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Sector",
  *     description="Creates a new Sector with given data",
  *     security={{ "bearerAuth": {} }},
@@ -310,7 +310,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/sectors/{secId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Sector by ID",
  *     description="Updates an existing Sector",
  *     security={{ "bearerAuth": {} }},
@@ -352,7 +352,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/sectors/{secId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Sector by ID",
  *     description="Deletes the Sector identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -379,7 +379,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/activities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Activities",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -388,7 +388,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/activities/{actId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Activity by ID",
  *     description="Returns Activity details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -407,7 +407,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/activities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Activity",
  *     description="Creates a new Activity with given data",
  *     security={{ "bearerAuth": {} }},
@@ -433,7 +433,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/activities/{actId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Activity by ID",
  *     description="Updates an existing Activity",
  *     security={{ "bearerAuth": {} }},
@@ -470,7 +470,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/activities/{actId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Activity by ID",
  *     description="Deletes the Activity identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -493,7 +493,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/activities/{actId}/entities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Entities of Activity by ID",
  *     description="Updates an existing Entities of  Activity",
  *     security={{ "bearerAuth": {} }},
@@ -536,7 +536,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/sub-activities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Sub Activities",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -545,7 +545,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/sub-activities/{subActId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Sub Activity by ID",
  *     description="Returns Sub Activity details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -564,7 +564,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/sub-activities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Sub Activity",
  *     description="Creates a new Sub Activity with given data",
  *     security={{ "bearerAuth": {} }},
@@ -590,7 +590,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/sub-activities/{subActId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Sub Activity by ID",
  *     description="Updates an existing Sub Activity",
  *     security={{ "bearerAuth": {} }},
@@ -627,7 +627,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/sub-activities/{subActId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Sub Activity by ID",
  *     description="Deletes the Sub Activity identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -654,7 +654,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/entities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Entities",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -663,7 +663,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/entities/{entId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Entity by ID",
  *     description="Returns Entity details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -682,7 +682,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/entities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Entity",
  *     description="Creates a new Entity with given data",
  *     security={{ "bearerAuth": {} }},
@@ -713,7 +713,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/entities/{entId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Entity by ID",
  *     description="Updates an existing Entity",
  *     security={{ "bearerAuth": {} }},
@@ -755,7 +755,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/entities/{entId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Entity by ID",
  *     description="Deletes the Entity identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -778,7 +778,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/entities/{entId}/activities",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Activities of Entity by ID",
  *     description="Updates an existing Activities of Entity",
  *     security={{ "bearerAuth": {} }},
@@ -819,7 +819,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/incubators",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Incubators",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -828,7 +828,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/incubators/{incId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Incubator by ID",
  *     description="Returns Incubator details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -847,7 +847,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/incubators",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Incubator",
  *     description="Creates a new Incubator with given data",
  *     security={{ "bearerAuth": {} }},
@@ -873,7 +873,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/incubators/{incId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Incubator by ID",
  *     description="Updates an existing Incubator",
  *     security={{ "bearerAuth": {} }},
@@ -910,7 +910,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/incubators/{incId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Incubator by ID",
  *     description="Deletes the Incubator identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -937,7 +937,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/form-fields",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Form Fields",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -946,7 +946,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/form-fields/{ffId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Form Field by ID",
  *     description="Returns Form Field details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -965,7 +965,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/form-fields",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Form Field",
  *     description="Creates a new Form Field with given data",
  *     security={{ "bearerAuth": {} }},
@@ -1044,7 +1044,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/form-fields/{ffId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Form Field by ID",
  *     description="Updates an existing Form Field",
  *     security={{ "bearerAuth": {} }},
@@ -1127,7 +1127,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/form-fields/{ffId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Form Field by ID",
  *     description="Deletes the Form Field identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -1154,7 +1154,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/stages",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Stages",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -1163,7 +1163,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/stages/{sId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Stage by ID",
  *     description="Returns Stage details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -1182,7 +1182,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/stages",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Stage",
  *     description="Creates a new Stage with given data",
  *     security={{ "bearerAuth": {} }},
@@ -1208,7 +1208,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/stages/{sId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Stage by ID",
  *     description="Updates an existing Stage",
  *     security={{ "bearerAuth": {} }},
@@ -1245,7 +1245,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/stages/{sId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Stage by ID",
  *     description="Deletes the Stage identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -1272,7 +1272,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/stage-statuses",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get all Stage Statuses",
  *     security={{ "bearerAuth": {} }},
  *     @OA\Response(response=200, description="OK")
@@ -1281,7 +1281,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Get(
  *     path="/api/v1/admin/stage-statuses/{ssId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Get a single Stage Statuses by ID",
  *     description="Returns Stage Statuses details for the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -1300,7 +1300,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Post(
  *     path="/api/v1/admin/stage-statuses",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Create a new Stage Statuses",
  *     description="Creates a new Stage Statuses with given data",
  *     security={{ "bearerAuth": {} }},
@@ -1326,7 +1326,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Put(
  *     path="/api/v1/admin/stage-statuses/{ssId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Update a Stage Statuses by ID",
  *     description="Updates an existing Stage Statuses",
  *     security={{ "bearerAuth": {} }},
@@ -1363,7 +1363,7 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Delete(
  *     path="/api/v1/admin/stage-statuses/{ssId}",
- *     tags={"Admin"},
+ *     tags={"Admin Classifications"},
  *     summary="Delete a Stage Statuses by ID",
  *     description="Deletes the Stage Statuses identified by the given ID",
  *     security={{ "bearerAuth": {} }},
@@ -1385,6 +1385,6 @@ use OpenApi\Annotations as OA;
  * )
  */
 
-class GenericSwagger
+class ClassificationSwagger
 {
 }

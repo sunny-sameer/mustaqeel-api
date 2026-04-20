@@ -9,169 +9,7 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Tag(
  *     name="Requests",
- *     description="All Requests-related APIs (Complete Request Application and Classification Related to Request)"
- * )
- *
- *
- * // Nationalities
- *
- *
- * @OA\Get(
- *     path="/api/v1/user/classifications/nationalities",
- *     tags={"Requests"},
- *     summary="Get all Nationalities",
- *     security={{ "bearerAuth": {} }},
- *     @OA\Response(response=200, description="OK")
- * )
- *
- *
- * // Categories
- *
- *
- * @OA\Get(
- *     path="/api/v1/user/classifications/categories",
- *     tags={"Requests"},
- *     summary="Get all Categories",
- *     security={{ "bearerAuth": {} }},
- *     @OA\Response(response=200, description="OK")
- * )
- *
- *
- * // Sectors, Incubatos, SubCategories of Category
- *
- *
- * @OA\Get(
- *     path="/api/v1/user/classifications/sectors-sub-categories-incubators/{catSlug}",
- *     tags={"Requests"},
- *     summary="Get Sectors, Incubatos and SubCategories with Category by Slug",
- *     description="Returns Sectors, Incubatos and SubCategories details for the given Slug",
- *     security={{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         name="catSlug",
- *         in="path",
- *         description="Slug of the Category",
- *         required=true,
- *         @OA\Schema(type="string")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Category found"
- *     )
- * )
- *
- *
- * // Activities of Sector
- *
- *
- * @OA\Get(
- *     path="/api/v1/user/classifications/activities/{secSlug}",
- *     tags={"Requests"},
- *     summary="Get Activities with Sector by Slug",
- *     description="Returns Activities details for the given Slug",
- *     security={{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         name="secSlug",
- *         in="path",
- *         description="Slug of the Sector",
- *         required=true,
- *         @OA\Schema(type="string")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Sector found"
- *     )
- * )
- *
- *
- * // Entities, SubActivities of Activity
- *
- *
- * @OA\Get(
- *     path="/api/v1/user/classifications/entities-sub-activities/{actSlug}",
- *     tags={"Requests"},
- *     summary="Get Entities and SubActivities with Activity by Slug",
- *     description="Returns Entities and SubActivities details for the given Slug",
- *     security={{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         name="actSlug",
- *         in="path",
- *         description="Slug of the Activity",
- *         required=true,
- *         @OA\Schema(type="string")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Activity found"
- *     )
- * )
- *
- *
- * // Form Fields by Category, Sub Category, Sector, Activity, Sub Activity, Entity, Incubator
- *
- *
- * @OA\Get(
- *     path="/api/v1/user/classifications/form-fields",
- *     tags={"Requests"},
- *     summary="Get form fields based on classification filters",
- *     description="Returns dynamic form fields for the given classification filters such as category, subCategory, sector, activity, subActivity, entity, and incubator.",
- *     security={{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         name="category",
- *         in="query",
- *         description="Slug of the category (required)",
- *         required=true,
- *         @OA\Schema(type="string", example="tal")
- *     ),
- *     @OA\Parameter(
- *         name="subCategory",
- *         in="query",
- *         description="Slug of the sub-category (optional)",
- *         required=false,
- *         @OA\Schema(type="string", example="")
- *     ),
- *     @OA\Parameter(
- *         name="sector",
- *         in="query",
- *         description="Slug of the sector (optional)",
- *         required=false,
- *         @OA\Schema(type="string", example="")
- *     ),
- *     @OA\Parameter(
- *         name="activity",
- *         in="query",
- *         description="Slug of the activity (optional)",
- *         required=false,
- *         @OA\Schema(type="string", example="")
- *     ),
- *     @OA\Parameter(
- *         name="subActivity",
- *         in="query",
- *         description="Slug of the sub-activity (optional)",
- *         required=false,
- *         @OA\Schema(type="string", example="")
- *     ),
- *     @OA\Parameter(
- *         name="entity",
- *         in="query",
- *         description="Slug of the entity (optional)",
- *         required=false,
- *         @OA\Schema(type="string", example="")
- *     ),
- *     @OA\Parameter(
- *         name="incubator",
- *         in="query",
- *         description="Slug of the incubator (optional)",
- *         required=false,
- *         @OA\Schema(type="string", example="")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Form fields retrieved successfully",
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Missing or invalid category"
- *     )
+ *     description="All Requests-related APIs (Complete Classification Related to Request)"
  * )
  *
  *
@@ -870,6 +708,142 @@ use OpenApi\Annotations as OA;
  *     @OA\Response(
  *         response=200,
  *         description="QC Request found"
+ *     )
+ * )
+ *
+ *
+ * // Update Request Status
+ *
+ *
+ * @OA\Put(
+ *     path="/api/v1/user/requests/{reqId}/update-status",
+ *     tags={"Requests"},
+ *     summary="Update Request Status",
+ *     description="Update a request status.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="reqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="string")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"status"},
+ *             @OA\Property(property="status", type="string", example="On Hold"),
+ *             @OA\Property(property="commentsEn", type="string", example="Hello World", description="required_if:status,On Hold,Rejected"),
+ *             @OA\Property(property="commentsAr", type="string", example="ثممخ صخقمي", description="required_if:status,On Hold,Rejected"),
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Request status updated successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ *
+ * // Create Additional Request
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/user/requests/{reqId}/additional-request",
+ *     tags={"Requests"},
+ *     summary="Create Additional Request",
+ *     description="Create an additional request.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="reqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"additional"},
+ *             @OA\Property(
+ *                 property="additional",
+ *                 type="object",
+ *                 required={"questions"},
+ *                 @OA\Property(
+ *                     property="questions",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="string"
+ *                     )
+ *                 ),
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Addiional request created successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
+ *     )
+ * )
+ *
+ *
+ * // Submit Additional Request
+ *
+ *
+ * @OA\Post(
+ *     path="/api/v1/user/requests/{reqId}/additional-request-submission/{addReqId}",
+ *     tags={"Requests"},
+ *     summary="Submit Additional Request",
+ *     description="Submit an Additional Request.",
+ *     security={{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name="reqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="addReqId",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"quesId", "answer"},
+ *                 @OA\Property(
+ *                     property="quesId",
+ *                     type="integer",
+ *                     example="1"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="answer",
+ *                     type="string",
+ *                     example="This is test"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="document",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="The file to upload"
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Additional request submitted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error"
  *     )
  * )
  */

@@ -22,7 +22,7 @@ if(!function_exists('lowerFirstWord')){
     }
 }
 
-if(!function_exists('getEntityRole')){
+if(!function_exists('getEntityRoles')){
     function getEntityRoles(){
         $roles = [];
 
@@ -68,5 +68,12 @@ if(!function_exists('getUserMetas')){
         ->toArray();
 
         return $metaData;
+    }
+}
+
+if(!function_exists('getSlugStatus')){
+    function getSlugStatus($slug){
+        $explodeSlug = explode('-',$slug);
+        return $explodeSlug[0];
     }
 }

@@ -824,6 +824,41 @@ class PermissionSeeder extends Seeder
                 'guard_name'=>'web',
                 'type'=>'dashboard',
             ],
+            [
+                'name'=>'view-application-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
+            [
+                'name'=>'view-jusour-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
+            [
+                'name'=>'view-entity-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
+            [
+                'name'=>'view-moci-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
+            [
+                'name'=>'view-vfs-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
+            [
+                'name'=>'view-mol-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
+            [
+                'name'=>'view-hayya-statuses',
+                'guard_name'=>'web',
+                'type'=>'statuses',
+            ],
         ];
 
         foreach ($permissions as $permission) {

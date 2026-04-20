@@ -13,8 +13,8 @@ use App\Exceptions\StageStatusNotFoundException;
 
 
 use App\Http\Controllers\Api\BaseController;
-
-
+use App\Http\Requests\API\V1\RequestAdditionalRequest;
+use App\Http\Requests\API\V1\RequestAdditionalSubmissionRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\V1\RequestsStoreRequest;
 use App\Http\Requests\API\V1\RequestsDocumentRequest;
@@ -36,7 +36,8 @@ class RequestsController extends BaseController
 {
     /**
      * See Swagger annotations in \App\Swaggers\V1\Requests\RequestsSwagger
-     * See Swagger annotations in \App\Swaggers\V1\Admin\AdminRequestsSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Requests\ClassificationSwagger
+     * See Swagger annotations in \App\Swaggers\V1\Admin\RequestsSwagger
      */
 
 
@@ -50,6 +51,27 @@ class RequestsController extends BaseController
     {
         $this->requests = $requests;
         $this->documentService = $documentService;
+    }
+
+    public function getQc(Request $request)
+    {
+        try {
+            $status = isset($request->status) ? $request->status : 'Action Required';
+            return $this->requests
+                ->setRequestIdInputs($request)
+                ->userExists()
+                ->requestNotFound()
+                ->requestQcNotFound($status)
+                ->getQcRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestQcNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
     }
 
     public function getAllRequests(Request $request)
@@ -162,6 +184,31 @@ class RequestsController extends BaseController
         }
     }
 
+    public function deleteDocumentRequest($id)
+    {
+        try {
+            return $this->requests
+                ->userExists()
+                ->requestNotFound()
+                ->deleteDocumentById($id);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function previewDocument($documentId)
+    {
+        try {
+            return $this->documentService
+                ->validateDocumentAccess($documentId)
+                ->getDocumentPreview($documentId);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
+        }
+    }
+
     public function canSubmitApplication($entitySlug)
     {
         try {
@@ -200,6 +247,50 @@ class RequestsController extends BaseController
         }
     }
 
+    public function additionalRequest(RequestAdditionalRequest $request, $id)
+    {
+        try {
+            return $this->requests
+                ->setInputsAdditionalRequest($request, $id)
+                ->userExists()
+                ->requestNotFound()
+                ->requestAdditionalInvalid()
+                ->createAdditionalRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        }  catch (RequestInvalidException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
+    public function additionalRequestSubmission(RequestAdditionalSubmissionRequest $request, $id, $addReqId)
+    {
+        try {
+            return $this->requests
+                ->setInputsAdditionalRequestSubmission($request, $id, $addReqId)
+                ->userExists()
+                ->requestNotFoundWithUser()
+                ->requestAdditionalSubmissionInvalid()
+                ->submitAdditionalRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (RequestNotExistException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        }  catch (RequestInvalidException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 422);
+        } catch (BadRequestException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
     public function reuploadDocumentRequest(ReuploadDocumentRequest $request, $id)
     {
         try {
@@ -214,41 +305,6 @@ class RequestsController extends BaseController
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (BadRequestException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
-        } catch (\Exception $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
-        }
-    }
-
-    public function deleteDocumentRequest($id)
-    {
-        try {
-            return $this->requests
-                ->userExists()
-                ->requestNotFound()
-                ->deleteDocumentById($id);
-        } catch (BadRequestException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 400);
-        } catch (\Exception $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
-        }
-    }
-
-    public function getQc(Request $request)
-    {
-        try {
-            $status = isset($request->status) ? $request->status : 'Action Required';
-            return $this->requests
-                ->setRequestIdInputs($request)
-                ->userExists()
-                ->requestNotFound()
-                ->requestQcNotFound($status)
-                ->getQcRequest();
-        } catch (UserNotFoundException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (RequestNotExistException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
-        } catch (RequestQcNotExistException $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
         }
@@ -311,6 +367,21 @@ class RequestsController extends BaseController
         }
     }
 
+    public function selfAssignRequest(Request $request)
+    {
+        try {
+            return $this->requests
+                ->setRequestIdInputs($request)
+                ->userExists()
+                ->alreadySelfAssigned()
+                ->selfAssignRequest();
+        } catch (UserNotFoundException $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 403);
+        }
+    }
+
     public function getAllNationalities()
     {
         return $this->sendSuccessResponse($this->requests->getAllNationalities());
@@ -356,23 +427,5 @@ class RequestsController extends BaseController
         if (empty($request->category) && !isset($request->category)) return $this->sendErrorResponse('Invalid category slug', 'Invalid category slug', 400);
 
         return $this->requests->getFormFields($request->all());
-    }
-
-    /**
-     * Preview document securely - Accessible to any authenticated user with proper permissions
-     *
-     * @param string $documentId
-     * @param Request $request
-     * @return StreamedResponse|\Illuminate\Http\JsonResponse
-     */
-    public function previewDocument($documentId)
-    {
-        try {
-            return $this->documentService
-                ->validateDocumentAccess($documentId)
-                ->getDocumentPreview($documentId);
-        } catch (\Exception $e) {
-            return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
-        }
     }
 }

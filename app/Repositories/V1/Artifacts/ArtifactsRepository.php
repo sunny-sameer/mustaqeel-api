@@ -78,4 +78,9 @@ class ArtifactsRepository extends CoreRepository implements ArtifactsInterface
         $document->delete();
         return $documentName;
     }
+
+    public function createAdditionalRequest($request)
+    {
+        return $this->model->create($request);
+    }
 }
