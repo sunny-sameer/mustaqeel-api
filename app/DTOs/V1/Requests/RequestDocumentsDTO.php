@@ -6,7 +6,7 @@ use App\Models\Requests;
 use Illuminate\Http\Request;
 
 
-final readonly class RequestDTO
+final readonly class RequestDocumentsDTO
 {
     public function __construct(
         public int $entityId,
