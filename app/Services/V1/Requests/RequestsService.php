@@ -762,7 +762,6 @@ class RequestsService extends BaseService
             }
 
             if($response->additionalRequestSubmission->status){
-                $this->createOrUpdateStageStatus('app', $this->requestId);
                 if(isset($request->status['jusour'][0]['slug']) && getSlugStatus($request->status['jusour'][0]['slug']) == 'adr'){
                     $stage = strtolower(substr($request->status['jusour'][0]['stage'], 0, 3));
                     $userId = $request->status['jusour'][0]['userId'];
@@ -772,6 +771,8 @@ class RequestsService extends BaseService
                     $userId = $request->status['entity'][0]['userId'];
                     $this->createOrUpdateStageStatus($stage, $this->requestId,[],$userId);
                 }
+                $this->status = 'ur';
+                $this->createOrUpdateStageStatus('app', $this->requestId);
             }
 
             $request =  $this->getRequestData();
