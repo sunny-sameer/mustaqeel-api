@@ -12,16 +12,16 @@
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@200&display=swap');
         @font-face {
             font-family: Frutiger;
-            src: asset("fonts/FrutigerLTStd-Bold.otf");
+            src: public_path("fonts/FrutigerLTStd-Bold.otf");
         }
         @font-face {
             font-family: 'Frutiger LT Arabic Std';
-            src: asset("fonts/FrutigerLTArabic-65Bold.ttf");
+            src: public_path("fonts/FrutigerLTArabic-65Bold.ttf");
         }
 
         @font-face {
             font-family: frutiger_arabi;
-            src: asset("fonts/FrutigerLTArabic.ttf");
+            src: public_path("fonts/FrutigerLTArabic.ttf");
         }
 
         /*Add your CSS styles here*/
@@ -31,16 +31,16 @@
         @media print {
             @font-face {
                 font-family: 'Frutiger LT Std';
-                src: asset("fonts/FrutigerLTStd-Bold.otf");
+                src: public_path("fonts/FrutigerLTStd-Bold.otf");
             }
             @font-face {
                 font-family: 'Frutiger LT Arabic Std';
-                src: asset("fonts/FrutigerLTArabic-65Bold.ttf");
+                src: public_path("fonts/FrutigerLTArabic-65Bold.ttf");
             }
 
             @font-face {
                 font-family: frutiger_arabi;
-                src: asset("fonts/FrutigerLTArabic.ttf");
+                src: public_path("fonts/FrutigerLTArabic.ttf");
             }
 
 
@@ -74,7 +74,7 @@
             </td>
 
             <td class="" style="width: 20%; text-align: center;">
-                <img src="{{ asset('images/Jusour-logo-01.svg') }}" alt="" style="width:140px;">
+                <img src="{{ public_path('images/Jusour-logo-01.svg') }}" alt="" style="width:140px;">
             </td>
 
             <td class="" style="width: 40%; direction: rtl;">
@@ -295,7 +295,7 @@ The endorser entity holds the right to cancel the endorsement in their discretio
         </p>
 
 
-        <img src="{{ asset('images/linePng.png') }}" alt="" style="padding-top: 1em">
+        <img src="{{ public_path('images/linePng.png') }}" alt="" style="padding-top: 1em">
     </footer>
 </body>
 </html>
