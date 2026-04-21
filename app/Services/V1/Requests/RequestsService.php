@@ -771,6 +771,7 @@ class RequestsService extends BaseService
                     $userId = $request->status['entity'][0]['userId'];
                     $this->createOrUpdateStageStatus($stage, $this->requestId,[],$userId);
                 }
+                $this->createOrUpdateStageStatus('app', $this->requestId);
                 $this->status = 'ur';
                 $this->createOrUpdateStageStatus('app', $this->requestId);
             }
