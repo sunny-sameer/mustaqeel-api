@@ -198,12 +198,12 @@ class RequestsController extends BaseController
         }
     }
 
-    public function previewDocument($documentId)
+    public function previewDocument(Request $request, $documentId)
     {
         try {
             return $this->documentService
-                ->validateDocumentAccess($documentId)
-                ->getDocumentPreview($documentId);
+                ->validateDocumentAccess($request,$documentId)
+                ->getDocumentPreview();
         } catch (\Exception $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getMessage(), 500);
         }

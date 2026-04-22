@@ -6,14 +6,20 @@ use App\Exceptions\DocumentNotFoundException;
 use App\Exceptions\DocumentAccessDeniedException;
 use App\Exceptions\BadRequestException;
 use App\Models\Documents;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\FacadesLog;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class DocumentService
 {
     protected $currentDocument;
+    protected $quesId;
+    protected $documentId;
+    protected $documentName;
+    protected $filePath;
 
     // Allowed MIME types for preview
     protected $allowedMimeTypes = [
@@ -38,29 +44,28 @@ class DocumentService
     /**
      * Validate document access and return the document (for direct calls)
      */
-    public function getDocumentPreview($documentId)
+    public function getDocumentPreview()
     {
-        // Validate access and get the document
-        $document = $this->validateAndGetDocument($documentId);
-        $filePath = $this->getFilePathFromDocument($document);
+        $filePath = $this->getFilePathFromDocument();
 
-        $this->validateFileExists($filePath);
+        $this->validateFileExists();
 
         // Check if file is encrypted
-        $isEncrypted = $this->isFileEncrypted($filePath);
+        $isEncrypted = $this->isFileEncrypted();
 
         if ($isEncrypted) {
-            return $this->handleEncryptedFilePreview($filePath, $document);
+            return $this->handleEncryptedFilePreview();
         } else {
-            return $this->handleRegularFilePreview($filePath, $document);
+            return $this->handleRegularFilePreview();
         }
     }
 
     /**
      * Validate document access for fluent interface
      */
-    public function validateDocumentAccess($documentId)
+    public function validateDocumentAccess(Request $request, $documentId)
     {
+        $this->quesId = $request->quesId ?? null;
         $this->currentDocument = $this->validateAndGetDocument($documentId);
         return $this;
     }
@@ -76,11 +81,12 @@ class DocumentService
             throw new DocumentNotFoundException('Document not found');
         }
 
+        $this->documentId = $document->id;
         $user = auth()->user();
         if (!$this->userCanAccessDocument($user, $document)) {
             Log::warning('Document access denied', [
                 'userId' => $user->id,
-                'documentId' => $documentId,
+                'documentId' => $this->documentId,
                 'userRole' => $user->getRoleNames()->first()
             ]);
             throw new DocumentAccessDeniedException('Access denied to this document');
@@ -95,16 +101,14 @@ class DocumentService
     private function userCanAccessDocument($user, $document)
     {
         // Super-admin and admin can access all documents
-        if ($user->hasRole('super-admin') || $user->hasRole('admin')) {
-            return true;
-        }
 
         // Applicant can only access their own documents
         if ($user->hasRole('applicant')) {
             return $this->isDocumentOwner($user, $document);
+        }else{
+            return true;
         }
 
-        return false;
     }
 
     /**
@@ -131,38 +135,51 @@ class DocumentService
     /**
      * Extract file path from document meta or documentName
      */
-    private function getFilePathFromDocument($document)
+    private function getFilePathFromDocument()
     {
-        \Log::info('Getting file path for document:', [
-            'documentId' => $document->id,
-            'documentName' => $document->documentName,
-            'meta' => $document->meta
-        ]);
+        $this->documentName = $this->currentDocument->documentName;
+        $meta = json_decode($this->currentDocument->meta,true);
 
         // Files are stored in public disk
         $storageDisk = 'public';
         $basePath = 'requests/documents/';
 
-        // First check if path is stored in meta
-        if ($document->meta && is_array($document->meta)) {
-            if (isset($document->meta['filePath'])) {
-                $filePath = $document->meta['filePath'];
-                \Log::info('Found file path in meta:', ['filePath' => $filePath]);
-                return $filePath;
+        if(!empty($this->quesId)){
+            foreach ($meta as $key => $value) {
+                if(isset($value['id']) && $value['id'] == $this->quesId) {
+                    $this->documentName = $value['documentName'] ?? $this->currentDocument->documentName;
+                    $basePath = 'requests/documents/additional/';
+                    $this->filePath = $value['file_path'];
+                }
+            }
+        }else{
+            if ($meta && is_array($meta)) {
+                if (isset($meta['file_path'])) {
+                    $filePath = $meta['file_path'];
+                    Log::info('Found file path in meta:', ['file_path' => $filePath]);
+                    $this->filePath = $filePath;
+                }
             }
         }
 
-        // Construct the file path
-        $filePath = $basePath . $document->documentName;
+        Log::info('Getting file path for document:', [
+            'documentId' => $this->documentId,
+            'documentName' => $this->documentName,
+            'meta' => $meta
+        ]);
 
-        \Log::info('Checking file path:', [
+
+        // Construct the file path
+        $filePath = $this->filePath ? $this->filePath : $basePath . $this->documentName;
+
+        Log::info('Checking file path:', [
             'disk' => $storageDisk,
             'filePath' => $filePath,
             'exists' => Storage::disk($storageDisk)->exists($filePath)
         ]);
 
         if (!Storage::disk($storageDisk)->exists($filePath)) {
-            \Log::error('Document file not found:', [
+            Log::error('Document file not found:', [
                 'disk' => $storageDisk,
                 'filePath' => $filePath,
                 'availableFiles' => Storage::disk(name: $storageDisk)->files($basePath)
@@ -176,33 +193,33 @@ class DocumentService
     /**
      * Check if file is encrypted (has .enc extension)
      */
-    private function isFileEncrypted($filePath)
+    private function isFileEncrypted()
     {
-        return str_ends_with($filePath, '.enc');
+        return str_ends_with($this->filePath, '.enc');
     }
 
     /**
      * Handle preview for encrypted files
      */
-    private function handleEncryptedFilePreview($filePath, $document)
+    private function handleEncryptedFilePreview()
     {
         try {
-            \Log::info('Starting encrypted file preview:', [
-                'filePath' => $filePath,
-                'documentId' => $document->id
+            Log::info('Starting encrypted file preview:', [
+                'filePath' => $this->filePath,
+                'documentId' => $this->documentId
             ]);
 
             // Read and decrypt the file from public disk
-            $encryptedContent = Storage::disk('public')->get($filePath);
+            $encryptedContent = Storage::disk('public')->get($this->filePath);
 
-            \Log::info('Encrypted content read:', [
+            Log::info('Encrypted content read:', [
                 'contentSize' => strlen($encryptedContent),
-                'filePath' => $filePath
+                'filePath' => $this->filePath
             ]);
 
             $decryptedContent = Crypt::decrypt($encryptedContent);
 
-            \Log::info('File decrypted successfully:', [
+            Log::info('File decrypted successfully:', [
                 'decryptedSize' => strlen($decryptedContent)
             ]);
 
@@ -213,35 +230,35 @@ class DocumentService
             if ($fileSize > $this->maxFileSize) {
                 throw new BadRequestException('File too large for preview. Maximum size is 10MB.');
             }
-
+            
             // Determine MIME type from document meta
-            $mimeType = $this->getMimeTypeFromDocument($document);
-            \Log::info('MIME type determined:', ['mimeType' => $mimeType]);
+            $mimeType = $this->getMimeTypeFromDocument();
+            Log::info('MIME type determined:', ['mimeType' => $mimeType]);
 
-            $this->validateMimeType($mimeType, $document->id, $document->documentName);
+            $this->validateMimeType($mimeType);
 
-            $headers = $this->getSecurityHeaders($mimeType, $this->getOriginalFileName($document), $fileSize);
+            $headers = $this->getSecurityHeaders($mimeType, $this->getOriginalFileName(), $fileSize);
 
-            $this->logDocumentAccess($document);
+            $this->logDocumentAccess($this->currentDocument);
 
-            \Log::info('Returning successful preview response');
+            Log::info('Returning successful preview response');
 
             // Create response with decrypted content
             return new StreamedResponse(function () use ($decryptedContent) {
                 echo $decryptedContent;
             }, 200, $headers);
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            \Log::error('Decryption failed:', [
+            Log::error('Decryption failed:', [
                 'error' => $e->getMessage(),
-                'filePath' => $filePath,
-                'documentId' => $document->id
+                'filePath' => $this->filePath,
+                'documentId' => $this->documentId
             ]);
             throw new BadRequestException('Unable to decrypt document: ' . $e->getMessage());
         } catch (\Exception $e) {
-            \Log::error('Encrypted file preview error:', [
+            Log::error('Encrypted file preview error:', [
                 'error' => $e->getMessage(),
-                'filePath' => $filePath,
-                'documentId' => $document->id,
+                'filePath' => $this->filePath,
+                'documentId' => $this->documentId,
                 'trace' => $e->getTraceAsString()
             ]);
             throw new BadRequestException('Unable to preview document: ' . $e->getMessage());
@@ -251,48 +268,48 @@ class DocumentService
     /**
      * Handle preview for regular (non-encrypted) files
      */
-    private function handleRegularFilePreview($filePath, $document)
+    private function handleRegularFilePreview()
     {
         // Use public disk for file operations
-        $fileSize = Storage::disk('public')->size($filePath);
+        $fileSize = Storage::disk('public')->size($this->filePath);
         if ($fileSize > $this->maxFileSize) {
             throw new BadRequestException('File too large for preview. Maximum size is 10MB.');
         }
 
-        $mimeType = Storage::disk('public')->mimeType($filePath);
-        $this->validateMimeType($mimeType, $document->id, $document->documentName);
+        $mimeType = Storage::disk('public')->mimeType($this->filePath);
+        $this->validateMimeType($mimeType);
 
-        $headers = $this->getSecurityHeaders($mimeType, $document->documentName, $fileSize);
+        $headers = $this->getSecurityHeaders($mimeType, $this->documentName, $fileSize);
 
-        $this->logDocumentAccess($document);
+        $this->logDocumentAccess($this->currentDocument);
 
-        return $this->createSecureStreamedResponse($filePath, $headers);
+        return $this->createSecureStreamedResponse($this->filePath, $headers);
     }
 
     /**
      * Validate file exists in storage
      */
-    private function validateFileExists($filePath)
+    private function validateFileExists()
     {
-        if (!Storage::disk('public')->exists($filePath)) {
-            throw new DocumentNotFoundException('Document file not found in storage: ' . $filePath);
+        if (!Storage::disk('public')->exists($this->filePath)) {
+            throw new DocumentNotFoundException('Document file not found in storage: ' . $this->filePath);
         }
     }
 
     /**
      * Get MIME type from document meta or file extension
      */
-    private function getMimeTypeFromDocument($document)
+    private function getMimeTypeFromDocument()
     {
-        \Log::info('Getting MIME type for document:', [
-            'documentId' => $document->id,
-            'meta' => $document->meta,
-            'documentName' => $document->documentName
+        Log::info('Getting MIME type for document:', [
+            'documentId' => $this->documentId,
+            'meta' => $this->currentDocument->meta,
+            'documentName' => $this->documentName
         ]);
 
         // Try to get from meta first
-        if ($document->meta) {
-            $metaArray = is_array($document->meta) ? $document->meta : json_decode($document->meta, true);
+        if ($this->currentDocument->meta) {
+            $metaArray = is_array($this->currentDocument->meta) ? $this->currentDocument->meta : json_decode($this->currentDocument->meta, true);
 
             if (isset($metaArray['extension'])) {
                 $extension = strtolower($metaArray['extension']);
@@ -315,7 +332,7 @@ class DocumentService
 
                 if (isset($mimeMap[$extension])) {
                     $mimeType = $mimeMap[$extension];
-                    \Log::info('MIME type determined from extension:', [
+                    Log::info('MIME type determined from extension:', [
                         'extension' => $extension,
                         'mimeType' => $mimeType
                     ]);
@@ -325,51 +342,50 @@ class DocumentService
         }
 
         // Fallback: Try to determine from filename
-        $fileName = $this->getOriginalFileName($document);
+        $fileName = $this->getOriginalFileName();
         if (str_ends_with($fileName, '.jpg') || str_ends_with($fileName, '.jpeg')) {
-            \Log::info('MIME type determined from filename: image/jpeg');
+            Log::info('MIME type determined from filename: image/jpeg');
             return 'image/jpeg';
         }
 
-        \Log::warning('Could not determine MIME type, using fallback');
+        Log::warning('Could not determine MIME type, using fallback');
         return 'image/jpeg'; // Default to image/jpeg for your case
     }
 
     /**
      * Get original file name without .enc extension
      */
-    private function getOriginalFileName($document)
+    private function getOriginalFileName()
     {
-        $fileName = $document->documentName;
-        if (str_ends_with($fileName, '.enc')) {
-            return substr($fileName, 0, -4); // Remove .enc extension
+        if (str_ends_with($this->documentName, '.enc')) {
+            return substr($this->documentName, 0, -4); // Remove .enc extension
         }
-        return $fileName;
+        return $this->documentName;
     }
 
     /**
      * Validate MIME type for security
      */
-    private function validateMimeType($mimeType, $documentId, $fileName)
+    private function validateMimeType($mimeType)
     {
-        \Log::info('Validating MIME type:', [
+        Log::info('Validating MIME type:', [
             'mimeType' => $mimeType,
-            'documentId' => $documentId,
-            'fileName' => $fileName,
+            'documentId' => $this->documentId,
+            'fileName' => $this->documentName,
             'allowedTypes' => $this->allowedMimeTypes
         ]);
 
         if (!in_array($mimeType, $this->allowedMimeTypes)) {
             Log::warning('Unsupported file type attempted', [
                 'mimeType' => $mimeType,
-                'documentId' => $documentId,
-                'fileName' => $fileName,
+                'documentId' => $this->documentId,
+                'fileName' => $this->documentName,
                 'allowedTypes' => $this->allowedMimeTypes
             ]);
             throw new BadRequestException('File type not supported for preview. Type: ' . $mimeType);
         }
 
-        \Log::info('MIME type validation passed');
+        Log::info('MIME type validation passed');
     }
 
     /**
