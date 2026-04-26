@@ -583,13 +583,13 @@ class RequestsService extends BaseService
             $this->requestId = $request->id;
             $response =  $this->getRequestData();
 
-            if (!$response->ok) {
+            if (!$response) {
                 DB::rollBack();
 
                 return $this->error(
-                    message: $response->message,
-                    errors: $response->ok,
-                    statusCode: $response->status
+                    message: 'No request found.',
+                    errors: 'No request found.',
+                    statusCode: 404
                 );
             }
 
@@ -706,13 +706,13 @@ class RequestsService extends BaseService
             $this->requests['entityType'] = Requests::class;
             $response = $this->artifactsService->createAdditionalRequest($this->requests);
 
-            if (!$response->ok) {
+            if (!$response) {
                 DB::rollBack();
 
                 return $this->error(
-                    message: $response->message,
-                    errors: $response->ok,
-                    statusCode: $response->status
+                    message: 'Failed to create additional request',
+                    errors: 'Failed to create additional request',
+                    statusCode: 500
                 );
             }
 
@@ -751,13 +751,13 @@ class RequestsService extends BaseService
             $this->requests['addReqId'] = $this->addReqId;
             $response = $this->artifactsService->submitAdditionalRequest($this->requests);
 
-            if (!$response->ok) {
+            if (!$response) {
                 DB::rollBack();
 
                 return $this->error(
-                    message: $response->message,
-                    errors: $response->ok,
-                    statusCode: $response->status
+                    message: 'Failed to submit additional request',
+                    errors: 'Failed to submit additional request',
+                    statusCode: 500
                 );
             }
 
